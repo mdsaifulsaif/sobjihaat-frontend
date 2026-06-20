@@ -1,3 +1,5 @@
+
+
 // import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // export interface CartItem {
@@ -14,12 +16,14 @@
 //     items: CartItem[];
 //     totalQuantity: number;
 //     totalPrice: number;
+//     isMiniCartOpen: boolean;     // ← নতুন যোগ করা হয়েছে
 // }
 
 // const initialState: CartState = {
 //     items: [],
 //     totalQuantity: 0,
 //     totalPrice: 0,
+//     isMiniCartOpen: false,       // ← ডিফল্ট false
 // };
 
 // const calculateTotals = (items: CartItem[]) => {
@@ -96,6 +100,19 @@
 //             state.totalQuantity = totals.totalQuantity;
 //             state.totalPrice = totals.totalPrice;
 //         },
+
+//         // ==================== নতুন Reducers ====================
+//         openMiniCart: (state) => {
+//             state.isMiniCartOpen = true;
+//         },
+
+//         closeMiniCart: (state) => {
+//             state.isMiniCartOpen = false;
+//         },
+
+//         toggleMiniCart: (state) => {
+//             state.isMiniCartOpen = !state.isMiniCartOpen;
+//         },
 //     },
 // });
 
@@ -105,7 +122,10 @@
 //     increaseQuantity,
 //     decreaseQuantity,
 //     clearCart,
-//     updateQuantity
+//     updateQuantity,
+//     openMiniCart,
+//     closeMiniCart,
+//     toggleMiniCart,
 // } = cartSlice.actions;
 
 // export default cartSlice.reducer;
@@ -114,7 +134,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface CartItem {
-    id: number;
+    id: number | string; // API theke _id (string) ashe, tai number | string both support kora holo
     name: string;
     price: number;
     mrp: number;
@@ -127,14 +147,14 @@ interface CartState {
     items: CartItem[];
     totalQuantity: number;
     totalPrice: number;
-    isMiniCartOpen: boolean;     // ← নতুন যোগ করা হয়েছে
+    isMiniCartOpen: boolean;
 }
 
 const initialState: CartState = {
     items: [],
     totalQuantity: 0,
     totalPrice: 0,
-    isMiniCartOpen: false,       // ← ডিফল্ট false
+    isMiniCartOpen: false,
 };
 
 const calculateTotals = (items: CartItem[]) => {
@@ -161,7 +181,7 @@ const cartSlice = createSlice({
             state.totalPrice = totals.totalPrice;
         },
 
-        removeFromCart: (state, action: PayloadAction<number>) => {
+        removeFromCart: (state, action: PayloadAction<number | string>) => {
             state.items = state.items.filter(item => item.id !== action.payload);
 
             const totals = calculateTotals(state.items);
@@ -169,7 +189,7 @@ const cartSlice = createSlice({
             state.totalPrice = totals.totalPrice;
         },
 
-        increaseQuantity: (state, action: PayloadAction<number>) => {
+        increaseQuantity: (state, action: PayloadAction<number | string>) => {
             const item = state.items.find(item => item.id === action.payload);
             if (item) {
                 item.quantity += 1;
@@ -180,7 +200,7 @@ const cartSlice = createSlice({
             state.totalPrice = totals.totalPrice;
         },
 
-        decreaseQuantity: (state, action: PayloadAction<number>) => {
+        decreaseQuantity: (state, action: PayloadAction<number | string>) => {
             const item = state.items.find(item => item.id === action.payload);
             if (item) {
                 if (item.quantity > 1) {
@@ -201,7 +221,7 @@ const cartSlice = createSlice({
             state.totalPrice = 0;
         },
 
-        updateQuantity: (state, action: PayloadAction<{ id: number; quantity: number }>) => {
+        updateQuantity: (state, action: PayloadAction<{ id: number | string; quantity: number }>) => {
             const item = state.items.find(item => item.id === action.payload.id);
             if (item && action.payload.quantity > 0) {
                 item.quantity = action.payload.quantity;
@@ -212,7 +232,6 @@ const cartSlice = createSlice({
             state.totalPrice = totals.totalPrice;
         },
 
-        // ==================== নতুন Reducers ====================
         openMiniCart: (state) => {
             state.isMiniCartOpen = true;
         },

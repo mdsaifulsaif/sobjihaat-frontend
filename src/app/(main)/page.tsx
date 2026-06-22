@@ -6,6 +6,7 @@ import {
   BlogSection,
   Support
 } from '@/components/home';
+import Faq from '@/components/home/Faq';
 import PromoBanner from '@/components/home/PromoBanner';
 import TwoBanners from '@/components/home/TwoBanners';
 
@@ -13,13 +14,13 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <PromoBanner />
       <HomeCategory />
       <PopularProducts />
       <TwoBanners />
       <NewProducts />
       <BlogSection />
       <Support />
+      <Faq/>
     </>
   );
 }

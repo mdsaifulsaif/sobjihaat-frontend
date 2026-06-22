@@ -62,7 +62,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       )}
 
       {/* Nav items */}
-      <div className="flex-1 overflow-y-auto py-2 px-2">
+      <div className="flex-1 overflow-y-auto py-2 px-2 custom-scrollbar">
         {navItems.map((group) => (
           <div key={group.section} className="mb-3">
             <p className="text-[10px] uppercase tracking-widest font-semibold text-gray-400 px-2 py-2">
@@ -106,15 +106,15 @@ export default function SidebarCategories({ desktopOpen, mobileOpen, onMobileClo
   return (
     <>
       {/* ── DESKTOP SIDEBAR (md+) ── পুরো hide/show, কোনো icon-only state নেই */}
-      <aside
-        className={`
-          hidden md:flex flex-col flex-shrink-0
-          bg-white border-r border-gray-100
-          w-[220px] h-full overflow-hidden
-          transition-all duration-200
-          ${desktopOpen ? "translate-x-0" : "-translate-x-full w-0 border-0"}
-        `}
-      >
+     <aside
+  className={`
+    hidden md:flex flex-col flex-shrink-0
+    bg-white border-r border-gray-100
+    h-full overflow-hidden
+    transition-all duration-200
+    ${desktopOpen ? "w-[220px] border-r" : "w-0 border-0"}
+  `}
+>
         <SidebarContent />
       </aside>
 

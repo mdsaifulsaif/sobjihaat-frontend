@@ -141,6 +141,7 @@ export interface CartItem {
     image: string;
     category: string;
     quantity: number;
+     thumbnail?: string; 
 }
 
 interface CartState {

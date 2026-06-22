@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -10,6 +11,7 @@ import {
     closeMiniCart
 } from '@/redux/slices/cartSlice';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const MiniCart = () => {
     const dispatch = useAppDispatch();
@@ -17,132 +19,138 @@ const MiniCart = () => {
 
     if (!isMiniCartOpen) return null;
 
-    // No overlay, no outside-click-to-close.
-    // Closes ONLY when the user clicks the collapse (>>) button.
-    // Main page stays fully clickable/scrollable while this is open.
     return (
-        <div
-            className="fixed top-0 right-0 h-screen w-[340px] z-50 flex flex-col shadow-2xl"
-            style={{ background: 'var(--color-background)' }}
-        >
-            {/* Top bar */}
+        <>
+            {/* Mobile backdrop */}
             <div
-                className="px-4 py-2 text-xs font-medium"
-                style={{ background: 'var(--color-text-secondary)', color: 'var(--color-background)' }}
-            >
-                Delivery charge not needed
-            </div>
+                className="md:hidden fixed inset-0 bg-black/40 z-40"
+                onClick={() => dispatch(closeMiniCart())}
+            />
 
-            {/* Header */}
-            <div className="px-4 py-3 flex items-center justify-between border-b">
-                <div className="flex items-center gap-2">
-                    <FiShoppingBag size={18} style={{ color: 'var(--color-primary)' }} />
-                    <div>
-                        <p className="font-bold text-sm italic" style={{ color: 'var(--color-text-primary)' }}>
-                            {items.length} item{items.length !== 1 ? 's' : ''}
-                        </p>
-                        <p className="text-xs flex items-center gap-1" style={{ color: 'var(--color-primary)' }}>
-                            Discounted Shipping Fee: ৳0
-                            <FiInfo size={12} />
-                        </p>
-                    </div>
+            {/* ✅ Desktop: top-0 right-0, Mobile: bottom sheet */}
+            <div className="
+                fixed z-50 flex flex-col shadow-2xl bg-white
+
+                top-0 right-0 h-screen w-[340px]
+
+                max-md:top-auto max-md:bottom-0 max-md:left-0 max-md:right-0
+                max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl
+            ">
+
+                {/* Top bar */}
+                <div className="px-4 py-2 text-xs font-medium text-center bg-gray-800 text-white max-md:rounded-t-2xl">
+                    Delivery charge not included
                 </div>
-                <button
-                    onClick={() => dispatch(closeMiniCart())}
-                    className="p-1 rounded transition-colors"
-                    style={{ color: 'var(--color-primary)' }}
-                    aria-label="Collapse cart"
-                >
-                    <FiChevronsRight size={20} />
-                </button>
-            </div>
 
-            {/* Items List */}
-            <div className="flex-1 overflow-y-auto">
-                {items.length === 0 ? (
-                    <p className="text-center py-10 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                        Your cart is empty
-                    </p>
-                ) : (
-                    items.map((item) => (
-                        <div key={item.id} className="flex items-start gap-3 px-4 py-3 border-b">
-                            <div className="w-10 h-10 relative flex-shrink-0 rounded overflow-hidden border" style={{ background: 'var(--color-surface)' }}>
-                                {/* product image here */}
-                            </div>
+                {/* Header */}
+                <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                        <FiShoppingBag size={18} className="text-[var(--color-primary)]" />
+                        <div>
+                            <p className="font-bold text-sm text-gray-800">
+                                {items.length} item{items.length !== 1 ? 's' : ''}
+                            </p>
+                            <p className="text-xs flex items-center gap-1 text-[var(--color-primary)]">
+                                Shipping Fee: ৳0
+                                <FiInfo size={12} />
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => dispatch(closeMiniCart())}
+                        className="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-500"
+                        aria-label="Collapse cart"
+                    >
+                        <FiChevronsRight size={20} />
+                    </button>
+                </div>
 
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm leading-snug line-clamp-2" style={{ color: 'var(--color-text-primary)' }}>
-                                    {item.name}
-                                </p>
-                            </div>
+                {/* Items List */}
+                <div className="flex-1 overflow-y-auto">
+                    {items.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400">
+                            <FiShoppingBag size={40} />
+                            <p className="text-sm">Your cart is empty</p>
+                        </div>
+                    ) : (
+                        items.map((item) => (
+                            <div key={item.id} className="flex items-start gap-3 px-4 py-3 border-b border-gray-50">
 
-                            <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                                <div
-                                    className="flex items-center border rounded-full text-xs"
-                                    style={{ borderColor: 'var(--color-text-muted)' }}
-                                >
-                                    <button
-                                        onClick={() => dispatch(decreaseQuantity(item.id))}
-                                        className="w-6 h-6 flex items-center justify-center hover:opacity-70"
-                                        style={{ color: 'var(--color-text-secondary)' }}
-                                    >
-                                        −
-                                    </button>
-                                    <span className="px-2 font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                                        {item.quantity}
-                                    </span>
-                                    <button
-                                        onClick={() => dispatch(increaseQuantity(item.id))}
-                                        className="w-6 h-6 flex items-center justify-center hover:opacity-70"
-                                        style={{ color: 'var(--color-text-secondary)' }}
-                                    >
-                                        +
-                                    </button>
-                                </div>
-
-                                <div className="flex items-center gap-1">
-                                    <span className="text-sm font-bold" style={{ color: 'var(--color-error)' }}>
-                                        ৳{item.price}
-                                    </span>
-                                    {item.mrp > item.price && (
-                                        <span className="text-xs line-through" style={{ color: 'var(--color-text-muted)' }}>
-                                            ৳{item.mrp}
-                                        </span>
+                                {/* Image */}
+                                <div className="w-14 h-14 flex-shrink-0 rounded-md overflow-hidden border border-gray-100 bg-gray-50">
+                                    {item.thumbnail ? (
+                                        <Image
+                                            src={item.thumbnail}
+                                            alt={item.name}
+                                            width={56}
+                                            height={56}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <FiShoppingBag size={20} className="text-gray-300" />
+                                        </div>
                                     )}
                                 </div>
 
-                                <button
-                                    onClick={() => dispatch(removeFromCart(item.id))}
-                                    className="text-xs flex items-center gap-1 hover:opacity-70"
-                                    style={{ color: 'var(--color-error)' }}
-                                >
-                                    <FiTrash2 size={11} />
-                                </button>
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm leading-snug line-clamp-2 text-gray-700 mb-2">
+                                        {item.name}
+                                    </p>
+                                    <div className="flex items-center gap-1.5 mb-2">
+                                        <span className="text-sm font-bold text-[var(--color-primary)]">
+                                            ৳{item.price}
+                                        </span>
+                                        {item.mrp > item.price && (
+                                            <span className="text-xs line-through text-gray-400">
+                                                ৳{item.mrp}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center border border-gray-200 rounded-full text-xs">
+                                            <button
+                                                onClick={() => dispatch(decreaseQuantity(item.id))}
+                                                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                                            >−</button>
+                                            <span className="px-2 font-semibold text-gray-800 min-w-[20px] text-center">
+                                                {item.quantity}
+                                            </span>
+                                            <button
+                                                onClick={() => dispatch(increaseQuantity(item.id))}
+                                                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                                            >+</button>
+                                        </div>
+                                        <button
+                                            onClick={() => dispatch(removeFromCart(item.id))}
+                                            className="text-red-400 hover:text-red-600 transition-colors"
+                                        >
+                                            <FiTrash2 size={14} />
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))
-                )}
-            </div>
+                        ))
+                    )}
+                </div>
 
-            {/* Footer */}
-            <div className="border-t">
-                <button
-                    className="w-full py-3 text-xs flex items-center justify-center gap-1"
-                    style={{ color: 'var(--color-text-secondary)', background: 'var(--color-surface)' }}
-                >
-                    ⌃ Enter special code
-                </button>
-                <Link href="/cart" onClick={() => dispatch(closeMiniCart())}>
-                    <button
-                        className="w-full py-4 font-semibold text-base flex items-center justify-between px-5"
-                        style={{ background: 'var(--color-primary)', color: 'var(--color-background)' }}
+                {/* Footer */}
+                <div className="border-t border-gray-100">
+                    <button className="w-full py-2.5 text-xs flex items-center justify-center gap-1 text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-100">
+                        ⌃ Enter special code
+                    </button>
+                    <Link
+                        href="/cart"
+                        onClick={() => dispatch(closeMiniCart())}
+                        className="w-full py-4 font-semibold text-base flex items-center justify-between px-5 bg-[var(--color-primary)] text-white hover:opacity-95 transition-opacity"
                     >
                         <span>Checkout</span>
                         <span>৳{totalPrice.toLocaleString()}</span>
-                    </button>
-                </Link>
+                    </Link>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

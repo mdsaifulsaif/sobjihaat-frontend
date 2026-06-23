@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <HomeCategory />
+      {/* <HomeCategory /> */}
       <PreOrderDeliverySlots />
       <DeliveryCharges />
       <PopularProducts />

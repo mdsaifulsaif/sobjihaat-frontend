@@ -78,7 +78,7 @@ const PreOrderDeliverySlots: React.FC = () => {
   ];
 
   return (
-    <div className="font-poppins bg-theme-surface p-6 md:p-10 rounded-2xl">
+    <div className="font-poppins bg-theme-surface p-6 md:p-10 rounded-2xl container">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Section - Pre-Order Info */}
         <div className="flex flex-col md:flex-row lg:flex-row gap-6 items-start">

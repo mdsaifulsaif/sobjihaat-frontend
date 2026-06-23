@@ -49,7 +49,7 @@ const Hero: React.FC = () => {
   const location = "Barisal Sadar, Rupatoli, Nathullabad & more";
 
   return (
-    <div className="mx-auto w-full  px-4">
+    <div className="mx-auto container   px-4">
       <div
         className="relative w-full overflow-hidden rounded-2xl bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${bannerUrl})`, minHeight: "280px" }}

@@ -9,6 +9,7 @@ import {
 import DeliveryCharges from '@/components/home/DeliveryCharges';
 import DeliveryCoverage from '@/components/home/Deliverycoverage';
 import Faq from '@/components/home/Faq';
+import HappyCustomers from '@/components/home/Happycustomers';
 import OurCommitment from '@/components/home/Ourcommitment';
 import PreOrderDeliverySlots from '@/components/home/PreOrderDeliverySlots';
 import PromoBanner from '@/components/home/PromoBanner';
@@ -19,7 +20,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      {/* <HomeCategory /> */}
+      <HomeCategory />
       <PreOrderDeliverySlots />
       <DeliveryCharges />
       {/* <PopularProducts /> */}
@@ -31,6 +32,7 @@ export default function Home() {
       {/* <BlogSection /> */}
       {/* <Support /> */}
          <WhyChooseUs />
+         <HappyCustomers />
        <DeliveryCoverage />
       <Faq/>
     </>

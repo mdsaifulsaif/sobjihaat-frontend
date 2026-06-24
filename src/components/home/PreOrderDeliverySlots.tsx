@@ -1,228 +1,281 @@
-"use client"
+'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image'; // If using Next.js, otherwise use an <img> tag
+import Image from 'next/image';
 
-// Mock Icons to represent the ones in the image.
-// In a real project, you'd use your own SVG files or a library like 'lucide-react'
-const CheckCircleIcon = ({ isChecked }: { isChecked: boolean }) => (
+/* ---------- decorative leaf SVG (reused at different sizes/rotations) ---------- */
+
+const Leaf: React.FC<{
+  className?: string;
+  size?: number;
+  rotate?: number;
+  flip?: boolean;
+}> = ({ className = '', size = 22, rotate = 0, flip = false }) => (
   <svg
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
-    className={`w-5 h-5 ${isChecked ? 'text-theme-primary' : 'text-theme-text-muted'}`}
-    strokeWidth="2"
+    className={className}
+    style={{
+      transform: `rotate(${rotate}deg) scaleX(${flip ? -1 : 1})`,
+    }}
   >
     <path
+      d="M21 3C13 3 4 8 4 17c0 1.5.3 2.7.8 3.7C7 14 12 8 21 3Z"
+      fill="#7fc77f"
+    />
+    <path
+      d="M21 3C13 3 4 8 4 17"
+      stroke="#5da85d"
+      strokeWidth="1"
       strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      fill="none"
     />
   </svg>
 );
 
-const CalendarIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    className="w-12 h-12 text-theme-text-muted"
-    strokeWidth="1"
-  >
+/* ---------- check icon for benefit list ---------- */
+
+const CheckIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="#2f9e44" strokeWidth="1.6" />
     <path
+      d="M8 12.5l2.5 2.5L16 9.5"
+      stroke="#2f9e44"
+      strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
     />
   </svg>
 );
 
-const ClockIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    className="w-10 h-10 text-theme-primary"
-    strokeWidth="2"
-  >
+const LeafBadgeIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
     <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      d="M20 4C10 4 4 10 4 18c0 1 .1 1.6.3 2C8 12 14 6 20 4Z"
+      fill="#2f9e44"
     />
   </svg>
 );
 
-interface DeliverySlot {
-  id: string;
-  timeRange: string;
-  type: 'Fast Delivery' | 'Standard Delivery';
+const CartBoxIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <rect x="3" y="7" width="18" height="13" rx="1.5" stroke="#fff" strokeWidth="1.8" />
+    <path d="M3 11h18" stroke="#fff" strokeWidth="1.8" />
+    <path d="M8 7V5a4 4 0 0 1 8 0v2" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+const ClockIcon: React.FC<{ color?: string; size?: number }> = ({
+  color = '#2f9e44',
+  size = 20,
+}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.6" />
+    <path
+      d="M12 7v5l3.5 2"
+      stroke={color}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const CheckBadge = () => (
+  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#2f9e44]">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M5 13l4.5 4.5L19 7"
+        stroke="#fff"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  </span>
+);
+
+const InfoIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="9" stroke="#2f9e44" strokeWidth="1.6" />
+    <path d="M12 10.5v5.5" stroke="#2f9e44" strokeWidth="1.6" strokeLinecap="round" />
+    <circle cx="12" cy="7.8" r="0.9" fill="#2f9e44" />
+  </svg>
+);
+
+/* ---------- data ---------- */
+
+const benefits = [
+  'Fresh from Local Markets',
+  'Hand Picked Quality',
+  'Best Price Guaranteed',
+  'Priority Delivery',
+];
+
+interface TimeSlot {
+  id: number;
+  range: string;
+  label: string;
 }
 
-const PreOrderDeliverySlots: React.FC = () => {
-  const [selectedDay, setSelectedDay] = useState<'Today' | 'Tomorrow'>('Today');
-  const [selectedSlotId, setSelectedSlotId] = useState<string>('slot1'); // Default select first slot
+const timeSlots: TimeSlot[] = [
+  { id: 1, range: '8:00 AM – 10:00 AM', label: 'Fast Delivery' },
+  { id: 2, range: '10:00 AM – 12:00 PM', label: 'Fast Delivery' },
+  { id: 3, range: '2:00 PM – 4:00 PM', label: 'Standard Delivery' },
+  { id: 4, range: '6:00 PM – 8:00 PM', label: 'Standard Delivery' },
+];
 
-  const deliverySlots: DeliverySlot[] = [
-    { id: 'slot1', timeRange: '8:00 AM - 10:00 AM', type: 'Fast Delivery' },
-    { id: 'slot2', timeRange: '10:00 AM - 12:00 PM', type: 'Fast Delivery' },
-    { id: 'slot3', timeRange: '2:00 PM - 4:00 PM', type: 'Standard Delivery' },
-    { id: 'slot4', timeRange: '6:00 PM - 8:00 PM', type: 'Standard Delivery' },
-  ];
+/* ---------- main component ---------- */
 
-  const preOrderFeatures = [
-    'Next Morning Delivery',
-    'Bulk & Festival Orders',
-    'Fresh from Market Collection',
-    'Best Price Guaranteed',
-  ];
+const PreOrderDeliveryTime: React.FC = () => {
+  const [day, setDay] = useState<'today' | 'tomorrow'>('today');
+  const [selectedSlot, setSelectedSlot] = useState<number>(1);
 
   return (
-    <div className="font-poppins bg-theme-surface p-6 md:p-10 rounded-2xl container">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Section - Pre-Order Info */}
-        <div className="flex flex-col md:flex-row lg:flex-row gap-6 items-start">
-          <div className="flex-1 space-y-4">
-            <h2 className="font-heading text-4xl font-bold text-theme-text-primary">
-              Pre-Order & Save More at Sobjihaat!
-            </h2>
-            <p className="text-base text-theme-text-secondary leading-relaxed">
-              Order in advance and get the best products at the lowest prices.
-            </p>
+    <section className="bg-[#fbfcfa] px-4 py-10 sm:px-6 lg:py-14">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          {/* ---------------- LEFT: Pre-Order panel ---------------- */}
+          <div className="relative overflow-hidden px-6 py-10 sm:px-10 lg:py-14">
+            {/* soft radial backdrop behind the basket */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute right-[-10%] top-1/2 h-[280px] w-[280px] -translate-y-1/2 rounded-full bg-[#e3f3e3] sm:h-[340px] sm:w-[340px] lg:right-[2%]"
+            />
 
-            <ul className="space-y-3.5 pt-2">
-              {preOrderFeatures.map((feature, index) => (
-                <li key={index} className="flex items-center gap-3">
-                  <CheckCircleIcon isChecked={true} />
-                  <span className="text-sm font-medium text-theme-text-primary">
-                    {feature}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {/* scattered decorative leaves */}
+            <Leaf className="pointer-events-none absolute left-[6%] top-[12%]" size={20} rotate={-15} />
+            <Leaf className="pointer-events-none absolute left-[2%] top-[55%]" size={16} rotate={40} flip />
+            <Leaf className="pointer-events-none absolute left-[18%] top-[78%]" size={18} rotate={-30} />
+            <Leaf className="pointer-events-none absolute right-[28%] top-[8%]" size={18} rotate={20} />
+            <Leaf className="pointer-events-none absolute right-[6%] top-[30%]" size={16} rotate={60} />
+            <Leaf className="pointer-events-none absolute right-[16%] bottom-[10%]" size={20} rotate={-50} flip />
+            <Leaf className="pointer-events-none absolute left-[34%] bottom-[4%]" size={14} rotate={10} />
 
-            <div className="pt-6">
-              <button
-                className="btn hover-lift text-white transition-all duration-300"
-                style={{ backgroundColor: 'var(--color-primary)' }}
-              >
-                Pre-Order Now
-              </button>
-            </div>
-          </div>
+            <div className="relative z-10 grid grid-cols-1 items-center gap-8 sm:grid-cols-2">
+              {/* copy */}
+              <div>
+                <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#e7f5e8] px-3.5 py-1 text-xs font-semibold text-[#2f9e44]">
+                  <LeafBadgeIcon />
+                  Fresh. Fast. Reliable.
+                </span>
 
-          <div className="w-full md:w-[280px] lg:w-[280px] flex-shrink-0 relative">
-            <div className="relative aspect-[3/4] p-4 bg-theme-background border border-slate-100 rounded-xl shadow-sm">
-              <Image
-                src="/path/to/your/bag-and-veg-image.png" // Replace with your image path
-                alt="GreenBasket Delivery Bag with Vegetables"
-                layout="fill"
-                objectFit="contain"
-                className="p-3"
-              />
-            </div>
-          </div>
-        </div>
+                <h2 className="text-3xl font-extrabold leading-tight text-[#163a1d] sm:text-[2.15rem]">
+                  Pre-Order &amp; Save More!
+                </h2>
 
-        {/* Right Section - Delivery Time Selection */}
-        <div className="space-y-6">
-          <h3 className="font-heading text-3xl font-bold text-theme-text-primary">
-            Choose Your Delivery Time
-          </h3>
-
-          {/* Day Selection (Today/Tomorrow) */}
-          <div className="flex items-center gap-4 border border-slate-100 rounded-xl p-2 bg-theme-background w-fit">
-            {(['Today', 'Tomorrow'] as const).map((day) => (
-              <button
-                key={day}
-                onClick={() => setSelectedDay(day)}
-                className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                  selectedDay === day
-                    ? 'text-white'
-                    : 'text-theme-text-primary bg-theme-surface hover:bg-slate-100'
-                }`}
-                style={
-                  selectedDay === day
-                    ? { backgroundColor: 'var(--color-primary)' }
-                    : {}
-                }
-              >
-                {day}
-              </button>
-            ))}
-          </div>
-
-          {/* Time Slot Selection */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {deliverySlots.map((slot) => (
-              <button
-                key={slot.id}
-                onClick={() => setSelectedSlotId(slot.id)}
-                className={`relative p-5 rounded-xl border transition-all text-left ${
-                  selectedSlotId === slot.id
-                    ? 'border-theme-primary bg-white'
-                    : 'border-slate-200 bg-theme-surface hover:border-theme-primary/30'
-                }`}
-              >
-                {selectedSlotId === slot.id && (
-                  <div className="absolute top-3 right-3 text-theme-primary">
-                    <svg
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                      strokeWidth="2"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m4.5 12.75 6 6 9-13.5"
-                      />
-                    </svg>
-                  </div>
-                )}
-                <p className="text-xl font-bold text-theme-text-primary">
-                  {slot.timeRange}
+                <p className="mt-3 text-sm leading-relaxed text-gray-500 sm:text-[15px]">
+                  Order in advance and get the best products at the lowest
+                  prices.
                 </p>
-                <p className="text-sm font-medium text-theme-text-muted mt-1">
-                  {slot.type}
-                </p>
-              </button>
-            ))}
-          </div>
 
-          {/* 3D Icons Group (Calendar & Clock) */}
-          <div className="relative pt-6 flex flex-col items-center gap-10">
-            {/* These would be images of the 3D icons, placed absolutely to match your layout */}
-            <div className="absolute -left-10 top-10 flex gap-4 items-center">
-              <CalendarIcon />
-              <div className="flex flex-col items-center -rotate-12 translate-y-10">
-                <ClockIcon />
+                <ul className="mt-5 space-y-2.5">
+                  {benefits.map((b) => (
+                    <li key={b} className="flex items-center gap-2 text-sm text-gray-700">
+                      <CheckIcon />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+
+                <button className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#2f9e44] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#278039]">
+                  <CartBoxIcon />
+                  Pre-Order Now
+                </button>
+              </div>
+
+              {/* basket image */}
+              <div className="relative flex items-center justify-center">
+                <Image
+                  src="/dtime.png"
+                  alt="GreenBasket crate filled with fresh vegetables"
+                  width={640}
+                  height={2300}
+                  className="relative z-10 h-auto w-full max-w-[300px] select-none drop-shadow-xl sm:max-w-[840px]"
+                  priority
+                />
               </div>
             </div>
+          </div>
 
-            {/* If using Next.js for absolute placed 3D icons as in image, it would be something like: */}
-            {/*
-            <div className="absolute -left-20 top-10 w-32 h-32">
-                <Image src="/path/to/3d-calendar.png" alt="3D Calendar" layout="fill" />
+          {/* ---------------- RIGHT: Delivery time panel ---------------- */}
+          <div className="relative border-t border-gray-100 px-6 py-10 sm:px-10 lg:border-l lg:border-t-0 lg:py-14">
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#e7f5e8]">
+                <ClockIcon size={22} />
+              </span>
+              <h3 className="text-xl font-bold leading-tight text-gray-900 sm:text-2xl">
+                Choose Your
+                <br />
+                Delivery Time
+              </h3>
             </div>
-            <div className="absolute left-10 bottom-0 w-24 h-24">
-                <Image src="/path/to/3d-clock.png" alt="3D Clock" layout="fill" />
+
+            {/* day toggle */}
+            <div className="mt-6 inline-flex w-full rounded-xl bg-gray-100 p-1 sm:w-auto">
+              <button
+                onClick={() => setDay('today')}
+                className={`flex-1 rounded-lg px-6 py-2 text-sm font-semibold transition sm:flex-none ${
+                  day === 'today'
+                    ? 'bg-[#2f9e44] text-white shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Today
+              </button>
+              <button
+                onClick={() => setDay('tomorrow')}
+                className={`flex-1 rounded-lg px-6 py-2 text-sm font-semibold transition sm:flex-none ${
+                  day === 'tomorrow'
+                    ? 'bg-[#2f9e44] text-white shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Tomorrow
+              </button>
             </div>
-            */}
+
+            {/* time slot grid */}
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {timeSlots.map((slot) => {
+                const isSelected = selectedSlot === slot.id;
+                return (
+                  <button
+                    key={slot.id}
+                    onClick={() => setSelectedSlot(slot.id)}
+                    className={`relative rounded-xl border px-4 py-3.5 text-left transition ${
+                      isSelected
+                        ? 'border-[#2f9e44] bg-white ring-1 ring-[#2f9e44]'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    {isSelected && (
+                      <span className="absolute right-3 top-3">
+                        <CheckBadge />
+                      </span>
+                    )}
+                    <ClockIcon color={isSelected ? '#2f9e44' : '#9ca3af'} size={18} />
+                    <p className="mt-2 text-sm font-bold text-gray-900">{slot.range}</p>
+                    <p className="text-xs text-gray-400">{slot.label}</p>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* info footer */}
+            <div className="mt-5 flex items-center gap-2 rounded-xl bg-[#eef8ee] px-4 py-3">
+              <InfoIcon />
+              <p className="text-xs font-medium text-[#2f6b34] sm:text-sm">
+                We&apos;ll deliver your order in your selected time slot.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Confirmation Text */}
-      <div className="mt-10 flex items-center gap-2.5">
-        <CheckCircleIcon isChecked={true} />
-        <p className="text-sm font-medium text-theme-text-primary">
-          We'll deliver your order in your selected time slot
-        </p>
-      </div>
-    </div>
+    </section>
   );
 };
 
-export default PreOrderDeliverySlots;
+export default PreOrderDeliveryTime;

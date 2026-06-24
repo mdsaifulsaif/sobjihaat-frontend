@@ -301,7 +301,7 @@ const DeliveryCoverage: React.FC = () => {
         </div>
 
         {/* ── Stats ── */}
-        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+        {/* <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
           {stats.map((s) => (
             <div
               key={s.label}
@@ -320,17 +320,14 @@ const DeliveryCoverage: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* ── Currently Delivering list ── */}
         <div className="mt-5">
           <h3 className="mb-3 text-sm font-bold text-gray-900 sm:text-base">
             Currently Delivering ({activeZones.length})
           </h3>
-          {/* 
-              Mobile:  2 columns
-              lg:      4 columns (one per zone) 
-          */}
+       
           <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
             {activeZones.map((zone) => (
               <div

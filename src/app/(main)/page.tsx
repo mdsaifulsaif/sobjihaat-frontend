@@ -23,13 +23,15 @@ export default function Home() {
       <PreOrderDeliverySlots />
       <DeliveryCharges />
       {/* <PopularProducts /> */}
-      <DeliveryCoverage />
-      <WhyChooseUs />
+     
+   
       <OurCommitment />
       <TwoBanners />
       {/* <NewProducts /> */}
       {/* <BlogSection /> */}
-      <Support />
+      {/* <Support /> */}
+         <WhyChooseUs />
+       <DeliveryCoverage />
       <Faq/>
     </>
   );

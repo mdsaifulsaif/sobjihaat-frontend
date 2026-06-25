@@ -234,7 +234,7 @@ const WhyChooseUs: React.FC = () => {
       <DotGrid className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block" />
       <DotGrid className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 hidden lg:block" />
 
-      <div className="relative mx-auto max-w-5xl">
+      <div className="relative mx-auto container">
 
         {/* ── Section heading ── */}
         <div className="mb-10 text-center sm:mb-14">

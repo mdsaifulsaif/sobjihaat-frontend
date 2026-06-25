@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import TopNavbar from "@/components/layout/Header/TopNavber";
 import SidebarCategories from "@/components/shared/SidebarCategories";
 import { useState } from "react";
+import Footer from "./Footer";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const [desktopOpen, setDesktopOpen] = useState(true);
@@ -40,6 +41,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         )}
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+      
       </div>
     </div>
   );

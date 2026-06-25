@@ -237,7 +237,7 @@ const DeliveryCoverage: React.FC = () => {
         .leaflet-control-zoom a:hover{background:#f0faf0!important}
       `}</style>
 
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto container">
 
         {/* ── Header ── */}
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

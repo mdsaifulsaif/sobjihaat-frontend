@@ -506,7 +506,7 @@ const HomeCategory: React.FC = () => {
       <PaperPlaneDoodle className="pointer-events-none absolute left-0 top-6 hidden h-40 w-56 sm:block" />
       <FloatingLeafDoodle className="pointer-events-none absolute right-0 top-10 hidden h-32 w-56 sm:block" />
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative mx-auto container    ">
         {/* ---------- heading ---------- */}
         <div className="text-center">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">

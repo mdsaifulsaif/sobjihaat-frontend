@@ -1,5 +1,6 @@
 
 
+import Footer from "@/components/layout/Footer";
 import LayoutShell from "@/components/layout/LayoutShell";
 import FloatingCartButton from "@/components/shared/FloatingCartButton";
 import MiniCart from "@/components/shared/MiniCart";
@@ -10,9 +11,16 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <LayoutShell>
+  return <>
+  <LayoutShell>
     {children}
     <MiniCart />
      <FloatingCartButton />
+      <Footer/>
   </LayoutShell>;
+   
+  </>
 }
+
+
+

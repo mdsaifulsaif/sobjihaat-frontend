@@ -60,7 +60,7 @@ const Faq = () => {
   ];
 
   return (
-    <div className="w-full max-w-[900px] mx-auto py-10 flex flex-col items-center px-4 md:px-0">
+    <div className="w-full max-w-6xl mx-auto py-10 flex flex-col items-center px-4 md:px-0">
       {/* Title & Subtitle Area */}
       <div className="text-center mb-10">
         <h4 className="h4  text-[#0E2038]">Frequently Asked Questions</h4>

@@ -79,8 +79,8 @@ const AppDownloadPromo: React.FC = () => {
   const [email, setEmail] = useState('');
 
   return (
-    <section className="px-4 py-8 sm:px-6">
-      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-[#eef3e6]">
+    <section className="px-4 py-8 sm:px-6 bg-[#eef3e6]">
+      <div className="relative mx-auto container overflow-hidden rounded-3xl ">
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
           {/* ==================== LEFT: copy ==================== */}
           <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-10 lg:py-12">

@@ -223,7 +223,7 @@ const BrandCard: React.FC<{ brand: Brand }> = ({ brand }) => (
     <p className="mt-1 text-center text-sm font-medium text-[var(--color-primary)]">
       {brand.productCount}
     </p>
-  </div>
+  </div>    
 );
 
 /* ---------------------------------------------------------------------------
@@ -233,7 +233,7 @@ const BrandCard: React.FC<{ brand: Brand }> = ({ brand }) => (
 const TrustedBrands: React.FC = () => {
   return (
     <section className="relative overflow-hidden bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative mx-auto container">
         {/* ---------- heading ---------- */}
         <div className="text-center">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">

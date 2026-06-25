@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
                             <div className="w-10 h-10 rounded-md bg-[var(--color-primary)] flex items-center justify-center text-white font-bold text-xl">
                                 M
                             </div>
-                            <span className="text-2xl font-semibold text-white">ShopBangla</span>
+                            <span className="text-2xl font-semibold text-white">SobjiHaat</span>
                         </div>
                         <p className="text-sm leading-relaxed mb-6 italic">
                             "Providing the best products for our customers since 2020. Quality and satisfaction guaranteed."
@@ -122,7 +122,7 @@ const Footer: React.FC = () => {
                             </li>
                             <li className="flex gap-4">
                                 <AiOutlineMail className="text-[var(--color-primary)] flex-shrink-0" size={24} />
-                                <span className="text-sm">support@ShopBangla.com</span>
+                                <span className="text-sm">support@sobjihaat.com</span>
                             </li>
                         </ul>
                         <div className="mt-8">
@@ -144,7 +144,7 @@ const Footer: React.FC = () => {
             <div className="bg-[#111111] py-8">
                 <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-sm text-gray-500">
-                        Copyright © {new Date().getFullYear()} <span className="text-white font-bold">ShopBangla</span>. All Rights Reserved.
+                        Copyright © {new Date().getFullYear()} <span className="text-white font-bold">SobjiHaat</span>. All Rights Reserved.
                     </p>
                     <div className="flex items-center gap-4 grayscale opacity-50">
                         <FaCcVisa size={30} />

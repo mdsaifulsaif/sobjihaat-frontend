@@ -8,7 +8,7 @@ import { FiMapPin, FiClock, FiShield } from "react-icons/fi";
 import { PiLeafLight } from "react-icons/pi";
 import { TbCurrencyTaka } from "react-icons/tb";
 
-const bannerUrl = "/img/image.png";
+const bannerUrl = "/img/sbb.png";
 const heroProductImg = "/img/hero-product.png"; // basket/groceries image
 
 interface Feature {
@@ -52,7 +52,10 @@ const Hero: React.FC = () => {
     <div className="mx-auto container   px-4">
       <div
         className="relative w-full overflow-hidden rounded-2xl bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${bannerUrl})`, minHeight: "280px" }}
+        style={{ backgroundImage: `url(${bannerUrl})`,
+         minHeight: "380px",
+         backgroundSize: "cover"
+       }}
       >
         {/* White gradient overlay — left side */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent z-0 pointer-events-none" />

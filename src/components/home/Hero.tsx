@@ -8,7 +8,7 @@ import { FiMapPin, FiClock, FiShield } from "react-icons/fi";
 import { PiLeafLight } from "react-icons/pi";
 import { TbCurrencyTaka } from "react-icons/tb";
 
-const bannerUrl = "/img/sbb.png";
+const bannerUrl = "/img/sbb1.png";
 const heroProductImg = "/img/hero-product.png"; // basket/groceries image
 
 interface Feature {

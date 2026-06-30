@@ -16,7 +16,7 @@ export default function DashboardLayout({
     {children}
     <MiniCart />
      <FloatingCartButton />
-      <Footer/>
+    
   </LayoutShell>;
    
   </>

@@ -37,15 +37,15 @@ const CheckoutPage = () => {
         shippingMethod: 'standard'
     });
 
-    useEffect(() => {
-        if (items.length === 0) {
-            router.push('/cart');
-        }
-        if (!isAuthenticated) {
-            toast.error('Please login to proceed with checkout');
-            router.push('/login?redirect=/checkout');
-        }
-    }, [items, isAuthenticated, router]);
+    // useEffect(() => {
+    //     if (items.length === 0) {
+    //         router.push('/cart');
+    //     }
+    //     if (!isAuthenticated) {
+    //         toast.error('Please login to proceed with checkout');
+    //         router.push('/login?redirect=/checkout');
+    //     }
+    // }, [items, isAuthenticated, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

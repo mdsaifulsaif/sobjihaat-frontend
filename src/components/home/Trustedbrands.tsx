@@ -290,11 +290,11 @@ const TrustedBrands: React.FC = () => {
       </div>
 
       {/* decorative leaf branches, bottom corners */}
-      <LeafBranchDoodle className="pointer-events-none absolute bottom-0 left-0 h-40 w-32 sm:h-52 sm:w-40" />
+      {/* <LeafBranchDoodle className="pointer-events-none absolute bottom-0 left-0 h-40 w-32 sm:h-52 sm:w-40" />
       <LeafBranchDoodle
         flip
         className="pointer-events-none absolute bottom-0 right-0 h-40 w-32 sm:h-52 sm:w-40"
-      />
+      /> */}
 
       {/* faint rolling ground wave at the very bottom */}
       <svg

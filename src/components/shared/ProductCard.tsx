@@ -357,8 +357,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
       {/* Info */}
       <div className="p-4 flex-1 flex flex-col">
         <div className="cursor-pointer flex-1" onClick={onQuickView}>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-[var(--color-primary)]">
+          <div className="flex items-baseline  mb-4">
+            <span className="text-xl font-bold text-[var(--color-primary)]">
               ৳{product.price}
             </span>
             {oldPrice && (
@@ -366,9 +366,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
             )}
           </div>
 
-          <h3 className="font-semibold text-[17px] leading-tight mt-1.5 text-gray-900 line-clamp-2 hover:text-[var(--color-primary)] transition-colors">
+          <p className=" font-400 text-[14px] leading-tight mt-1.5 text-gray-900 line-clamp-2 hover:text-[var(--color-primary)] transition-colors mb-2">
             {product.name}
-          </h3>
+          </p>
 
           {product.categoryName && (
             <p className="text-gray-500 text-sm mt-0.5">({product.categoryName})</p>
@@ -376,7 +376,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
         </div>
 
         {/* Bottom Info */}
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between mt-auto pt-2 mt-2 border-t border-gray-100">
           <div className="flex items-center gap-1">
             <span className="text-yellow-500 text-lg">★</span>
             <span className="font-medium text-sm">{product.rating}</span>

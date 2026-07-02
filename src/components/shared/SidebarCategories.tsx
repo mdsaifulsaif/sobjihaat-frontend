@@ -101,33 +101,59 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   );
 }
 
+// export default function SidebarCategories({ desktopOpen, mobileOpen, onMobileClose }: Props) {
+//   return (
+//     <>
+//       {/* ── DESKTOP SIDEBAR (md+) ── পুরো hide/show, কোনো icon-only state নেই */}
+//       <aside
+//         className={`
+//           hidden md:flex flex-col flex-shrink-0
+//           bg-white border-r border-gray-100
+//           h-full overflow-hidden
+//           transition-all duration-200
+//           ${desktopOpen ? "w-[220px] border-r" : "w-0 border-0"}
+//         `}
+//       >
+//         <SidebarContent />
+//       </aside>
+
+//       {/* ── MOBILE DRAWER ── fixed, overlay হিসেবে আসে */}
+//       <aside
+//         className={`
+//           fixed top-0 left-0 h-full w-[260px] z-40
+//           bg-white shadow-xl
+//           transition-transform duration-300 ease-in-out
+//           md:hidden
+//           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+//         `}
+//       >
+//         <SidebarContent onClose={onMobileClose} />
+//       </aside>
+//     </>
+//   );
+// }
+
+
+
 export default function SidebarCategories({ desktopOpen, mobileOpen, onMobileClose }: Props) {
   return (
     <>
-      {/* ── DESKTOP SIDEBAR (md+) ── পুরো hide/show, কোনো icon-only state নেই */}
+      {/* Desktop Sidebar */}
       <aside
-        className={`
-          hidden md:flex flex-col flex-shrink-0
-          bg-white border-r border-gray-100
-          h-full overflow-hidden
-          transition-all duration-200
-          ${desktopOpen ? "w-[220px] border-r" : "w-0 border-0"}
-        `}
+        className={`hidden md:flex flex-col flex-shrink-0 bg-white border-r border-gray-100 h-full transition-all duration-300 ${desktopOpen ? "w-[220px]" : "w-0"}`}
       >
-        <SidebarContent />
+        <div className="flex-1 overflow-y-auto h-full custom-scrollbar">
+            <SidebarContent />
+        </div>
       </aside>
 
-      {/* ── MOBILE DRAWER ── fixed, overlay হিসেবে আসে */}
+      {/* Mobile Drawer */}
       <aside
-        className={`
-          fixed top-0 left-0 h-full w-[260px] z-40
-          bg-white shadow-xl
-          transition-transform duration-300 ease-in-out
-          md:hidden
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
+        className={`fixed top-0 left-0 h-full w-[260px] z-40 bg-white shadow-xl transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <SidebarContent onClose={onMobileClose} />
+        <div className="h-full overflow-y-auto custom-scrollbar">
+            <SidebarContent onClose={onMobileClose} />
+        </div>
       </aside>
     </>
   );

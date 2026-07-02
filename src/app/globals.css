@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#root, __next {
+  height: 100%;
+}
+
 /* ===== Google Fonts ===== */
 * {
   font-family: "Poppins", sans-serif;
@@ -282,23 +299,3 @@ h6 {
 }
 
 
-
-/* scrole bar stle  */
-
-/* Custom Scrollbar for Sidebar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 3px; /* স্ক্রলবার চিকন করা */
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #d1d5db; /* Gray-300 কালার */
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af; /* হোভার করলে কিছুটা গাঢ় গ্রে */
-}

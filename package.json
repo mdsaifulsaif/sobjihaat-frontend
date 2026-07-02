@@ -12,6 +12,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "leaflet": "^1.9.4",
     "next": "16.1.2",
+    "next-auth": "^4.24.14",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hot-toast": "^2.6.0",

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ReduxProvider } from "@/redux";
+import AuthSessionProvider from "@/components/providers/AuthSessionProvider";
 
 export const metadata: Metadata = {
   title: "Mega Ecommerce - Best Online Shopping Experience",
@@ -23,10 +24,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body>
+        <AuthSessionProvider>
         <ReduxProvider>
           <Toaster position="top-center" reverseOrder={false} />
           {children}
         </ReduxProvider>
+          </AuthSessionProvider>
       </body>
     </html>
   );

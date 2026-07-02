@@ -16,7 +16,8 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   const isHome = pathname === "/";
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
+  <>
+    <div className={`flex flex-col ${!isHome? 'h-screen': "h-auto"} overflow-hidden bg-gray-50`}>
       <TopNavbar
         onToggleDesktop={() => setDesktopOpen(!desktopOpen)}
         onToggleMobile={() => setMobileOpen(!mobileOpen)}
@@ -43,8 +44,12 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
 
 
-      
+       
       </div>
+ 
     </div>
+        {/* শুধু Home page-এ Footer */}
+      {isHome && <Footer />}
+  </>
   );
 }

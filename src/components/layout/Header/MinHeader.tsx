@@ -1,23 +1,27 @@
+
+
+
 "use client";
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { FiSearch, FiHeart, FiShoppingCart, FiUser, FiChevronDown, FiMenu } from 'react-icons/fi';
-import { useAppSelector } from '@/redux';
 
 const MinHeader: React.FC = () => {
-    const cartItems = useAppSelector(state => state.cart.items);
-    const wishlistItems = useAppSelector(state => state.wishlist.items);
-    const auth = useAppSelector(state => state.auth);
-    const { user, isAuthenticated } = auth;
+    const { data: session, status } = useSession();
+    const isAuthenticated = status === "authenticated";
+    const user = session?.user;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearch, setShowSearch] = useState(false);
 
-    const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    // Temporary cart count (আপনি Redux বা Context থেকে নিতে পারবেন)
+    const cartCount = 0;
+    const wishlistCount = 0;
 
     return (
-        <div className="bg-white py-5 sticky top-0 z-40 transition-all border-b border-gray-100">
+        <div className="bg-white py-1 border-b border-gray-100 sticky top-0 z-50 shadow-sm transition-all duration-200">
             <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
                 <div className="flex items-center justify-between gap-8">
                     {/* Logo Area */}
@@ -43,7 +47,7 @@ const MinHeader: React.FC = () => {
                                 placeholder="Search products, brands and more..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full py-3.5 pl-6 pr-14 text-[14px] border-2 border-gray-100 rounded-md bg-gray-50/50 outline-none focus:border-[var(--color-primary)] focus:bg-white focus:shadow-xl focus:shadow-[var(--color-primary)]/5 transition-all duration-300"
+                                className="w-full py-2.5 pl-6 pr-14 text-[14px] border-2 border-gray-100 rounded-md bg-gray-50/50 outline-none focus:border-[var(--color-primary)] focus:bg-white focus:shadow-xl focus:shadow-[var(--color-primary)]/5 transition-all duration-300"
                             />
                             <button className="absolute right-2 top-2 bottom-2 px-5 bg-[var(--color-primary)] text-white rounded-md hover:scale-95 transition-all active:scale-90 shadow-md shadow-[var(--color-primary)]/20">
                                 <FiSearch size={20} />
@@ -64,9 +68,9 @@ const MinHeader: React.FC = () => {
                         {/* Wishlist */}
                         <Link href="/wishlist" className="relative w-11 h-11 flex items-center justify-center hover:bg-gray-50 rounded-md transition-all group">
                             <FiHeart size={21} className="text-gray-600 group-hover:text-red-500 transition-colors" />
-                            {wishlistItems.length > 0 && (
+                            {wishlistCount > 0 && (
                                 <span className="absolute top-1.5 right-1.5 w-5 h-5 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-white">
-                                    {wishlistItems.length}
+                                    {wishlistCount}
                                 </span>
                             )}
                         </Link>
@@ -75,15 +79,15 @@ const MinHeader: React.FC = () => {
                         <Link href="/cart" className="relative flex items-center gap-3 pl-2 pr-3 py-1.5 hover:bg-gray-50 rounded-md transition-all group border border-transparent hover:border-gray-100">
                             <div className="relative">
                                 <FiShoppingCart size={21} className="text-gray-600 group-hover:text-[var(--color-primary)] transition-colors" />
-                                {cartItems.length > 0 && (
+                                {cartCount > 0 && (
                                     <span className="absolute -top-2 -right-2 w-5 h-5 bg-[var(--color-primary)] text-white text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-white">
-                                        {cartItems.length}
+                                        {cartCount}
                                     </span>
                                 )}
                             </div>
                             <div className="hidden lg:block">
                                 <p className="text-[11px] font-semibold text-gray-400 uppercase leading-none">Cart</p>
-                                <p className="text-[14px] font-bold text-gray-800 mt-1">৳{cartTotal.toLocaleString()}</p>
+                                <p className="text-[14px] font-bold text-gray-800 mt-1">৳0</p>
                             </div>
                         </Link>
 
@@ -94,12 +98,19 @@ const MinHeader: React.FC = () => {
                         <div className="relative group">
                             <button className="flex items-center gap-3 p-1.5 pr-2 hover:bg-gray-50 rounded-md transition-all">
                                 <div className="w-9 h-9 rounded-md bg-gray-100 flex items-center justify-center font-bold text-[var(--color-primary)]">
-                                    {isAuthenticated ? user?.name?.charAt(0).toUpperCase() : <FiUser size={19} className="text-gray-600" />}
+                                    {isAuthenticated && user?.firstName 
+                                        ? user.firstName.charAt(0).toUpperCase() 
+                                        : <FiUser size={19} className="text-gray-600" />
+                                    }
                                 </div>
                                 <div className="hidden xl:block text-left">
                                     <p className="text-[11px] font-semibold text-gray-400 uppercase leading-none">Account</p>
                                     <p className="text-[14px] font-medium text-gray-700 mt-1 flex items-center gap-1">
-                                        {isAuthenticated ? user?.name.split(' ')[0] : 'Login'} <FiChevronDown size={14} />
+                                        {isAuthenticated && user?.firstName
+                                            ? user.firstName.split(' ')[0] 
+                                            : 'Login'
+                                        } 
+                                        <FiChevronDown size={14} />
                                     </p>
                                 </div>
                             </button>
@@ -111,9 +122,12 @@ const MinHeader: React.FC = () => {
                                         <h4 className="text-lg font-bold text-gray-800 mb-1">Welcome!</h4>
                                         <p className="text-xs text-gray-500 mb-4">Access your account & orders</p>
                                         <div className="flex gap-2">
-                                            <Link href="/login" className="flex-1 py-2.5 text-center text-xs font-bold bg-[var(--color-primary)] text-white rounded-md hover:opacity-90 transition-all">
+                                            <button
+                                                onClick={() => signIn()}
+                                                className="flex-1 py-2.5 text-center text-xs font-bold bg-[var(--color-primary)] text-white rounded-md hover:opacity-90 transition-all"
+                                            >
                                                 SIGN IN
-                                            </Link>
+                                            </button>
                                             <Link href="/register" className="flex-1 py-2.5 text-center text-xs font-bold border border-gray-200 text-gray-700 rounded-md hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all">
                                                 JOIN
                                             </Link>
@@ -126,21 +140,26 @@ const MinHeader: React.FC = () => {
                                     </div>
                                 )}
                                 <div className="py-2">
-                                    {isAuthenticated && user?.role === 'admin' && (
-                                        <Link href="/dashboard/admin" className="block px-6 py-2.5 text-sm font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 transition-all border-b border-gray-50">
-                                            💎 Admin Dashboard
-                                        </Link>
+                                    {isAuthenticated && (
+                                        <>
+                                            <Link href="/account" className="block px-6 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-all">
+                                                My Profile
+                                            </Link>
+                                            <Link href="/orders" className="block px-6 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-all">
+                                                Order History
+                                            </Link>
+                                            <Link href="/wishlist" className="block px-6 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-all">
+                                                Wishlist
+                                            </Link>
+                                            <div className="border-t border-gray-100 my-1" />
+                                            <button 
+                                                onClick={() => signOut({ callbackUrl: '/' })}
+                                                className="w-full text-left px-4 py-2.5 text-sm text-[var(--color-error)] hover:bg-red-50 transition-all"
+                                            >
+                                                Sign out
+                                            </button>
+                                        </>
                                     )}
-                                    {[
-                                        { label: 'My Profile', href: '/account' },
-                                        { label: 'Order History', href: '/orders' },
-                                        { label: 'Wishlist', href: '/wishlist' },
-                                        { label: 'Support Center', href: '#' }
-                                    ].map((item, idx) => (
-                                        <Link key={idx} href={item.href} className="block px-6 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-all">
-                                            {item.label}
-                                        </Link>
-                                    ))}
                                 </div>
                             </div>
                         </div>

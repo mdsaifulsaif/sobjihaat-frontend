@@ -6,7 +6,7 @@ import { BsWhatsapp } from 'react-icons/bs';
 
 const TopHeader: React.FC = () => {
     return (
-        <div className="bg-[#f8f8f8] border-b border-gray-200 py-2 hidden md:block">
+        <div className="bg-[#f8f8f8] border-b border-gray-200 py-1 hidden md:block">
             <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 flex justify-between items-center">
                 {/* Left Side: Contact Info */}
                 <div className="flex items-center gap-6">

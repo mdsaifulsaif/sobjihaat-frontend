@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
@@ -16,7 +15,9 @@ const CategoryPage = () => {
   const slug = params?.slug as string;
 
   const [page, setPage] = useState(1);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null,
+  );
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -24,10 +25,11 @@ const CategoryPage = () => {
     setPage(1);
   }, [slug]);
 
-  const { data, isLoading, isFetching, error } = useGetProductsByCategorySlugQuery(
-    { slug, page, limit: 15 },
-    { skip: !slug }
-  );
+  const { data, isLoading, isFetching, error } =
+    useGetProductsByCategorySlugQuery(
+      { slug, page, limit: 15 },
+      { skip: !slug },
+    );
 
   const products = data?.data || [];
   const meta = data?.meta;
@@ -47,7 +49,7 @@ const CategoryPage = () => {
       (entries) => {
         if (entries[0].isIntersecting) loadMore();
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     observer.observe(el);
@@ -56,7 +58,7 @@ const CategoryPage = () => {
 
   const { data: selectedProductData } = useGetProductByIdQuery(
     selectedProductId as string,
-    { skip: !selectedProductId }
+    { skip: !selectedProductId },
   );
 
   const handleQuickView = (id: string) => {
@@ -79,7 +81,6 @@ const CategoryPage = () => {
           top: "var(--header-height, 74px)",
           height: "calc(100vh - var(--header-height, 74px))",
         }}
-
       >
         <SidebarCategories />
       </aside>
@@ -102,7 +103,10 @@ const CategoryPage = () => {
           {isLoading && page === 1 && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {[...Array(10)].map((_, i) => (
-                <div key={i} className="h-72 bg-gray-100 rounded-2xl animate-pulse" />
+                <div
+                  key={i}
+                  className="h-72 bg-gray-100 rounded-2xl animate-pulse"
+                />
               ))}
             </div>
           )}
@@ -120,7 +124,7 @@ const CategoryPage = () => {
           )}
 
           {/* Product Grid */}
-          {products.length > 0 && (
+          {/* {products.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-5">
               {products.map((product: any) => (
                 <ProductCard
@@ -143,8 +147,36 @@ const CategoryPage = () => {
                 />
               ))}
             </div>
+          )} */}
+          {/* Product Grid - Mobile এ ৩টা করে প্রোডাক্ট */}
+          {products.length > 0 && (
+            <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4">
+              {products.map((product: any) => (
+                <div key={product._id} className="w-full">
+                  <ProductCard
+                    product={{
+                      id: product._id,
+                      name: product.name,
+                      image: product.thumbnail,
+                      price:
+                        product.salePrice > 0
+                          ? product.salePrice
+                          : product.regularPrice,
+                      originalPrice: product.regularPrice,
+                      mrp: product.regularPrice,
+                      discount: product.discountPercent,
+                      rating: product.rating || 0,
+                      reviews: product.numReviews || 0,
+                      unit: product.unitDetails?.shortName
+                        ? `${product.weightOrVolume || 1} ${product.unitDetails.shortName}`
+                        : product.unitDetails?.name || "1 pc",
+                    }}
+                    onQuickView={() => handleQuickView(product._id)}
+                  />
+                </div>
+              ))}
+            </div>
           )}
-
           {/* Infinite Scroll Loader */}
           {hasMore && (
             <div ref={observerRef} className="w-full flex justify-center py-10">

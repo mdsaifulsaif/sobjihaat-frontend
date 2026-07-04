@@ -1,6 +1,8 @@
 import React from 'react';
 import Header from "@/components/layout/Header";
 import SidebarCategories from "@/components/shared/SidebarCategories";
+import MiniCart from '@/components/shared/MiniCart';
+import FloatingCartButton from '@/components/shared/FloatingCartButton';
 
 export default function CategoryLayout({
     children,
@@ -8,7 +10,7 @@ export default function CategoryLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen">
             {/* Static Sidebar (Desktop) */}
             {/* <div className="hidden md:block w-[240px] lg:w-[260px] flex-shrink-0 border-r border-gray-100 bg-white sticky top-0 h-screen overflow-y-auto custom-scrollbar z-40">
                 <SidebarCategories />
@@ -20,6 +22,8 @@ export default function CategoryLayout({
                 <div>
                     {children}
                 </div>
+                  <MiniCart/>
+                <FloatingCartButton />
             </div>
         </div>
     );

@@ -1,52 +1,54 @@
+
+
+
+
 // import NextAuth, { NextAuthOptions } from "next-auth";
 // import CredentialsProvider from "next-auth/providers/credentials";
 // import GoogleProvider from "next-auth/providers/google";
 
 // export const authOptions: NextAuthOptions = {
 //   providers: [
-//     // ---------- Email / Password ----------
 //     CredentialsProvider({
 //       name: "Credentials",
 //       credentials: {
 //         email: { label: "Email", type: "email" },
 //         password: { label: "Password", type: "password" },
 //       },
-//   async authorize(credentials) {
-//   if (!credentials?.email || !credentials?.password) {
-//     throw new Error("Email and password required");
-//   }
+//       async authorize(credentials) {
+//         if (!credentials?.email || !credentials?.password) {
+//           throw new Error("Email and password required");
+//         }
 
-//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       email: credentials.email,
-//       password: credentials.password,
+//         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({
+//             email: credentials.email,
+//             password: credentials.password,
+//           }),
+//         });
+
+//         const result = await res.json();
+
+//         if (!res.ok || !result?.accessToken) {
+//           throw new Error(result?.message || "Invalid email or password");
+//         }
+
+//         const user = result.data;
+
+//         return {
+//           id: user._id,
+//           firstName: user.firstName,
+//           lastName: user.lastName,
+//           email: user.email,
+//           role: user.role,
+//           accessToken: result.accessToken,
+//           refreshToken: result.refreshToken,             // ✅ নতুন
+//           accessTokenExpires: result.accessTokenExpires,  // ✅ নতুন
+//         };
+//       },
 //     }),
-//   });
 
-//   const result = await res.json();
-
-//   // 👇 accessToken na, token
-//   if (!res.ok || !result?.data?.token) {
-//     throw new Error(result?.message || "Invalid email or password");
-//   }
-
-//   const user = result.data.user;
-//   const accessToken = result.data.token; // 👈 fix
-
-//   return {
-//     id: user._id,
-//     firstName: user.firstName,
-//     lastName: user.lastName,
-//     email: user.email,
-//     role: user.role,
-//     accessToken,
-//   };
-// },
-//     }),
-
-//     // ---------- Google ----------
 //     GoogleProvider({
 //       clientId: process.env.GOOGLE_CLIENT_ID as string,
 //       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
@@ -59,68 +61,101 @@
 
 //   pages: {
 //     signIn: "/login",
-//     error: "/login", // google login e error hole login page e redirect
+//     error: "/login",
 //   },
 
 //   callbacks: {
-//     // Google দিয়ে login করলে এখানে backend এ user create/sync করব
-//    async signIn({ user, account }) {
-//   if (account?.provider === "google") {
-//     try {
-//       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/social-login`, {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({
-//           email: user.email,
-//           firstName: user.name?.split(" ")[0] || "",
-//           lastName: user.name?.split(" ").slice(1).join(" ") || "",
-//           provider: "google",
-//           providerId: account.providerAccountId,
-//         }),
-//       });
+//     async signIn({ user, account }) {
+//       if (account?.provider === "google") {
+//         try {
+//           const res = await fetch(
+//             `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
+//             {
+//               method: "POST",
+//               headers: { "Content-Type": "application/json" },
+//               body: JSON.stringify({
+//                 email: user.email,
+//                 firstName: user.name?.split(" ")[0] || "Google",
+//                 lastName: user.name?.split(" ").slice(1).join(" ") || "User",
+//                 googleId: account.providerAccountId,
+//                 avatarUrl: user.image || undefined,
+//               }),
+//             }
+//           );
 
-//       const result = await res.json();
+//           const result = await res.json();
 
-//       // 👇 eikhaneo token check korun, apnar backend eta implement korle
-//       if (!res.ok || !result?.data?.token) {
-//         return false;
+//           if (!res.ok || !result?.accessToken) {
+//             console.error("Google social login backend error:", result?.message);
+//             return false;
+//           }
+
+//           (user as any).accessToken = result.accessToken;
+//           (user as any).refreshToken = result.refreshToken;             // ✅ নতুন
+//           (user as any).accessTokenExpires = result.accessTokenExpires; // ✅ নতুন
+//           (user as any).id = result.data._id;
+//           (user as any).role = result.data.role;
+//           (user as any).firstName = result.data.firstName;
+//           (user as any).lastName = result.data.lastName;
+
+//           return true;
+//         } catch (err) {
+//           console.error("Google social login failed:", err);
+//           return false;
+//         }
 //       }
 
-//       (user as any).accessToken = result.data.token; // 👈 fix
-//       (user as any).id = result.data.user._id;
-//       (user as any).role = result.data.user.role;
-//       (user as any).firstName = result.data.user.firstName;
-//       (user as any).lastName = result.data.user.lastName;
-
 //       return true;
-//     } catch (err) {
-//       console.error("Google social login failed:", err);
-//       return false;
-//     }
-//   }
+//     },
 
-//   return true;
-// },
-
-//     // user login howar por token e dhukbe
 //     async jwt({ token, user }) {
+//       // প্রথমবার login
 //       if (user) {
 //         token.accessToken = (user as any).accessToken;
+//         token.refreshToken = (user as any).refreshToken;
+//         token.accessTokenExpires = (user as any).accessTokenExpires;
 //         token.id = (user as any).id;
 //         token.role = (user as any).role;
 //         token.firstName = (user as any).firstName;
 //         token.lastName = (user as any).lastName;
+//         return token;
 //       }
-//       return token;
+
+//       // ✅ এখানেই refresh call হবে — access token এখনো valid থাকলে skip
+//       if (Date.now() < (token.accessTokenExpires as number) - 60_000) {
+//         return token;
+//       }
+
+//       // ✅ Access token expire হয়ে গেছে/হতে যাচ্ছে — এখন backend কল হবে
+//       try {
+//         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`, {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ refreshToken: token.refreshToken }),
+//         });
+
+//         const result = await res.json();
+
+//         if (!res.ok || !result?.data?.accessToken) {
+//           return { ...token, error: "RefreshAccessTokenError" };
+//         }
+
+//         token.accessToken = result.data.accessToken;
+//         token.accessTokenExpires = result.data.accessTokenExpires;
+//         return token;
+//       } catch (err) {
+//         console.error("Token refresh failed:", err);
+//         return { ...token, error: "RefreshAccessTokenError" };
+//       }
 //     },
 
-//     // client side e session hisebe ja pabo
 //     async session({ session, token }) {
 //       session.accessToken = token.accessToken as string;
 //       session.user.id = token.id as string;
 //       session.user.role = token.role as string;
 //       session.user.firstName = token.firstName as string;
 //       session.user.lastName = token.lastName as string;
+//       (session as any).error = token.error;
 //       return session;
 //     },
 //   },
@@ -138,9 +173,61 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
+// ✅ Module-level lock — একই সময়ে একাধিক parallel request আসলেও
+// শুধু একটাই refresh call backend এ যাবে, বাকি সব সেই একই promise শেয়ার করবে
+let refreshPromise: Promise<any> | null = null;
+
+async function refreshAccessToken(token: any) {
+  // ইতিমধ্যে একটা refresh call চলমান থাকলে, নতুন call না করে সেটাই await করো
+  if (refreshPromise) {
+    console.log("⏳ [JWT] Refresh already in progress, reusing existing promise...");
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    try {
+      console.log("🔄 [JWT] Token expired, calling refresh...");
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken: token.refreshToken }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || !result?.data?.accessToken) {
+        console.error("🔴 [JWT] Refresh failed:", result?.message);
+        return { ...token, error: "RefreshAccessTokenError" };
+      }
+
+      const newToken = {
+        ...token,
+        accessToken: result.data.accessToken,
+        accessTokenExpires: result.data.accessTokenExpires,
+      };
+      delete newToken.error; // আগে কোনো error থাকলে মুছে দাও, refresh সফল হয়েছে
+
+      console.log(
+        "✅ [JWT] Refreshed, new expiry:",
+        new Date(newToken.accessTokenExpires).toISOString(),
+      );
+
+      return newToken;
+    } catch (err) {
+      console.error("🔴 [JWT] Refresh request failed:", err);
+      return { ...token, error: "RefreshAccessTokenError" };
+    } finally {
+      // ✅ কাজ শেষে lock ছেড়ে দাও, পরের বার নতুন করে refresh করতে পারবে
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
-    // ---------- Email / Password ----------
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -163,13 +250,11 @@ export const authOptions: NextAuthOptions = {
 
         const result = await res.json();
 
-        // ✅ fix: accessToken top-level এ থাকে, data.token না
         if (!res.ok || !result?.accessToken) {
           throw new Error(result?.message || "Invalid email or password");
         }
 
-        const user = result.data; // ✅ fix: data নিজেই user object
-        const accessToken = result.accessToken;
+        const user = result.data;
 
         return {
           id: user._id,
@@ -177,12 +262,13 @@ export const authOptions: NextAuthOptions = {
           lastName: user.lastName,
           email: user.email,
           role: user.role,
-          accessToken,
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+          accessTokenExpires: result.accessTokenExpires,
         };
       },
     }),
 
-    // ---------- Google ----------
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
@@ -202,7 +288,6 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         try {
-          // ✅ fix: route নাম /auth/google-login (backend এর সাথে মিলিয়ে)
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
             {
@@ -212,7 +297,7 @@ export const authOptions: NextAuthOptions = {
                 email: user.email,
                 firstName: user.name?.split(" ")[0] || "Google",
                 lastName: user.name?.split(" ").slice(1).join(" ") || "User",
-                googleId: account.providerAccountId, // ✅ fix: googleId নামে পাঠাও
+                googleId: account.providerAccountId,
                 avatarUrl: user.image || undefined,
               }),
             }
@@ -220,13 +305,14 @@ export const authOptions: NextAuthOptions = {
 
           const result = await res.json();
 
-          // ✅ fix: accessToken আর data সঠিক path থেকে পড়ো
           if (!res.ok || !result?.accessToken) {
             console.error("Google social login backend error:", result?.message);
             return false;
           }
 
           (user as any).accessToken = result.accessToken;
+          (user as any).refreshToken = result.refreshToken;
+          (user as any).accessTokenExpires = result.accessTokenExpires;
           (user as any).id = result.data._id;
           (user as any).role = result.data.role;
           (user as any).firstName = result.data.firstName;
@@ -243,14 +329,30 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user }) {
+      // ---------- প্রথমবার login ----------
       if (user) {
         token.accessToken = (user as any).accessToken;
+        token.refreshToken = (user as any).refreshToken;
+        token.accessTokenExpires = (user as any).accessTokenExpires;
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.firstName = (user as any).firstName;
         token.lastName = (user as any).lastName;
+
+        console.log(
+          "🟢 [JWT] First login, token expires at:",
+          new Date(token.accessTokenExpires as number).toISOString(),
+        );
+        return token;
       }
-      return token;
+
+      // ---------- Access token এখনো valid (এখনো মেয়াদ আছে) ----------
+      if (Date.now() < (token.accessTokenExpires as number) - 5_000) {
+        return token; // এখনো refresh লাগবে না
+      }
+
+      // ---------- Access token expire হয়ে গেছে/হতে যাচ্ছে — deduplicated refresh call ----------
+      return refreshAccessToken(token); // ✅ race-condition-safe
     },
 
     async session({ session, token }) {
@@ -259,6 +361,7 @@ export const authOptions: NextAuthOptions = {
       session.user.role = token.role as string;
       session.user.firstName = token.firstName as string;
       session.user.lastName = token.lastName as string;
+      (session as any).error = token.error;
       return session;
     },
   },
@@ -268,3 +371,179 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
+
+
+
+// import NextAuth, { NextAuthOptions } from "next-auth";
+// import CredentialsProvider from "next-auth/providers/credentials";
+// import GoogleProvider from "next-auth/providers/google";
+
+// export const authOptions: NextAuthOptions = {
+//   providers: [
+//     CredentialsProvider({
+//       name: "Credentials",
+//       credentials: {
+//         email: { label: "Email", type: "email" },
+//         password: { label: "Password", type: "password" },
+//       },
+//       async authorize(credentials) {
+//         if (!credentials?.email || !credentials?.password) {
+//           throw new Error("Email and password required");
+//         }
+
+//         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({
+//             email: credentials.email,
+//             password: credentials.password,
+//           }),
+//         });
+
+//         const result = await res.json();
+
+//         if (!res.ok || !result?.accessToken) {
+//           throw new Error(result?.message || "Invalid email or password");
+//         }
+
+//         const user = result.data;
+
+//         return {
+//           id: user._id,
+//           firstName: user.firstName,
+//           lastName: user.lastName,
+//           email: user.email,
+//           role: user.role,
+//           accessToken: result.accessToken,
+//           refreshToken: result.refreshToken,
+//           accessTokenExpires: result.accessTokenExpires,
+//         };
+//       },
+//     }),
+
+//     GoogleProvider({
+//       clientId: process.env.GOOGLE_CLIENT_ID as string,
+//       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+//     }),
+//   ],
+
+//   session: {
+//     strategy: "jwt",
+//   },
+
+//   pages: {
+//     signIn: "/login",
+//     error: "/login",
+//   },
+
+//   callbacks: {
+//     async signIn({ user, account }) {
+//       if (account?.provider === "google") {
+//         try {
+//           const res = await fetch(
+//             `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
+//             {
+//               method: "POST",
+//               headers: { "Content-Type": "application/json" },
+//               body: JSON.stringify({
+//                 email: user.email,
+//                 firstName: user.name?.split(" ")[0] || "Google",
+//                 lastName: user.name?.split(" ").slice(1).join(" ") || "User",
+//                 googleId: account.providerAccountId,
+//                 avatarUrl: user.image || undefined,
+//               }),
+//             }
+//           );
+
+//           const result = await res.json();
+
+//           if (!res.ok || !result?.accessToken) {
+//             console.error("Google social login backend error:", result?.message);
+//             return false;
+//           }
+
+//           (user as any).accessToken = result.accessToken;
+//           (user as any).refreshToken = result.refreshToken;
+//           (user as any).accessTokenExpires = result.accessTokenExpires;
+//           (user as any).id = result.data._id;
+//           (user as any).role = result.data.role;
+//           (user as any).firstName = result.data.firstName;
+//           (user as any).lastName = result.data.lastName;
+
+//           return true;
+//         } catch (err) {
+//           console.error("Google social login failed:", err);
+//           return false;
+//         }
+//       }
+
+//       return true;
+//     },
+
+//     async jwt({ token, user }) {
+//       // ---------- প্রথমবার login ----------
+//       if (user) {
+//         token.accessToken = (user as any).accessToken;
+//         token.refreshToken = (user as any).refreshToken;
+//         token.accessTokenExpires = (user as any).accessTokenExpires;
+//         token.id = (user as any).id;
+//         token.role = (user as any).role;
+//         token.firstName = (user as any).firstName;
+//         token.lastName = (user as any).lastName;
+
+//         console.log("🟢 [JWT] First login, token expires at:", new Date(token.accessTokenExpires as number).toISOString());
+//         return token;
+//       }
+
+//       // ---------- Access token এখনো valid (এখনো মেয়াদ আছে) ----------
+//       if (Date.now() < (token.accessTokenExpires as number) - 5_000) {
+//         return token; // এখনো refresh লাগবে না
+//       }
+
+//       // ---------- Access token expire হয়ে গেছে/হতে যাচ্ছে — refresh call করো ----------
+//       console.log("🔄 [JWT] Token expired, calling refresh...");
+
+//       try {
+//         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`, {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ refreshToken: token.refreshToken }),
+//         });
+
+//         const result = await res.json();
+
+//         if (!res.ok || !result?.data?.accessToken) {
+//           console.error("🔴 [JWT] Refresh failed:", result?.message);
+//           return { ...token, error: "RefreshAccessTokenError" };
+//         }
+
+//         // ✅ fix: নতুন accessToken আর accessTokenExpires — দুটোই আপডেট হচ্ছে
+//         token.accessToken = result.data.accessToken;
+//         token.accessTokenExpires = result.data.accessTokenExpires;
+//         delete token.error; // আগে কোনো error থাকলে মুছে দাও, refresh সফল হয়েছে
+
+//         console.log("✅ [JWT] Refreshed, new expiry:", new Date(token.accessTokenExpires as number).toISOString());
+
+//         return token;
+//       } catch (err) {
+//         console.error("🔴 [JWT] Refresh request failed:", err);
+//         return { ...token, error: "RefreshAccessTokenError" };
+//       }
+//     },
+
+//     async session({ session, token }) {
+//       session.accessToken = token.accessToken as string;
+//       session.user.id = token.id as string;
+//       session.user.role = token.role as string;
+//       session.user.firstName = token.firstName as string;
+//       session.user.lastName = token.lastName as string;
+//       (session as any).error = token.error;
+//       return session;
+//     },
+//   },
+
+//   secret: process.env.NEXTAUTH_SECRET,
+// };
+
+// const handler = NextAuth(authOptions);
+// export { handler as GET, handler as POST };

@@ -141,7 +141,7 @@ const MiniCart = () => {
                         ⌃ Enter special code
                     </button>
                     <Link
-                        href="/cart"
+                        href="/checkout"
                         onClick={() => dispatch(closeMiniCart())}
                         className="w-full py-4 font-semibold text-base flex items-center justify-between px-5 bg-[var(--color-primary)] text-white hover:opacity-95 transition-opacity"
                     >

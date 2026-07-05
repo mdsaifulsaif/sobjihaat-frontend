@@ -206,7 +206,7 @@ const LoginPage = () => {
     };
 
     const handleGoogleLogin = () => {
-        signIn("google", { callbackUrl: "/dashboard/user" });
+        signIn("google", { callbackUrl: "/" });
     };
 
     return (

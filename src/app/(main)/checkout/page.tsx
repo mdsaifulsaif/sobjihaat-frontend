@@ -384,15 +384,19 @@
 
 
 
+
+
+
+
 "use client";
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/redux';
 import { clearCart } from '@/redux/slices/cartSlice';
 import { useCreateOrderMutation } from '@/redux/api/orderApi';
-// ⚠️ তোমার actual area fetching hook দিয়ে replace করো
-// import { useGetAreasQuery } from '@/redux/api/areaApi';
+import { useGetAllAreasQuery } from '@/redux/api/areaApi'; // ✅ Area API
 import {
     FiMapPin,
     FiCreditCard,
@@ -407,22 +411,29 @@ import {
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
+interface Area {
+    _id: string;
+    name: string;
+    isActive: boolean;
+}
+
 const CheckoutPage = () => {
     const { items, totalPrice } = useAppSelector((state) => state.cart);
-    const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+    const { data: session, status } = useSession();
     const router = useRouter();
     const dispatch = useAppDispatch();
     const [createOrder, { isLoading: isPlacingOrder }] = useCreateOrderMutation();
 
-    // ⚠️ তোমার actual area API দিয়ে বদলাও
-    // const { data: areas } = useGetAreasQuery();
+    // ✅ Area list fetch করা (শুধু local delivery এর জন্য দরকার)
+    const { data: areasResponse, isLoading: isLoadingAreas } = useGetAllAreasQuery({});
+    const areas: Area[] = (areasResponse?.data || []).filter((a: Area) => a.isActive);
 
     const [formData, setFormData] = useState({
-        fullName: user?.name || '',
-        phone: user?.phone || '',
+        fullName: session?.user?.firstName || '',
+        phone: (session?.user as any)?.phone || '',
         deliveryType: 'local' as 'local' | 'nationwide',
-        city: user?.address?.city || '',
-        area: '', // Area ObjectId (dropdown থেকে সিলেক্ট হবে)
+        city: '',
+        area: '', // ✅ dropdown থেকে Area _id বসবে
         district: '',
         upazila: '',
         houseNo: '',
@@ -437,7 +448,7 @@ const CheckoutPage = () => {
         specialInstructions: '',
     });
 
-    // ✅ Delivery Date/Time - default এ কিছুই selected থাকবে না (ASAP)
+    // ✅ Default: কোনো schedule selected থাকবে না (ASAP)
     const [wantsScheduledDelivery, setWantsScheduledDelivery] = useState(false);
     const [deliveryDate, setDeliveryDate] = useState('');
     const [deliveryTime, setDeliveryTime] = useState('');
@@ -448,18 +459,25 @@ const CheckoutPage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // ✅ আজকের তারিখ - date input এর min attribute এর জন্য (past date সিলেক্ট করা UI লেভেলেই ব্লক)
     const todayStr = new Date().toISOString().split('T')[0];
-
-    // ✅ যদি আজকের তারিখ সিলেক্ট করা হয়, time input এর min ও এখনকার সময় হওয়া উচিত
     const isDeliveryDateToday = deliveryDate === todayStr;
-    const currentTimeStr = new Date().toTimeString().slice(0, 5); // "HH:mm"
+    const currentTimeStr = new Date().toTimeString().slice(0, 5);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!formData.fullName || !formData.phone || !formData.city) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
+
         if (formData.deliveryType === 'local' && !formData.area) {
             toast.error('Please select your delivery area');
+            return;
+        }
+
+        if (formData.deliveryType === 'nationwide' && !formData.district) {
+            toast.error('Please provide your district');
             return;
         }
 
@@ -469,9 +487,8 @@ const CheckoutPage = () => {
         }
 
         const orderData: any = {
-            items: items.map((item: any) => ({
+            items: items.map((item) => ({
                 productID: item.id,
-                // variantID: item.variantId || undefined,
                 quantity: item.quantity,
             })),
             deliveryType: formData.deliveryType,
@@ -479,7 +496,7 @@ const CheckoutPage = () => {
                 name: formData.fullName,
                 phone: formData.phone,
                 city: formData.city,
-                area: formData.area,
+                area: formData.area, // ✅ Area ObjectId dropdown থেকে
                 district: formData.district || undefined,
                 upazila: formData.upazila || undefined,
                 houseNo: formData.houseNo || undefined,
@@ -495,7 +512,8 @@ const CheckoutPage = () => {
             specialInstructions: formData.specialInstructions || undefined,
         };
 
-        // ✅ user schedule করলে তবেই deliveryDate/deliveryTime পাঠাবে, না করলে কিছুই পাঠাবে না (ASAP)
+        // ✅ শুধু user explicitly schedule করলে তবেই এই দুটো field payload এ যাবে
+        // Default অবস্থায় (checkbox off) এই if ব্লক স্কিপ হবে - deliveryDate/deliveryTime একদমই পাঠানো হবে না
         if (wantsScheduledDelivery && deliveryDate && deliveryTime) {
             orderData.deliveryDate = deliveryDate;
             orderData.deliveryTime = deliveryTime;
@@ -514,13 +532,29 @@ const CheckoutPage = () => {
         }
     };
 
-    // ⚠️ Frontend এ shipping charge শুধু estimate/preview - আসল হিসাব backend করবে
     const estimatedShipping = formData.deliveryType === 'local'
         ? (totalPrice >= 1000 ? 0 : 60)
         : 120;
     const grandTotal = totalPrice + estimatedShipping;
 
-    if (items.length === 0 || !isAuthenticated) return null;
+    if (status === 'loading') {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-gray-200 border-t-[var(--color-primary)] rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (status === 'unauthenticated') {
+        toast.error('Please login to proceed with checkout');
+        router.push('/login?redirect=/checkout');
+        return null;
+    }
+
+    if (!items || items.length === 0) {
+        router.push('/cart');
+        return null;
+    }
 
     return (
         <div className="bg-gray-50/50 min-h-screen pb-20">
@@ -582,7 +616,7 @@ const CheckoutPage = () => {
                                     />
                                 </div>
 
-                                {/* ✅ Area - dropdown হওয়া উচিত (Area model থেকে ObjectId) - শুধু local delivery হলে required */}
+                                {/* ✅ Area Dropdown - real API data */}
                                 {formData.deliveryType === 'local' && (
                                     <div>
                                         <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Area</label>
@@ -591,15 +625,26 @@ const CheckoutPage = () => {
                                             required
                                             value={formData.area}
                                             onChange={handleChange}
-                                            className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-md outline-none focus:border-[var(--color-primary)] focus:bg-white transition-all text-sm font-medium appearance-none"
+                                            disabled={isLoadingAreas}
+                                            className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-md outline-none focus:border-[var(--color-primary)] focus:bg-white transition-all text-sm font-medium appearance-none disabled:opacity-60"
                                         >
-                                            <option value="">Select your area</option>
-                                            {/* ⚠️ areas?.map((a) => <option key={a._id} value={a._id}>{a.name}</option>) */}
+                                            <option value="">
+                                                {isLoadingAreas ? 'Loading areas...' : 'Select your area'}
+                                            </option>
+                                            {areas.map((area) => (
+                                                <option key={area._id} value={area._id}>
+                                                    {area.name}
+                                                </option>
+                                            ))}
                                         </select>
+                                        {!isLoadingAreas && areas.length === 0 && (
+                                            <p className="text-[10px] text-red-500 font-medium mt-1 px-1">
+                                                No delivery areas available right now.
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
-                                {/* ✅ Nationwide হলে district/upazila দেখাবে */}
                                 {formData.deliveryType === 'nationwide' && (
                                     <>
                                         <div>
@@ -696,7 +741,6 @@ const CheckoutPage = () => {
                                 <h2 className="text-xl font-black text-gray-800">Delivery Options</h2>
                             </div>
 
-                            {/* ✅ Delivery Type: local / nationwide */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 <label className={`flex items-center justify-between p-5 border rounded-md cursor-pointer transition-all ${formData.deliveryType === 'local' ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5' : 'border-gray-100 hover:border-gray-200'}`}>
                                     <div className="flex items-center gap-4">
@@ -732,7 +776,7 @@ const CheckoutPage = () => {
                                 </label>
                             </div>
 
-                            {/* ✅ শুধু Local delivery হলে scheduled date/time দেখাবে, Nationwide এ লাগবে না */}
+                            {/* ✅ শুধু local delivery হলে scheduled option দেখাবে, default এ off */}
                             {formData.deliveryType === 'local' && (
                                 <div className="pt-6 border-t border-gray-50">
                                     <label className="flex items-center gap-3 cursor-pointer mb-4">
@@ -755,26 +799,26 @@ const CheckoutPage = () => {
                                     {wantsScheduledDelivery && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                             <div>
-                                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1 flex items-center gap-1">
+                                                <label className="flex items-center gap-1 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
                                                     <FiCalendar size={12} /> Delivery Date
                                                 </label>
                                                 <input
                                                     type="date"
                                                     value={deliveryDate}
-                                                    min={todayStr} // 🔒 past date UI লেভেলেই ব্লক
+                                                    min={todayStr}
                                                     onChange={(e) => setDeliveryDate(e.target.value)}
                                                     required={wantsScheduledDelivery}
                                                     className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-md outline-none focus:border-[var(--color-primary)] focus:bg-white transition-all text-sm font-medium"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1 flex items-center gap-1">
+                                                <label className="flex items-center gap-1 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
                                                     <FiClock size={12} /> Delivery Time
                                                 </label>
                                                 <input
                                                     type="time"
                                                     value={deliveryTime}
-                                                    min={isDeliveryDateToday ? currentTimeStr : undefined} // 🔒 আজকের তারিখ হলে past time ব্লক
+                                                    min={isDeliveryDateToday ? currentTimeStr : undefined}
                                                     onChange={(e) => setDeliveryTime(e.target.value)}
                                                     required={wantsScheduledDelivery}
                                                     className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-md outline-none focus:border-[var(--color-primary)] focus:bg-white transition-all text-sm font-medium"
@@ -816,7 +860,7 @@ const CheckoutPage = () => {
                                     </div>
                                 </label>
 
-                                <label className={`flex items-center gap-4 p-5 border rounded-md cursor-not-allowed opacity-50 bg-gray-50 transition-all`}>
+                                <label className="flex items-center gap-4 p-5 border rounded-md cursor-not-allowed opacity-50 bg-gray-50 transition-all">
                                     <input
                                         type="radio"
                                         name="paymentMethod"
@@ -845,7 +889,7 @@ const CheckoutPage = () => {
                             <h2 className="text-xl font-black text-gray-900 mb-8 pb-4 border-b border-gray-50">Order Review</h2>
 
                             <div className="space-y-6 mb-8 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                {items.map((item: any) => (
+                                {items.map((item) => (
                                     <div key={item.id} className="flex gap-4">
                                         <div className="w-16 h-20 bg-gray-50 rounded-md overflow-hidden flex-shrink-0 border border-gray-100 p-1">
                                             <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
@@ -859,7 +903,6 @@ const CheckoutPage = () => {
                                 ))}
                             </div>
 
-                            {/* ✅ Selected delivery schedule summary দেখানো */}
                             <div className="mb-6 p-4 bg-gray-50 rounded-md border border-gray-100">
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Delivery Schedule</p>
                                 <p className="text-sm font-bold text-gray-900">

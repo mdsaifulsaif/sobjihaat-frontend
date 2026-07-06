@@ -1,6 +1,3 @@
-
-
-
 // "use client";
 
 // import React, { useState } from 'react';
@@ -98,8 +95,8 @@
 //                         <div className="relative group">
 //                             <button className="flex items-center gap-3 p-1.5 pr-2 hover:bg-gray-50 rounded-md transition-all">
 //                                 <div className="w-9 h-9 rounded-md bg-gray-100 flex items-center justify-center font-bold text-[var(--color-primary)]">
-//                                     {isAuthenticated && user?.firstName 
-//                                         ? user.firstName.charAt(0).toUpperCase() 
+//                                     {isAuthenticated && user?.firstName
+//                                         ? user.firstName.charAt(0).toUpperCase()
 //                                         : <FiUser size={19} className="text-gray-600" />
 //                                     }
 //                                 </div>
@@ -107,9 +104,9 @@
 //                                     <p className="text-[11px] font-semibold text-gray-400 uppercase leading-none">Account</p>
 //                                     <p className="text-[14px] font-medium text-gray-700 mt-1 flex items-center gap-1">
 //                                         {isAuthenticated && user?.firstName
-//                                             ? user.firstName.split(' ')[0] 
+//                                             ? user.firstName.split(' ')[0]
 //                                             : 'Login'
-//                                         } 
+//                                         }
 //                                         <FiChevronDown size={14} />
 //                                     </p>
 //                                 </div>
@@ -152,7 +149,7 @@
 //                                                 Wishlist
 //                                             </Link>
 //                                             <div className="border-t border-gray-100 my-1" />
-//                                             <button 
+//                                             <button
 //                                                 onClick={() => signOut({ callbackUrl: '/' })}
 //                                                 className="w-full text-left px-4 py-2.5 text-sm text-[var(--color-error)] hover:bg-red-50 transition-all"
 //                                             >
@@ -188,20 +185,26 @@
 
 // export default MinHeader;
 
-
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { FiSearch, FiHeart, FiUser, FiChevronDown, FiMenu } from 'react-icons/fi';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
+import {
+  FiSearch,
+  FiHeart,
+  FiUser,
+  FiChevronDown,
+  FiMenu,
+} from "react-icons/fi";
 
 const MinHeader = ({ onToggleMobile }: { onToggleMobile: () => void }) => {
   const { data: session, status } = useSession();
+  console.log(session)
   const isAuthenticated = status === "authenticated";
   const user = session?.user;
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
   const wishlistCount = 5; // পরে Redux থেকে নেবেন
@@ -212,7 +215,7 @@ const MinHeader = ({ onToggleMobile }: { onToggleMobile: () => void }) => {
         <div className="flex items-center justify-between py-3 md:py-4">
           {/* Left: Menu + Logo */}
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={onToggleMobile}
               className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-xl transition-all md:hidden"
             >
@@ -250,7 +253,10 @@ const MinHeader = ({ onToggleMobile }: { onToggleMobile: () => void }) => {
           {/* Right Side */}
           <div className="flex items-center gap-2 md:gap-3">
             {/* Wishlist */}
-            <Link href="/wishlist" className="relative p-3 hover:bg-gray-100 rounded-3xl transition-all">
+            <Link
+              href="/wishlist"
+              className="relative p-3 hover:bg-gray-100 rounded-3xl transition-all"
+            >
               <FiHeart size={23} className="text-gray-700" />
               {wishlistCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
@@ -263,21 +269,25 @@ const MinHeader = ({ onToggleMobile }: { onToggleMobile: () => void }) => {
             <div className="relative group">
               <button className="flex items-center gap-2 p-2 pr-3 hover:bg-gray-100 rounded-3xl transition-all">
                 <div className="w-9 h-9 bg-gray-100 rounded-2xl flex items-center justify-center font-bold text-lg text-[var(--color-primary)]">
-                  {isAuthenticated && user?.firstName 
-                    ? user.firstName.charAt(0).toUpperCase() 
-                    : <FiUser size={20} />}
+                  {isAuthenticated && user?.firstName ? (
+                    user.firstName.charAt(0).toUpperCase()
+                  ) : (
+                    <FiUser size={20} />
+                  )}
                 </div>
                 <div className="hidden md:block text-left">
-                  <p className="text-xs text-gray-500">Account</p>
+                  <p className="text-xs text-gray-500">Profile</p>
                   <p className="text-sm font-medium flex items-center gap-1">
-                    {isAuthenticated && user?.firstName ? user.firstName.split(' ')[0] : 'Login'}
+                    {isAuthenticated && user?.firstName
+                      ? user.firstName.split(" ")[0]
+                      : "Login"}
                     <FiChevronDown size={14} />
                   </p>
                 </div>
               </button>
 
               {/* Login Modal / Dropdown - আগের মতোই */}
-              <div className="absolute right-0 top-[110%] w-64 bg-white rounded-2xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all z-50">
+              {/* <div className="absolute right-0 top-[110%] w-64 bg-white rounded-2xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all z-50">
                 {!isAuthenticated ? (
                   <div className="p-6">
                     <h4 className="text-lg font-bold">Welcome!</h4>
@@ -300,11 +310,80 @@ const MinHeader = ({ onToggleMobile }: { onToggleMobile: () => void }) => {
                       <p className="text-xs text-gray-500">Signed in as</p>
                       <p className="font-medium truncate">{user?.email}</p>
                     </div>
-                    <Link href="/account" className="block px-6 py-3 hover:bg-gray-50">My Profile</Link>
+                    <Link href="/profile" className="block px-6 py-3 hover:bg-gray-50">My Profile</Link>
                     <Link href="/my-orders" className="block px-6 py-3 hover:bg-gray-50">Order History</Link>
                     <Link href="/wishlist" className="block px-6 py-3 hover:bg-gray-50">Wishlist</Link>
                     <button 
                       onClick={() => signOut({ callbackUrl: '/' })}
+                      className="w-full text-left px-6 py-3 text-red-600 hover:bg-red-50"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div> */}
+              {/* User Dropdown */}
+              <div className="absolute right-0 top-[110%] w-64 bg-white rounded-2xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all z-50">
+                {!isAuthenticated ? (
+                  <div className="p-6">
+                    <h4 className="text-lg font-bold">Welcome!</h4>
+                    <p className="text-sm text-gray-500 mt-1 mb-5">
+                      Sign in to access your account & orders
+                    </p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => signIn()}
+                        className="flex-1 py-3 bg-[var(--color-primary)] text-white rounded-xl font-medium hover:opacity-90 transition-all"
+                      >
+                        SIGN IN
+                      </button>
+                      <Link
+                        href="/register"
+                        className="flex-1 py-3 border border-gray-300 text-center rounded-xl font-medium hover:border-[var(--color-primary)] transition-all"
+                      >
+                        JOIN
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-2">
+                    <div className="px-6 py-4 border-b">
+                      <p className="text-xs text-gray-500">Signed in as</p>
+                      <p className="font-medium truncate">{user?.email}</p>
+                    </div>
+
+                    {/* Conditional Rider Dashboard */}
+                    {user?.role === "rider" && (
+                      <Link
+                        href="/rider-dashboard"
+                        className="block px-6 py-3 hover:bg-gray-50 flex items-center gap-2 text-[var(--color-primary)]"
+                      >
+                        Rider Dashboard
+                      </Link>
+                    )}
+
+                    <Link
+                      href="/profile"
+                      className="block px-6 py-3 hover:bg-gray-50"
+                    >
+                      My Profile
+                    </Link>
+                    <Link
+                      href="/my-orders"
+                      className="block px-6 py-3 hover:bg-gray-50"
+                    >
+                      Order History
+                    </Link>
+                    <Link
+                      href="/wishlist"
+                      className="block px-6 py-3 hover:bg-gray-50"
+                    >
+                      Wishlist
+                    </Link>
+
+                    <div className="border-t border-gray-100 my-1" />
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
                       className="w-full text-left px-6 py-3 text-red-600 hover:bg-red-50"
                     >
                       Sign Out

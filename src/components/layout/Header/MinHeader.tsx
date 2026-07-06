@@ -208,7 +208,7 @@ const MinHeader = ({ onToggleMobile }: { onToggleMobile: () => void }) => {
 
   return (
     <header className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-3 md:py-4">
           {/* Left: Menu + Logo */}
           <div className="flex items-center gap-4">
@@ -301,7 +301,7 @@ const MinHeader = ({ onToggleMobile }: { onToggleMobile: () => void }) => {
                       <p className="font-medium truncate">{user?.email}</p>
                     </div>
                     <Link href="/account" className="block px-6 py-3 hover:bg-gray-50">My Profile</Link>
-                    <Link href="/orders" className="block px-6 py-3 hover:bg-gray-50">Order History</Link>
+                    <Link href="/my-orders" className="block px-6 py-3 hover:bg-gray-50">Order History</Link>
                     <Link href="/wishlist" className="block px-6 py-3 hover:bg-gray-50">Wishlist</Link>
                     <button 
                       onClick={() => signOut({ callbackUrl: '/' })}

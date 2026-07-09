@@ -154,8 +154,8 @@ const Earnings = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
-          href="/dashboard/rider/payout"
-          className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-all flex items-center justify-between"
+          href="/rider-dashboard/payout"
+          className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-all flex items-center justify-between" 
         >
           <div>
             <h3 className="font-semibold text-gray-800">Payout History</h3>
@@ -164,7 +164,7 @@ const Earnings = () => {
           <FiArrowRight size={20} className="text-gray-400" />
         </Link>
         <Link
-          href="/dashboard/rider/payout/request"
+          href="/rider-dashboard/payout/request"
           className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-all flex items-center justify-between"
         >
           <div>

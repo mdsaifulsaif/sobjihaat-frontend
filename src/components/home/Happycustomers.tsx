@@ -1,6 +1,9 @@
+
+
+
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
 /* =========================================================================
    Brand color: --color-primary: #619d23
@@ -82,6 +85,26 @@ const testimonialsData: Testimonial[] = [
       'Great experience! The live tracking feature is very helpful. Keep up the good work FreshCart team!',
     initials: 'SI',
     avatarColor: '#e3d9f3',
+  },
+  {
+    id: 't5',
+    name: 'Tanvir Ahmed',
+    role: 'Verified Customer',
+    timeAgo: '1 month ago',
+    quote:
+      'Fair prices and the quality never drops. FreshCart has become part of our weekly routine now.',
+    initials: 'TA',
+    avatarColor: '#f3e6c9',
+  },
+  {
+    id: 't6',
+    name: 'Farhana Akter',
+    role: 'Verified Customer',
+    timeAgo: '1 month ago',
+    quote:
+      'Customer support resolved my issue within minutes. Rare to see this level of care these days.',
+    initials: 'FA',
+    avatarColor: '#cfe8e3',
   },
 ];
 
@@ -404,14 +427,9 @@ const TestimonialCard: React.FC<{ item: Testimonial }> = ({ item }) => (
    Main component
 --------------------------------------------------------------------------- */
 
-const VISIBLE_DESKTOP = 4;
-
 const HappyCustomers: React.FC = () => {
-  const [index, setIndex] = useState(0);
-  const maxIndex = Math.max(0, testimonialsData.length - 1);
-
-  const goPrev = () => setIndex((i) => (i === 0 ? maxIndex : i - 1));
-  const goNext = () => setIndex((i) => (i === maxIndex ? 0 : i + 1));
+  // Duplicate the list once so the marquee can loop seamlessly (no snap-back).
+  const loopData = [...testimonialsData, ...testimonialsData];
 
   return (
     <section className="relative overflow-hidden bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
@@ -439,64 +457,50 @@ const HappyCustomers: React.FC = () => {
           </p>
         </div>
 
-  
-
-        {/* ---------- testimonial carousel ---------- */}
-        <div className="relative mt-8">
-          {/* prev / next controls */}
-          <button
-            type="button"
-            onClick={goPrev}
-            aria-label="Previous testimonial"
-            className="absolute -left-3 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 sm:flex lg:-left-5"
-          >
-            <ChevronIcon direction="left" />
-          </button>
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label="Next testimonial"
-            className="absolute -right-3 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 sm:flex lg:-right-5"
-          >
-            <ChevronIcon direction="right" />
-          </button>
-
-          {/* desktop: static 4-up grid */}
-          <div className="hidden gap-5 lg:grid lg:grid-cols-4">
-            {testimonialsData.slice(0, VISIBLE_DESKTOP).map((t) => (
-              <TestimonialCard key={t.id} item={t} />
+        {/* ---------- testimonial marquee (smooth, infinite, never snaps back) ---------- */}
+        <div
+          className="group relative mt-10 overflow-hidden"
+          style={{
+            maskImage:
+              'linear-gradient(to right, transparent, black 6%, black 94%, transparent)',
+            WebkitMaskImage:
+              'linear-gradient(to right, transparent, black 6%, black 94%, transparent)',
+          }}
+        >
+          <div className="marquee-track flex w-max gap-5">
+            {loopData.map((t, i) => (
+              <div
+                key={`${t.id}-${i}`}
+                className="w-[260px] shrink-0 sm:w-[300px] lg:w-[320px]"
+              >
+                <TestimonialCard item={t} />
+              </div>
             ))}
-          </div>
-
-          {/* mobile / tablet: swipeable single-card carousel */}
-          <div className="overflow-hidden lg:hidden">
-            <div
-              className="flex transition-transform duration-300 ease-out"
-              style={{ transform: `translateX(-${index * 100}%)` }}
-            >
-              {testimonialsData.map((t) => (
-                <div key={t.id} className="w-full shrink-0 px-1 sm:w-1/2 sm:px-2">
-                  <TestimonialCard item={t} />
-                </div>
-              ))}
-            </div>
-
-            {/* dots */}
-            <div className="mt-5 flex justify-center gap-1.5">
-              {testimonialsData.map((t, i) => (
-                <button
-                  key={t.id}
-                  aria-label={`Go to testimonial ${i + 1}`}
-                  onClick={() => setIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === index ? 'w-6 bg-[var(--color-primary)]' : 'w-1.5 bg-gray-200'
-                  }`}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .marquee-track {
+          animation: marquee-scroll 40s linear infinite;
+        }
+        .group:hover .marquee-track {
+          animation-play-state: paused;
+        }
+        @keyframes marquee-scroll {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-50%);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-track {
+            animation: none;
+          }
+        }
+      `}</style>
     </section>
   );
 };

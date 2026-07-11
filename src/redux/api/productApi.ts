@@ -215,6 +215,13 @@ export const productApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Products"],
     }),
+    getFeaturedProdcut: builder.query({
+      query: (params = {}) => ({
+        url: "/products/featured",
+        params,
+      }),
+      providesTags: ["Products"],
+    }),
   }),
 });
 
@@ -229,4 +236,5 @@ export const {
   useUpdateStockMutation,
   useBulkUpdateStatusMutation,
   useBulkDeleteMutation,
+  useGetFeaturedProdcutQuery
 } = productApi;

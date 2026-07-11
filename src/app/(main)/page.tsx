@@ -48,9 +48,11 @@ import {
   HomeCategory,
 } from '@/components/home';
 import AppDownloadPromo from '@/components/home/Appdownloadpromo';
+import ComboProducts from '@/components/home/ComboProducts';
 import DeliveryCharges from '@/components/home/DeliveryCharges';
 import DeliveryCoverage from '@/components/home/Deliverycoverage';
 import Faq from '@/components/home/Faq';
+import FeaturedProducts from '@/components/home/FeaturedProducts';
 import HappyCustomers from '@/components/home/Happycustomers';
 import OurCommitment from '@/components/home/Ourcommitment';
 import PreOrderDeliverySlots from '@/components/home/PreOrderDeliverySlots';
@@ -91,10 +93,12 @@ export default async function Home() {
       <Hero />
       <HomeCategory initialCategories={categories?.data} />
       <TrustedBrands />
+      <FeaturedProducts />
+      <ComboProducts />
       <PreOrderDeliverySlots />
       <DeliveryCharges />
       <OurCommitment />
-      <WhyChooseUs />
+      {/* <WhyChooseUs /> */}
       <HappyCustomers />
       <AppDownloadPromo />
       <DeliveryCoverage />

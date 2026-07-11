@@ -439,25 +439,7 @@ const HappyCustomers: React.FC = () => {
           </p>
         </div>
 
-        {/* ---------- stats row ---------- */}
-        <div className="mt-10 grid grid-cols-2 gap-y-6 rounded-2xl border border-gray-100 bg-white px-6 py-6 sm:grid-cols-4 sm:gap-x-4 sm:px-10">
-          {statsData.map((s, i) => (
-            <div
-              key={s.id}
-              className={`flex items-center gap-3 sm:justify-self-center ${
-                i > 0 ? 'sm:border-l sm:border-gray-100 sm:pl-4' : ''
-              }`}
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#eef3e6]">
-                {renderStatIcon(s.icon)}
-              </span>
-              <div>
-                <p className="text-xl font-extrabold text-gray-900">{s.value}</p>
-                <p className="text-xs text-gray-500 sm:text-sm">{s.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+  
 
         {/* ---------- testimonial carousel ---------- */}
         <div className="relative mt-8">

@@ -90,6 +90,7 @@
 
 // export default CategoryCard;
 // components/shared/CategoryCard.tsx
+
 'use client';
 
 import React from 'react';
@@ -108,7 +109,8 @@ interface Category {
 }
 
 const CategoryCard: React.FC<{ item: Category }> = ({ item }) => {
-  const bgColors = ['#eef3e6', '#fdf1e3', '#f6f1e3', '#eef6f6', '#fbeae8', '#fdf2e1', '#eaf2fb', '#f1eefb', '#eaf3ec', '#fbeef3'];
+  // '#eef3e6', '#fdf1e3', '#f6f1e3', '#eef6f6', '#fbeae8', '#fdf2e1', '#eaf2fb', '#f1eefb', '#eaf3ec', '#fbeef3'
+  const bgColors = ['#ffff'];
   const bgIndex = parseInt(item._id.slice(-2), 16) % bgColors.length;
   const imageBg = bgColors[bgIndex];
 

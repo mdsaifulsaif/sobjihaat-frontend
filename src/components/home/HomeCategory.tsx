@@ -401,23 +401,32 @@
 // };
 
 // export default HomeCategory;
-// components/home/HomeCategory.tsx
 
 
 
 
-
-
-// components/home/HomeCategory.tsx
 "use client";
 
-import React from "react";
-import CategoryCard from "../shared/CategoryCard";
-import CategorySkeleton from "../shared/CategorySkeleton";
+import React, { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Mousewheel } from "swiper/modules";
+import { Navigation, Grid, Mousewheel } from "swiper/modules";
+import { useGetCategoriesQuery } from "@/redux/api/categoryApi";
+import CategoryCard from "../shared/CategoryCard";
+
+// ✅ Dynamic import for Skeleton
+import dynamic from "next/dynamic";
+const Skeleton = dynamic(() => import("react-loading-skeleton"), {
+  ssr: false,
+});
+
+// Import styles
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/grid";
+
+/* =========================================================================
+   Brand color: --color-primary: #619d23
+   ========================================================================= */
 
 /* ---------------------------------------------------------------------------
    Small UI icons
@@ -447,114 +456,159 @@ const ArrowRightIcon: React.FC<{ size?: number }> = ({ size = 14 }) => (
 
 const GridIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-    <rect x="4" y="4" width="7" height="7" rx="1.5" fill="var(--color-primary)" />
-    <rect x="13" y="4" width="7" height="7" rx="1.5" fill="var(--color-primary)" />
-    <rect x="4" y="13" width="7" height="7" rx="1.5" fill="var(--color-primary)" />
-    <rect x="13" y="13" width="7" height="7" rx="1.5" fill="var(--color-primary)" />
-  </svg>
-);
-
-// Navigation Arrow Icons
-const ChevronLeftIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M15 18l-6-6 6-6"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+    <rect
+      x="4"
+      y="4"
+      width="7"
+      height="7"
+      rx="1.5"
+      fill="var(--color-primary)"
+    />
+    <rect
+      x="13"
+      y="4"
+      width="7"
+      height="7"
+      rx="1.5"
+      fill="var(--color-primary)"
+    />
+    <rect
+      x="4"
+      y="13"
+      width="7"
+      height="7"
+      rx="1.5"
+      fill="var(--color-primary)"
+    />
+    <rect
+      x="13"
+      y="13"
+      width="7"
+      height="7"
+      rx="1.5"
+      fill="var(--color-primary)"
     />
   </svg>
 );
 
-const ChevronRightIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M9 18l6-6-6-6"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
+/* ---------------------------------------------------------------------------
+   Professional Skeleton Loader
+--------------------------------------------------------------------------- */
+
+const SkeletonLoader = () => (
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
+    {Array.from({ length: 6 }).map((_, index) => (
+      <div
+        key={index}
+        className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+      >
+        {/* Image Skeleton */}
+        <div className="aspect-square w-full rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
+        
+        {/* Title Skeleton */}
+        <div className="mt-3 text-center space-y-2">
+          <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-3/4 mx-auto animate-pulse" />
+          <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-1/2 mx-auto animate-pulse" />
+        </div>
+      </div>
+    ))}
+  </div>
 );
 
 /* ---------------------------------------------------------------------------
    Main HomeCategory Component
 --------------------------------------------------------------------------- */
 
-interface Category {
-  _id: string;
-  name: string;
-  slug: string;
-  productCount: number;
-  image?: string;
-  order: number;
-  status?: string;
-  isDeleted?: boolean;
-}
+const HomeCategory: React.FC = () => {
+  const { data, isLoading, error } = useGetCategoriesQuery({
+    status: "active",
+    isDeleted: false,
+    limit: 20,
+  });
 
-interface HomeCategoryProps {
-  initialCategories?: Category[];
-  isLoading?: boolean;
-}
-
-const HomeCategory: React.FC<HomeCategoryProps> = ({ 
-  initialCategories, 
-  isLoading = false 
-}) => {
   // Sort by order
   const categoriesData = React.useMemo(() => {
-    if (!initialCategories) return [];
-    return [...initialCategories]
+    if (!data?.data) return [];
+    return [...data.data]
       .sort((a, b) => (a.order || 0) - (b.order || 0))
       .filter((cat) => cat.status === "active" && !cat.isDeleted);
-  }, [initialCategories]);
+  }, [data]);
 
-  // Skeleton Loading State
+  // Swiper breakpoints
+  const breakpoints = {
+    320: {
+      slidesPerView: 2,
+      grid: { rows: 1, fill: "row" },
+      spaceBetween: 12,
+    },
+    480: {
+      slidesPerView: 2,
+      grid: { rows: 1, fill: "row" },
+      spaceBetween: 14,
+    },
+    640: {
+      slidesPerView: 3,
+      grid: { rows: 1, fill: "row" },
+      spaceBetween: 16,
+    },
+    768: {
+      slidesPerView: 4,
+      grid: { rows: 1, fill: "row" },
+      spaceBetween: 18,
+    },
+    1024: {
+      slidesPerView: 6,
+      grid: { rows: 1, fill: "row" },
+      spaceBetween: 20,
+    },
+    1280: {
+      slidesPerView: 6,
+      grid: { rows: 1, fill: "row" },
+      spaceBetween: 24,
+    },
+  };
+
   if (isLoading) {
     return (
-      <section className="bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
+      <section className="relative overflow-hidden bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
         <div className="mx-auto container">
-          {/* Heading Skeleton */}
+          {/* Heading */}
           <div className="text-center">
-            <div className="mx-auto mb-5 h-6 w-32 animate-pulse rounded-full bg-gray-200"></div>
-            <div className="mx-auto h-10 w-64 animate-pulse rounded-lg bg-gray-200 sm:h-12 sm:w-80"></div>
-            <div className="mx-auto mt-4 h-5 w-48 animate-pulse rounded-lg bg-gray-200"></div>
-          </div>
-
-          {/* Carousel Skeleton */}
-          <div className="mt-10">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <CategorySkeleton key={index} />
-              ))}
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5">
+              <span className="text-xs font-bold tracking-wide text-[var(--color-primary)]">
+                <StarBadgeIcon /> EXPLORE &amp; SHOP
+              </span>
             </div>
+            <h2 className="text-3xl font-extrabold leading-tight text-[#173321] sm:text-4xl lg:text-[2.6rem]">
+              Shop by Category
+            </h2>
+            <p className="mx-auto mt-4 text-sm text-gray-500 sm:text-base">
+              Find everything you need, fresh and fast
+            </p>
           </div>
 
-          {/* Button Skeleton */}
-          <div className="mt-8 text-center">
-            <div className="mx-auto h-11 w-48 animate-pulse rounded-full bg-gray-200"></div>
+          {/* Skeleton Grid */}
+          <div className="mt-10">
+            <SkeletonLoader />
           </div>
         </div>
       </section>
     );
   }
 
-  // যদি ডাটা না থাকে
-  if (!categoriesData || categoriesData.length === 0) {
+  if (error || categoriesData.length === 0) {
     return (
-      <section className="bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
-        <div className="mx-auto container text-center text-gray-500">
-          No categories found
+      <section className="relative overflow-hidden bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
+        <div className="mx-auto container text-center">
+          <p className="text-gray-500">Failed to load categories</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
-      <div className="mx-auto container">
+    <section className="relative overflow-hidden bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
+      <div className="mx-auto container overflow-hidden">
         {/* Heading */}
         <div className="text-center">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">
@@ -575,38 +629,23 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({
           </p>
         </div>
 
-        {/* Swiper Carousel with Navigation */}
+        {/* Swiper Carousel - No AutoPlay, No Infinite Loop */}
         <div className="relative mt-10">
           <Swiper
-            modules={[Navigation, Mousewheel]}
-            spaceBetween={12}
-            slidesPerView={2}
+            modules={[Navigation, Grid, Mousewheel]}
+            breakpoints={breakpoints}
             navigation={{
-              prevEl: '.custom-prev-button',
-              nextEl: '.custom-next-button',
+              nextEl: ".swiper-button-next-custom",
+              prevEl: ".swiper-button-prev-custom",
             }}
             mousewheel={{
+              sensitivity: 0.5,
               forceToAxis: true,
-              sensitivity: 1,
             }}
-            breakpoints={{
-              480: {
-                slidesPerView: 2,
-                spaceBetween: 12,
-              },
-              640: {
-                slidesPerView: 3,
-                spaceBetween: 16,
-              },
-              768: {
-                slidesPerView: 4,
-                spaceBetween: 16,
-              },
-              1024: {
-                slidesPerView: 6,
-                spaceBetween: 20,
-              },
-            }}
+            grabCursor={true}
+            // ❌ AutoPlay OFF
+            // ❌ Loop OFF - No infinite scroll
+            loop={false}
             className="!overflow-visible"
           >
             {categoriesData.map((cat) => (
@@ -617,20 +656,36 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({
           </Swiper>
 
           {/* Custom Navigation Buttons */}
-          {/* Left Arrow Button */}
           <button
-            className="custom-prev-button absolute -left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#173321] shadow-lg transition-all hover:bg-[var(--color-primary)] hover:text-white hover:shadow-xl focus:outline-none lg:-left-5 lg:h-12 lg:w-12"
-            aria-label="Previous categories"
+            type="button"
+            className="swiper-button-prev-custom absolute -left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 lg:-left-5"
+            aria-label="Previous"
           >
-            <ChevronLeftIcon />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M15 5l-7 7 7 7"
+                stroke="#1a3c1f"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
 
-          {/* Right Arrow Button */}
           <button
-            className="custom-next-button absolute -right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#173321] shadow-lg transition-all hover:bg-[var(--color-primary)] hover:text-white hover:shadow-xl focus:outline-none lg:-right-5 lg:h-12 lg:w-12"
-            aria-label="Next categories"
+            type="button"
+            className="swiper-button-next-custom absolute -right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 lg:-right-5"
+            aria-label="Next"
           >
-            <ChevronRightIcon />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 5l7 7-7 7"
+                stroke="#1a3c1f"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         </div>
 
@@ -638,7 +693,7 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({
         <div className="mt-8 text-center">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 px-6 py-3 text-sm font-bold text-[var(--color-primary)] transition hover:bg-[#eef3e6] hover:shadow-md"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 px-6 py-3 text-sm font-bold text-[var(--color-primary)] transition hover:bg-[#eef3e6]"
           >
             <GridIcon />
             View All Categories

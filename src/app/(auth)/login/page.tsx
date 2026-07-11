@@ -201,7 +201,7 @@ const LoginPage = () => {
         }
 
         toast.success('Login Successful! Welcome back.');
-        router.push('/dashboard/user');
+        router.push('/');
         router.refresh();
     };
 

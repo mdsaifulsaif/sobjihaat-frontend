@@ -323,7 +323,7 @@ const DeliveryCoverage: React.FC = () => {
         </div> */}
 
         {/* ── Currently Delivering list ── */}
-        <div className="mt-5">
+        <div className="mt-5 z-0">
           <h3 className="mb-3 text-sm font-bold text-gray-900 sm:text-base">
             Currently Delivering ({activeZones.length})
           </h3>

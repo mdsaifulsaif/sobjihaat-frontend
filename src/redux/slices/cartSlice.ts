@@ -1,29 +1,29 @@
 
-
 // import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // export interface CartItem {
-//     id: number;
+//     id: number | string; // API theke _id (string) ashe, tai number | string both support kora holo
 //     name: string;
 //     price: number;
 //     mrp: number;
 //     image: string;
 //     category: string;
 //     quantity: number;
+//      thumbnail?: string; 
 // }
 
 // interface CartState {
 //     items: CartItem[];
 //     totalQuantity: number;
 //     totalPrice: number;
-//     isMiniCartOpen: boolean;     // ← নতুন যোগ করা হয়েছে
+//     isMiniCartOpen: boolean;
 // }
 
 // const initialState: CartState = {
 //     items: [],
 //     totalQuantity: 0,
 //     totalPrice: 0,
-//     isMiniCartOpen: false,       // ← ডিফল্ট false
+//     isMiniCartOpen: false,
 // };
 
 // const calculateTotals = (items: CartItem[]) => {
@@ -50,7 +50,7 @@
 //             state.totalPrice = totals.totalPrice;
 //         },
 
-//         removeFromCart: (state, action: PayloadAction<number>) => {
+//         removeFromCart: (state, action: PayloadAction<number | string>) => {
 //             state.items = state.items.filter(item => item.id !== action.payload);
 
 //             const totals = calculateTotals(state.items);
@@ -58,7 +58,7 @@
 //             state.totalPrice = totals.totalPrice;
 //         },
 
-//         increaseQuantity: (state, action: PayloadAction<number>) => {
+//         increaseQuantity: (state, action: PayloadAction<number | string>) => {
 //             const item = state.items.find(item => item.id === action.payload);
 //             if (item) {
 //                 item.quantity += 1;
@@ -69,7 +69,7 @@
 //             state.totalPrice = totals.totalPrice;
 //         },
 
-//         decreaseQuantity: (state, action: PayloadAction<number>) => {
+//         decreaseQuantity: (state, action: PayloadAction<number | string>) => {
 //             const item = state.items.find(item => item.id === action.payload);
 //             if (item) {
 //                 if (item.quantity > 1) {
@@ -90,7 +90,7 @@
 //             state.totalPrice = 0;
 //         },
 
-//         updateQuantity: (state, action: PayloadAction<{ id: number; quantity: number }>) => {
+//         updateQuantity: (state, action: PayloadAction<{ id: number | string; quantity: number }>) => {
 //             const item = state.items.find(item => item.id === action.payload.id);
 //             if (item && action.payload.quantity > 0) {
 //                 item.quantity = action.payload.quantity;
@@ -101,7 +101,6 @@
 //             state.totalPrice = totals.totalPrice;
 //         },
 
-//         // ==================== নতুন Reducers ====================
 //         openMiniCart: (state) => {
 //             state.isMiniCartOpen = true;
 //         },
@@ -131,6 +130,8 @@
 // export default cartSlice.reducer;
 
 
+
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface CartItem {
@@ -141,7 +142,7 @@ export interface CartItem {
     image: string;
     category: string;
     quantity: number;
-     thumbnail?: string; 
+    thumbnail?: string;
 }
 
 interface CartState {
@@ -151,11 +152,29 @@ interface CartState {
     isMiniCartOpen: boolean;
 }
 
-const initialState: CartState = {
-    items: [],
-    totalQuantity: 0,
-    totalPrice: 0,
-    isMiniCartOpen: false,
+const CART_STORAGE_KEY = 'sobjihaat_cart';
+
+// ---------- localStorage helpers (SSR-safe) ----------
+const loadCartFromStorage = (): CartItem[] => {
+    if (typeof window === 'undefined') return []; // SSR এ localStorage থাকে না
+
+    try {
+        const stored = localStorage.getItem(CART_STORAGE_KEY);
+        return stored ? JSON.parse(stored) : [];
+    } catch (err) {
+        console.error('Failed to load cart from storage:', err);
+        return [];
+    }
+};
+
+const saveCartToStorage = (items: CartItem[]) => {
+    if (typeof window === 'undefined') return;
+
+    try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch (err) {
+        console.error('Failed to save cart to storage:', err);
+    }
 };
 
 const calculateTotals = (items: CartItem[]) => {
@@ -164,22 +183,40 @@ const calculateTotals = (items: CartItem[]) => {
     return { totalQuantity, totalPrice };
 };
 
+// ---------- Initial state: cart লোড হয় localStorage থেকে (থাকলে) ----------
+const initialItems = loadCartFromStorage();
+const initialTotals = calculateTotals(initialItems);
+
+const initialState: CartState = {
+    items: initialItems,
+    totalQuantity: initialTotals.totalQuantity,
+    totalPrice: initialTotals.totalPrice,
+    isMiniCartOpen: false,
+};
+
 const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        addToCart: (state, action: PayloadAction<Omit<CartItem, 'quantity'>>) => {
+        // ✅ fix: quantity প্যারামিটার সাপোর্ট করে, যাতে ProductModal থেকে সরাসরি
+        // নির্দিষ্ট quantity (যেমন ৩টা) একবারে add করা যায়
+        addToCart: (
+            state,
+            action: PayloadAction<Omit<CartItem, 'quantity'> & { quantity?: number }>
+        ) => {
+            const qtyToAdd = action.payload.quantity ?? 1;
             const existingItem = state.items.find(item => item.id === action.payload.id);
 
             if (existingItem) {
-                existingItem.quantity += 1;
+                existingItem.quantity += qtyToAdd;
             } else {
-                state.items.push({ ...action.payload, quantity: 1 });
+                state.items.push({ ...action.payload, quantity: qtyToAdd });
             }
 
             const totals = calculateTotals(state.items);
             state.totalQuantity = totals.totalQuantity;
             state.totalPrice = totals.totalPrice;
+            saveCartToStorage(state.items); // ✅ persist
         },
 
         removeFromCart: (state, action: PayloadAction<number | string>) => {
@@ -188,6 +225,7 @@ const cartSlice = createSlice({
             const totals = calculateTotals(state.items);
             state.totalQuantity = totals.totalQuantity;
             state.totalPrice = totals.totalPrice;
+            saveCartToStorage(state.items);
         },
 
         increaseQuantity: (state, action: PayloadAction<number | string>) => {
@@ -199,6 +237,7 @@ const cartSlice = createSlice({
             const totals = calculateTotals(state.items);
             state.totalQuantity = totals.totalQuantity;
             state.totalPrice = totals.totalPrice;
+            saveCartToStorage(state.items);
         },
 
         decreaseQuantity: (state, action: PayloadAction<number | string>) => {
@@ -214,12 +253,14 @@ const cartSlice = createSlice({
             const totals = calculateTotals(state.items);
             state.totalQuantity = totals.totalQuantity;
             state.totalPrice = totals.totalPrice;
+            saveCartToStorage(state.items);
         },
 
         clearCart: (state) => {
             state.items = [];
             state.totalQuantity = 0;
             state.totalPrice = 0;
+            saveCartToStorage(state.items);
         },
 
         updateQuantity: (state, action: PayloadAction<{ id: number | string; quantity: number }>) => {
@@ -231,6 +272,7 @@ const cartSlice = createSlice({
             const totals = calculateTotals(state.items);
             state.totalQuantity = totals.totalQuantity;
             state.totalPrice = totals.totalPrice;
+            saveCartToStorage(state.items);
         },
 
         openMiniCart: (state) => {

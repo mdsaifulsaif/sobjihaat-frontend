@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRegisterMutation } from '@/redux/api/authApi';
+import { signIn } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
-import { FiUser, FiMail, FiLock, FiPhone, FiArrowRight, FiCheck } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiPhone, FiArrowRight } from 'react-icons/fi';
+import { FcGoogle } from 'react-icons/fc';
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -36,21 +38,18 @@ const RegisterPage = () => {
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 email: formData.email,
-                phone: formData.phone,
+                phoneNumber: formData.phone, // ✅ fix: backend field নাম phoneNumber
                 password: formData.password,
             }).unwrap();
 
-            toast.success('Account Created! Please login.', {
+            toast.success('Account created! Please check your email to verify your account.', {
                 duration: 5000,
-                icon: '🎉',
-                style: {
-                    borderRadius: '10px',
-                    background: '#333',
-                    color: '#fff',
-                },
+                icon: '📧',
             });
 
-            router.push('/login');
+            // ✅ fix: auto sign-in বাদ দেওয়া হলো — email verify না হওয়া পর্যন্ত
+            // backend login কে block করে (isVerified check), তাই auto-login সবসময় fail করত
+            router.push(`/verify-notice?email=${encodeURIComponent(formData.email)}`);
         } catch (err: any) {
             toast.error(err?.data?.message || 'Registration failed. Try again.', {
                 duration: 4000
@@ -58,11 +57,30 @@ const RegisterPage = () => {
         }
     };
 
+    const handleGoogleRegister = () => {
+        signIn("google", { callbackUrl: "/dashboard/user" });
+    };
+
     return (
         <div className="bg-white p-8 rounded-md shadow-2xl shadow-gray-200 border border-gray-100 max-w-lg mx-auto">
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-black text-gray-900 mb-2">Create Account</h1>
                 <p className="text-gray-500 font-medium">Join MegaShop for a better shopping experience</p>
+            </div>
+
+            <button
+                type="button"
+                onClick={handleGoogleRegister}
+                className="w-full flex items-center justify-center gap-3 py-3.5 border border-gray-200 rounded-md font-semibold text-gray-700 hover:bg-gray-50 transition-all mb-6"
+            >
+                <FcGoogle size={20} />
+                Continue with Google
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+                <div className="flex-1 h-px bg-gray-100" />
+                <span className="text-xs text-gray-400 font-medium">OR</span>
+                <div className="flex-1 h-px bg-gray-100" />
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,17 +104,15 @@ const RegisterPage = () => {
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2 px-1">Last Name</label>
-                        <div className="relative group">
-                            <input
-                                type="text"
-                                name="lastName"
-                                required
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-md text-gray-900 text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all outline-none"
-                                placeholder="Doe"
-                            />
-                        </div>
+                        <input
+                            type="text"
+                            name="lastName"
+                            required
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-md text-gray-900 text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all outline-none"
+                            placeholder="Doe"
+                        />
                     </div>
                 </div>
 

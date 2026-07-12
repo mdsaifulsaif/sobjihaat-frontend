@@ -2,11 +2,12 @@
 
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { FiMapPin, FiClock, FiShield } from "react-icons/fi";
 import { PiLeafLight } from "react-icons/pi";
 import { TbCurrencyTaka } from "react-icons/tb";
+import { useSession } from "next-auth/react";
 
 const bannerUrl = "/img/sbb1.png";
 const heroProductImg = "/img/hero-product.png"; // basket/groceries image
@@ -47,6 +48,15 @@ const features: Feature[] = [
 
 const Hero: React.FC = () => {
   const location = "Barisal Sadar, Rupatoli, Nathullabad & more";
+
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    // যখন সেশন স্ট্যাটাস 'authenticated' হবে, তখন ডেটা কনসোল হবে
+    if (status === 'authenticated') {
+      console.log("User Session Data:", session);
+    }
+  }, [session, status]);
 
   return (
     <div className="mx-auto container px-4">

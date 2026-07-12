@@ -30,102 +30,68 @@ import {
     FiMail,
     FiChevronRight,
     FiActivity,
+    FiDollarSign,
+    FiClock,
 } from 'react-icons/fi';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
 }
 
-const menuItems = [
+interface MenuItem {
+    name: string;
+    href: string;
+    icon: any;
+    badge: string | null;
+    badgeColor?: string;
+    submenu?: { name: string; href: string }[];
+}
+
+const menuItems: MenuItem[] = [
     {
         name: 'Dashboard',
-        href: '/dashboard/admin',
+        href: '/rider-dashboard',
         icon: FiHome,
         badge: null
     },
     {
-        name: 'Products',
-        href: '/dashboard/admin/products',
-        icon: FiShoppingBag,
-        badge: null,
-        submenu: [
-            { name: 'All Products', href: '/dashboard/admin/products' },
-            { name: 'Add Product', href: '/dashboard/admin/products/new' },
-        ]
-    },
-    {
-        name: 'Categories',
-        href: '/dashboard/admin/categories',
-        icon: FiGrid,
-        badge: null,
-        submenu: [
-            { name: 'All Categories', href: '/dashboard/admin/categories' },
-            { name: 'Create Category', href: '/dashboard/admin/categories/new' },
-        ]
-    },
-    {
         name: 'Orders',
-        href: '/dashboard/admin/orders',
+        href: '/rider-dashboard/orders',
         icon: FiShoppingCart,
         badge: '12',
         badgeColor: 'bg-red-500'
     },
     {
-        name: 'Customers',
-        href: '/dashboard/admin/customers',
+        name: 'Profile',
+        href: '/rider-dashboard/profile',
         icon: FiUsers,
         badge: null
     },
     {
-        name: 'Payments',
-        href: '/dashboard/admin/payments',
+        name: 'Earnings',
+        href: '/rider-dashboard/earnings',
+        icon: FiDollarSign,
+        badge: null
+    },
+    {
+        name: 'Payout History',
+        href: '/rider-dashboard/payout',
+        icon: FiClock,
+        badge: null
+    },
+    {
+        name: 'Request Payout',
+        href: '/rider-dashboard/payout/request',
         icon: FiCreditCard,
-        badge: null
-    },
-    {
-        name: 'Shipping',
-        href: '/dashboard/admin/shipping',
-        icon: FiTruck,
-        badge: null
-    },
-    {
-        name: 'Reviews',
-        href: '/dashboard/admin/reviews',
-        icon: FiStar,
         badge: '5',
         badgeColor: 'bg-yellow-500'
-    },
-    {
-        name: 'Coupons',
-        href: '/dashboard/admin/coupons',
-        icon: FiTag,
-        badge: null
-    },
-    {
-        name: 'Analytics',
-        href: '/dashboard/admin/analytics',
-        icon: FiBarChart2,
-        badge: null
-    },
-    {
-        name: 'System Health',
-        href: '/dashboard/admin/health',
-        icon: FiActivity,
-        badge: null
-    },
-    {
-        name: 'API Scanner',
-        href: '/dashboard/admin/scanner',
-        icon: FiSearch,
-        badge: null
     },
 ];
 
 const settingsItems = [
-    { name: 'General', href: '/dashboard/admin/settings', icon: FiSettings },
-    { name: 'Theme', href: '/dashboard/admin/theme', icon: FiDroplet },
-    { name: 'Site Content', href: '/dashboard/admin/content', icon: FiFileText },
-    { name: 'Media', href: '/dashboard/admin/media', icon: FiImage },
+    { name: 'General', href: '/rider-dashboard/settings', icon: FiSettings },
+    { name: 'Location', href: '/rider-dashboard/location', icon: FiTruck },
+    { name: 'Status', href: '/rider-dashboard/status', icon: FiActivity },
 ];
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
@@ -147,7 +113,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     };
 
     const isActive = (href: string) => {
-        if (href === '/dashboard/admin') {
+        if (href === '/rider-dashboard') {
             return pathname === href;
         }
         return pathname.startsWith(href);
@@ -172,13 +138,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 {/* Logo */}
                 <div className="h-16 flex items-center justify-between px-4 border-b border-gray-700/50">
                     {sidebarOpen && (
-                        <Link href="/dashboard/admin" className="flex items-center gap-3">
+                        <Link href="/rider-dashboard" className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center font-bold text-lg shadow-md">
-                                M
+                                <FiTruck className="text-white" size={22} />
                             </div>
                             <div>
-                                <span className="font-bold text-lg">MegaShop</span>
-                                <p className="text-xs text-gray-400">Admin Panel</p>
+                                <span className="font-bold text-lg">Rider Panel</span>
+                                <p className="text-xs text-gray-400">Delivery Dashboard</p>
                             </div>
                         </Link>
                     )}
@@ -250,9 +216,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                 </Link>
 
                                 {/* Submenu */}
-                                {hasSubmenu && isExpanded && sidebarOpen && (
+                                {hasSubmenu && isExpanded && sidebarOpen && item.submenu && (
                                     <div className="mt-1 ml-4 pl-4 border-l border-gray-700 space-y-1">
-                                        {item.submenu!.map((sub) => (
+                                        {item.submenu.map((sub) => (
                                             <Link
                                                 key={sub.name}
                                                 href={sub.href}
@@ -329,7 +295,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                             <FiSearch className="text-gray-400" size={18} />
                             <input
                                 type="text"
-                                placeholder="Search orders, products..."
+                                placeholder="Search orders, deliveries..."
                                 className="bg-transparent outline-none w-72 text-sm"
                             />
                         </div>
@@ -337,15 +303,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
                     {/* Right */}
                     <div className="flex items-center gap-3">
-                        {/* Visit Store */}
-                        <Link
-                            href="/"
-                            target="_blank"
-                            className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-600 transition-colors"
-                        >
-                            <FiGlobe size={16} />
-                            Visit Store
-                        </Link>
+                        {/* Status Indicator */}
+                        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
+                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            <span className="text-xs font-medium text-green-700">Online</span>
+                        </div>
 
                         {/* Notifications */}
                         <button className="relative p-2.5 hover:bg-gray-100 rounded-md">
@@ -360,11 +322,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         {/* Profile */}
                         <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 rounded-md px-3 py-2 transition-colors">
                             <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center text-white font-bold shadow-md">
-                                A
+                                <FiTruck className="text-white" size={18} />
                             </div>
                             <div className="hidden sm:block">
-                                <p className="text-sm font-semibold text-gray-800">Admin User</p>
-                                <p className="text-xs text-gray-500">Super Admin</p>
+                                <p className="text-sm font-semibold text-gray-800">Rider User</p>
+                                <p className="text-xs text-gray-500">Delivery Rider</p>
                             </div>
                             <FiChevronDown className="hidden sm:block text-gray-400" />
                         </div>

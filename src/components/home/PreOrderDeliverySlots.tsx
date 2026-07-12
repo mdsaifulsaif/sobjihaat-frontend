@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -123,20 +124,6 @@ const ClockIcon: React.FC<{ color?: string; size?: number }> = ({
   </svg>
 );
 
-const CheckBadge = () => (
-  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-primary)]">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M5 13l4.5 4.5L19 7"
-        stroke="#fff"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </span>
-);
-
 const InfoIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <circle
@@ -165,24 +152,134 @@ const benefits = [
   "Priority Delivery",
 ];
 
-interface TimeSlot {
-  id: number;
-  range: string;
-  label: string;
+/* ---------- custom-time illustration (calendar + clock, no manual time picking) ---------- */
+
+const DAY_START_HOUR = 9; // 9:00 AM
+const DAY_END_HOUR = 17; // 5:00 PM
+
+function formatHourLabel(hour24: number) {
+  const period = hour24 >= 12 ? "PM" : "AM";
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  return `${hour12}:00 ${period}`;
 }
 
-const timeSlots: TimeSlot[] = [
-  { id: 1, range: "8:00 AM – 10:00 AM", label: "Fast Delivery" },
-  { id: 2, range: "10:00 AM – 12:00 PM", label: "Fast Delivery" },
-  { id: 3, range: "2:00 PM – 4:00 PM", label: "Standard Delivery" },
-  { id: 4, range: "6:00 PM – 8:00 PM", label: "Standard Delivery" },
-];
+const CalendarClockIcon: React.FC<{ size?: number }> = ({ size = 120 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 120 120"
+    fill="none"
+    style={{ overflow: "visible" }}
+  >
+    <defs>
+      <filter id="cc-shadow" x="-40%" y="-40%" width="180%" height="180%">
+        <feDropShadow
+          dx="0"
+          dy="4"
+          stdDeviation="4"
+          floodColor="var(--color-primary)"
+          floodOpacity="0.25"
+        />
+      </filter>
+    </defs>
+
+    {/* calendar ring tabs */}
+    <rect x="30" y="6" width="9" height="20" rx="4.5" fill="var(--color-primary)" />
+    <rect x="81" y="6" width="9" height="20" rx="4.5" fill="var(--color-primary)" />
+
+    {/* calendar card */}
+    <g filter="url(#cc-shadow)">
+      <rect
+        x="12"
+        y="16"
+        width="86"
+        height="82"
+        rx="18"
+        fill="var(--color-primary)"
+        fillOpacity="0.14"
+        stroke="var(--color-primary)"
+        strokeOpacity="0.3"
+        strokeWidth="2"
+      />
+      {/* calendar header */}
+      <path
+        d="M12 34a18 18 0 0 1 18-18h50a18 18 0 0 1 18 18v8H12v-8Z"
+        fill="var(--color-primary)"
+      />
+    </g>
+
+    {/* date grid (rounded squares like real calendar cells) */}
+    <g fill="var(--color-primary)" fillOpacity="0.5">
+      <rect x="22" y="52" width="9" height="9" rx="2.5" />
+      <rect x="37" y="52" width="9" height="9" rx="2.5" />
+      <rect x="52" y="52" width="9" height="9" rx="2.5" />
+      <rect x="22" y="67" width="9" height="9" rx="2.5" />
+      <rect x="37" y="67" width="9" height="9" rx="2.5" />
+      <rect x="22" y="82" width="9" height="9" rx="2.5" />
+    </g>
+    <g fill="var(--color-primary)" fillOpacity="0.25">
+      <rect x="67" y="52" width="9" height="9" rx="2.5" />
+      <rect x="52" y="67" width="9" height="9" rx="2.5" />
+      <rect x="37" y="82" width="9" height="9" rx="2.5" />
+    </g>
+
+    {/* clock badge overlapping bottom-right corner */}
+    <g filter="url(#cc-shadow)">
+      <circle cx="90" cy="90" r="28" fill="#fff" />
+      <circle
+        cx="90"
+        cy="90"
+        r="24"
+        fill="var(--color-primary)"
+      />
+    </g>
+
+    {/* tick marks at 12 / 3 / 6 / 9 */}
+    <g stroke="#fff" strokeWidth="2.5" strokeLinecap="round" opacity="0.85">
+      <line x1="90" y1="69" x2="90" y2="72" />
+      <line x1="111" y1="90" x2="108" y2="90" />
+      <line x1="90" y1="111" x2="90" y2="108" />
+      <line x1="69" y1="90" x2="72" y2="90" />
+    </g>
+
+    {/* clock hands (set to a friendly ~10:10) */}
+    <circle cx="90" cy="90" r="2.6" fill="#fff" />
+    <path
+      d="M90 90 90 77"
+      stroke="#fff"
+      strokeWidth="3.4"
+      strokeLinecap="round"
+    />
+    <path
+      d="M90 90 100 83"
+      stroke="#fff"
+      strokeWidth="3.4"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const CustomTimeNotice: React.FC = () => (
+  <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center sm:p-6">
+    <div className="mx-auto flex h-32 w-32 items-center justify-center pt-2 sm:h-36 sm:w-36">
+      <CalendarClockIcon size={116} />
+    </div>
+
+    <h3 className="mt-2 text-base font-bold text-gray-900 sm:text-lg">
+      Custom Pre-Order Timing
+    </h3>
+    <p className="mx-auto mt-1.5 max-w-xs text-xs text-gray-500 sm:text-sm">
+      Place your order anytime, and we&apos;ll get it ready for delivery
+      between {formatHourLabel(DAY_START_HOUR)} – {formatHourLabel(DAY_END_HOUR)},
+      whatever suits you best.
+    </p>
+  </div>
+);
 
 /* ---------- main component ---------- */
 
 const PreOrderDeliveryTime: React.FC = () => {
   const [day, setDay] = useState<"today" | "tomorrow">("today");
-  const [selectedSlot, setSelectedSlot] = useState<number>(1);
 
   return (
     <section className="bg-[#f8fbf7] px-4 py-10 sm:py-12">
@@ -297,53 +394,18 @@ const PreOrderDeliveryTime: React.FC = () => {
                 </button>
               </div>
 
-              {/* Time Slots */}
-              <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4">
-                {timeSlots.map((slot) => {
-                  const isSelected = selectedSlot === slot.id;
-                  return (
-                    <button
-                      key={slot.id}
-                      onClick={() => setSelectedSlot(slot.id)}
-                      className={`relative rounded-2xl border p-4 text-left transition-all hover:border-[var(--color-primary)] sm:p-5 ${
-                        isSelected
-                          ? "border-[var(--color-primary)] bg-white shadow-md"
-                          : "border-gray-200 bg-white"
-                      }`}
-                    >
-                      {isSelected && (
-                        <div className="absolute right-3 top-3 sm:right-4 sm:top-4">
-                          <CheckBadge />
-                        </div>
-                      )}
-
-                      <div className="flex items-start gap-3">
-                        <ClockIcon
-                          color={
-                            isSelected ? "var(--color-primary)" : "#94a3b8"
-                          }
-                          size={20}
-                        />
-
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900 sm:text-base">
-                            {slot.range}
-                          </p>
-                          <p className="text-xs text-gray-500 sm:text-sm mt-0.5">
-                            {slot.label}
-                          </p>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
+              {/* Custom pre-order time notice (illustrative only, not a picker) */}
+              <div className="mt-6 sm:mt-8">
+                <CustomTimeNotice />
               </div>
 
               {/* Info Box */}
               <div className="mt-6 flex gap-3 rounded-2xl bg-[#f0f9f0] p-4 sm:mt-8">
                 <InfoIcon />
                 <p className="text-xs text-[#2f6b34] sm:text-sm">
-                  We&apos;ll deliver your order in your selected time slot.
+                  We&apos;ll confirm your exact delivery time for{" "}
+                  {day === "today" ? "today" : "tomorrow"} once your pre-order
+                  is placed.
                 </p>
               </div>
             </div>

@@ -13,14 +13,15 @@
 
 // app/(rider)/layout.tsx
 "use client";
-import { useRiderSocket } from "@/hooks/useRiderSocket";
+// import { useRiderSocket } from "@/hooks/useRiderSocket";
+// import { useRiderSocket } from '@/hooks/useRiderSocket';
 
 export default function DashboardLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    useRiderSocket(); // ✅ function body তে, return এর আগে
+    // useRiderSocket(); // ✅ function body তে, return এর আগে
 
     return (
         <div className="dashboard-wrapper">

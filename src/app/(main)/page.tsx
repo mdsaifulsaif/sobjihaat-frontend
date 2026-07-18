@@ -49,6 +49,7 @@ import {
 } from '@/components/home';
 import AppDownloadPromo from '@/components/home/Appdownloadpromo';
 import ComboProducts from '@/components/home/ComboProducts';
+import DeliveryBanner from '@/components/home/DeliveryBanner';
 import DeliveryCharges from '@/components/home/DeliveryCharges';
 import DeliveryCoverage from '@/components/home/Deliverycoverage';
 import Faq from '@/components/home/Faq';
@@ -95,7 +96,8 @@ export default async function Home() {
       <TrustedBrands />
       <FeaturedProducts />
       <ComboProducts />
-      <PreOrderDeliverySlots />
+      {/* <PreOrderDeliverySlots /> */}
+      <DeliveryBanner />
       <DeliveryCharges />
       <OurCommitment />
       {/* <WhyChooseUs /> */}

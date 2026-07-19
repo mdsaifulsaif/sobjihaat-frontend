@@ -104,6 +104,24 @@ export const reviewApi = baseApi.injectEndpoints({
         { type: 'Reviews', id: productId },
       ],
     }),
+      // ✅ Get Featured Reviews (Public)
+    getFeaturedReviews: builder.query({
+      query: (params = { limit: 6 }) => ({
+        url: '/reviews/featured',
+        method: 'GET',
+        params,
+      }),
+      providesTags: ['Reviews'],
+    }),
+
+    // ✅ Admin: Toggle Featured
+    toggleFeaturedReview: builder.mutation({
+      query: (id) => ({
+        url: `/reviews/admin/${id}/featured`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Reviews'],
+    }),
   }),
 });
 
@@ -111,4 +129,6 @@ export const {
   useCreateReviewMutation,
   useGetReviewByIdQuery,
   useGetProductReviewsQuery,
+  useGetFeaturedReviewsQuery,
+  useToggleFeaturedReviewMutation,
 } = reviewApi;

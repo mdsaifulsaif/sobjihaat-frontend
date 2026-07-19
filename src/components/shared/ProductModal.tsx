@@ -254,7 +254,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
     setIsSubmittingReview(true);
     try {
       await createReview({
-        productId: product._id,
+        productID: product._id,
         rating: reviewRating,
         comment: reviewComment,
       }).unwrap();

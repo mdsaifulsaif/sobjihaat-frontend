@@ -222,6 +222,13 @@ export const productApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Products"],
     }),
+    getRelatedProducts: builder.query({
+      query: (categoryId: string) => ({
+        url: "/products/related-products",
+        params: { categoryId },
+      }),
+      providesTags: ["Products"],
+    }),
   }),
 });
 
@@ -236,5 +243,6 @@ export const {
   useUpdateStockMutation,
   useBulkUpdateStatusMutation,
   useBulkDeleteMutation,
-  useGetFeaturedProdcutQuery
+  useGetFeaturedProdcutQuery,
+  useGetRelatedProductsQuery
 } = productApi;

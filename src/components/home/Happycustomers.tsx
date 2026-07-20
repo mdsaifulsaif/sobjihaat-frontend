@@ -788,7 +788,6 @@ const HappyCustomers: React.FC = () => {
     ) ?? [];
 
   // Duplicate the list so the marquee can loop seamlessly (no snap-back).
-  // Guard against < 2 items so translateX(-50%) still makes sense.
   const loopData = testimonials.length > 0 ? [...testimonials, ...testimonials] : [];
 
   return (
@@ -818,7 +817,7 @@ const HappyCustomers: React.FC = () => {
 
         {/* ---------- testimonial marquee (smooth, infinite, never snaps back) ---------- */}
         <div
-          className="group relative mt-10 overflow-hidden"
+          className="marquee-viewport relative mt-10 overflow-hidden"
           style={{
             maskImage: 'linear-gradient(to right, transparent, black 6%, black 94%, transparent)',
             WebkitMaskImage:
@@ -859,11 +858,17 @@ const HappyCustomers: React.FC = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      {/* Plain global <style>, NOT styled-jsx — avoids "styled-jsx not configured"
+          issues in non-Next.js setups and keeps behavior predictable. */}
+      <style>{`
         .marquee-track {
-          animation: marquee-scroll 40s linear infinite;
+          animation-name: marquee-scroll;
+          animation-duration: 40s;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+          will-change: transform;
         }
-        .group:hover .marquee-track {
+        .marquee-viewport:hover .marquee-track {
           animation-play-state: paused;
         }
         @keyframes marquee-scroll {
@@ -872,11 +877,6 @@ const HappyCustomers: React.FC = () => {
           }
           to {
             transform: translateX(-50%);
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .marquee-track {
-            animation: none;
           }
         }
       `}</style>

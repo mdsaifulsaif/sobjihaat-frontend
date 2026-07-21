@@ -96,7 +96,7 @@ export const reviewApi = baseApi.injectEndpoints({
     // For product page (User)
     getProductReviews: builder.query({
       query: ({ productId, ...params }) => ({
-        url: `/reviews/product/${productId}`,
+        url: `/reviews/${productId}`,
         method: 'GET',
         params,
       }),

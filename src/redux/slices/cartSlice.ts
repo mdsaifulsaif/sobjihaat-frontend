@@ -136,6 +136,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface CartItem {
     id: number | string; // API theke _id (string) ashe, tai number | string both support kora holo
+        productID: string;     // ✅ নতুন
+    variantID?: string;    // ✅ নতুন
     name: string;
     price: number;
     mrp: number;

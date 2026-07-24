@@ -1002,41 +1002,45 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   const qtyInCart = cartItems.find((it: any) => it.id === cartItemId)?.quantity || 0;
 
   /* ---------- Cart Handlers ---------- */
-  const handleAddToCart = () => {
+const handleAddToCart = () => {
     if (!inStock) return;
     dispatch(
-      addToCart({
-        id: cartItemId,
-        name: selectedVariant
-          ? `${product.name} (${selectedVariant.weightOrVolume} kg)`
-          : product.name,
-        price,
-        mrp,
-        image: product.thumbnail,
-        category: product.categoryID?.name || '',
-        quantity: 1,
-      })
+        addToCart({
+            id: cartItemId,
+              productID: product._id,              // ✅ যোগ করুন
+        variantID: selectedVariant?._id,     // ✅ যোগ করুন     // ✅ variant থাকলে তার id, না থাকলে undefined
+            name: selectedVariant
+                ? `${product.name} (${selectedVariant.weightOrVolume} kg)`
+                : product.name,
+            price,
+            mrp,
+            image: product.thumbnail,
+            category: product.categoryID?.name || '',
+            quantity: 1,
+        })
     );
-  };
+};
 
-  const handleBuyNow = () => {
+const handleBuyNow = () => {
     if (!inStock) return;
     dispatch(
-      addToCart({
-        id: cartItemId,
-        name: selectedVariant
-          ? `${product.name} (${selectedVariant.weightOrVolume} kg)`
-          : product.name,
-        price,
-        mrp,
-        image: product.thumbnail,
-        category: product.categoryID?.name || '',
-        quantity: 1,
-      })
+        addToCart({
+            id: cartItemId,
+            productID: product._id,
+            variantID: selectedVariant?._id,
+            name: selectedVariant
+                ? `${product.name} (${selectedVariant.weightOrVolume} kg)`
+                : product.name,
+            price,
+            mrp,
+            image: product.thumbnail,
+            category: product.categoryID?.name || '',
+            quantity: 1,
+        })
     );
     onClose();
     router.push('/checkout');
-  };
+};
 
   /* ---------- Review Submit ---------- */
   const handleSubmitReview = async () => {

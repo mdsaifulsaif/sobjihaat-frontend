@@ -23,6 +23,8 @@
 //   reviews: number;
 //   categoryName?: string;
 //   unit?: string;
+//   productID?: string;
+//   stock?: number; // ✅ stock যোগ করা হয়েছে
 // }
 
 // interface ProductCardProps {
@@ -34,6 +36,9 @@
 //   const dispatch = useAppDispatch();
 //   const [isQuantityHovered, setIsQuantityHovered] = useState(false);
 
+//   // স্টক চেক - stock না থাকলে true ধরা হবে (পুরোনো যেসব জায়গায় stock নেই সেগুলোর জন্য)
+//   const isInStock = product.stock === undefined ? true : (product.stock ?? 0) > 0;
+
 //   const cartItem = useAppSelector((state) =>
 //     state.cart.items.find((item) => item.id === product.id),
 //   );
@@ -42,9 +47,12 @@
 
 //   const handleAddToCart = (e: React.MouseEvent) => {
 //     e.preventDefault();
+//     if (!isInStock) return;
+
 //     dispatch(
 //       addToCart({
 //         id: product.id,
+//         productID: product.productID || String(product.id),
 //         name: product.name,
 //         price: product.price,
 //         mrp: product.mrp || product.originalPrice || product.price,
@@ -56,7 +64,10 @@
 
 //   const handleIncrease = (e: React.MouseEvent) => {
 //     e.preventDefault();
-//     dispatch(increaseQuantity(product.id));
+//     if (!isInStock) return;
+//     if (quantity < (product.stock || 999)) {
+//       dispatch(increaseQuantity(product.id));
+//     }
 //   };
 
 //   const handleDecrease = (e: React.MouseEvent) => {
@@ -66,20 +77,12 @@
 
 //   const handleWishlist = (e: React.MouseEvent) => {
 //     e.preventDefault();
-//     // Wishlist logic এখানে যোগ করবেন
 //   };
 
 //   const oldPrice = product.mrp || product.originalPrice;
-//   const discountText =
-//     product.discount ||
-//     (oldPrice
-//       ? `${Math.round(((oldPrice - product.price) / oldPrice) * 100)}%`
-//       : null);
 
 //   return (
-  
-
-//   <div className="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 relative h-full flex flex-col">
+//     <div className="group bg-white rounded-xl md:rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 relative h-full flex flex-col">
 //       {/* Image */}
 //       <div className="relative aspect-square md:aspect-[4/3] bg-gray-50 overflow-hidden">
 //         <img
@@ -110,15 +113,33 @@
 //           {quantity === 0 ? (
 //             <button
 //               onClick={handleAddToCart}
-//               className="w-8 h-8 md:w-11 md:h-11 bg-white border-2 border-[var(--color-primary)] text-[var(--color-primary)] rounded-xl md:rounded-2xl flex items-center justify-center transition-all active:scale-95"
+//               disabled={!isInStock}
+//               className={`w-8 h-8 md:w-11 md:h-11 bg-white border-2 border-[var(--color-primary)] rounded-xl md:rounded-2xl flex items-center justify-center transition-all active:scale-95 ${
+//                 isInStock 
+//                   ? 'text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white' 
+//                   : 'text-gray-400 border-gray-300 cursor-not-allowed opacity-60'
+//               }`}
 //             >
 //               <span className="text-xl font-bold">+</span>
 //             </button>
 //           ) : isQuantityHovered ? (
 //             <div className="bg-white border border-[var(--color-primary)] rounded-xl md:rounded-2xl shadow-sm flex items-center py-0.5 px-1 md:py-1 md:px-2">
-//               <button onClick={handleDecrease} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)]">-</button>
+//               <button 
+//                 onClick={handleDecrease} 
+//                 className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)]"
+//               >
+//                 -
+//               </button>
 //               <span className="font-bold text-sm md:text-xl px-2 text-gray-900">{quantity}</span>
-//               <button onClick={handleIncrease} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)]">+</button>
+//               <button 
+//                 onClick={handleIncrease} 
+//                 disabled={!isInStock || quantity >= (product.stock || 999)}
+//                 className={`w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)] ${
+//                   (!isInStock || quantity >= (product.stock || 999)) ? 'opacity-40 cursor-not-allowed' : ''
+//                 }`}
+//               >
+//                 +
+//               </button>
 //             </div>
 //           ) : (
 //             <div 
@@ -171,8 +192,6 @@
 
 
 
-
-
 "use client";
 
 import React, { useState } from "react";
@@ -218,6 +237,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
 
   const quantity = cartItem?.quantity || 0;
 
+  // ✅ discount 0/falsy value hole show na kore, valid number check
+  const discountValue = Number(product.discount) || 0;
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isInStock) return;
@@ -261,12 +283,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+            !isInStock ? "opacity-50 grayscale-[30%]" : ""
+          }`}
         />
 
-        {product.discount && (
+        {discountValue > 0 && isInStock && (
           <span className="absolute top-1.5 left-1.5 md:top-3 md:left-3 bg-[#EA4335] text-white text-[9px] md:text-xs font-bold px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-md z-10">
-            {product.discount}% OFF
+            {discountValue}% OFF
+          </span>
+        )}
+
+        {/* ✅ Out of Stock badge */}
+        {!isInStock && (
+          <span className="absolute top-1.5 left-1.5 md:top-3 md:left-3 bg-gray-900/80 text-white text-[9px] md:text-xs font-bold px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-md z-10">
+            Out of Stock
           </span>
         )}
 
@@ -277,52 +308,51 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
           <FiHeart className="w-3 h-3 md:w-[17px] md:h-[17px]" />
         </button>
 
-        {/* Quantity Controller */}
-        <div 
-          className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-20"
-          onMouseEnter={() => setIsQuantityHovered(true)}
-          onMouseLeave={() => setIsQuantityHovered(false)}
-        >
-          {quantity === 0 ? (
-            <button
-              onClick={handleAddToCart}
-              disabled={!isInStock}
-              className={`w-8 h-8 md:w-11 md:h-11 bg-white border-2 border-[var(--color-primary)] rounded-xl md:rounded-2xl flex items-center justify-center transition-all active:scale-95 ${
-                isInStock 
-                  ? 'text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white' 
-                  : 'text-gray-400 border-gray-300 cursor-not-allowed opacity-60'
-              }`}
-            >
-              <span className="text-xl font-bold">+</span>
-            </button>
-          ) : isQuantityHovered ? (
-            <div className="bg-white border border-[var(--color-primary)] rounded-xl md:rounded-2xl shadow-sm flex items-center py-0.5 px-1 md:py-1 md:px-2">
-              <button 
-                onClick={handleDecrease} 
-                className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)]"
+        {/* Quantity Controller - stock thakle e dekhabe */}
+        {isInStock && (
+          <div
+            className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-20"
+            onMouseEnter={() => setIsQuantityHovered(true)}
+            onMouseLeave={() => setIsQuantityHovered(false)}
+          >
+            {quantity === 0 ? (
+              <button
+                onClick={handleAddToCart}
+                className="w-8 h-8 md:w-11 md:h-11 bg-white border-2 border-[var(--color-primary)] rounded-xl md:rounded-2xl flex items-center justify-center transition-all active:scale-95 text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white"
               >
-                -
+                <span className="text-xl font-bold">+</span>
               </button>
-              <span className="font-bold text-sm md:text-xl px-2 text-gray-900">{quantity}</span>
-              <button 
-                onClick={handleIncrease} 
-                disabled={!isInStock || quantity >= (product.stock || 999)}
-                className={`w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)] ${
-                  (!isInStock || quantity >= (product.stock || 999)) ? 'opacity-40 cursor-not-allowed' : ''
-                }`}
+            ) : isQuantityHovered ? (
+              <div className="bg-white border border-[var(--color-primary)] rounded-xl md:rounded-2xl shadow-sm flex items-center py-0.5 px-1 md:py-1 md:px-2">
+                <button
+                  onClick={handleDecrease}
+                  className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)]"
+                >
+                  -
+                </button>
+                <span className="font-bold text-sm md:text-xl px-2 text-gray-900">
+                  {quantity}
+                </span>
+                <button
+                  onClick={handleIncrease}
+                  disabled={quantity >= (product.stock || 999)}
+                  className={`w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-2xl text-[var(--color-primary)] ${
+                    quantity >= (product.stock || 999) ? "opacity-40 cursor-not-allowed" : ""
+                  }`}
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={handleIncrease}
+                className="w-8 h-8 md:w-11 md:h-11 bg-[var(--color-primary)] text-white rounded-xl md:rounded-2xl flex items-center justify-center font-bold text-sm md:text-xl cursor-pointer shadow-lg"
               >
-                +
-              </button>
-            </div>
-          ) : (
-            <div 
-              onClick={handleIncrease}
-              className="w-8 h-8 md:w-11 md:h-11 bg-[var(--color-primary)] text-white rounded-xl md:rounded-2xl flex items-center justify-center font-bold text-sm md:text-xl cursor-pointer shadow-lg"
-            >
-              {quantity}
-            </div>
-          )}
-        </div>
+                {quantity}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Info */}
@@ -332,21 +362,32 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
             <span className="text-sm md:text-xl font-bold text-[var(--color-primary)]">
               ৳{product.price}
             </span>
-            {oldPrice && (
-              <span className="text-gray-400 line-through text-[10px] md:text-sm">৳{oldPrice}</span>
+            {oldPrice && oldPrice > product.price && (
+              <span className="text-gray-400 line-through text-[10px] md:text-sm">
+                ৳{oldPrice}
+              </span>
             )}
           </div>
 
           <p className="text-[11px] md:text-[14px] leading-tight text-gray-800 line-clamp-2 mt-0.5 md:mt-1">
             {product.name}
           </p>
+
+          {/* ✅ Out of Stock chhoto message text-eo (card body-te) */}
+          {!isInStock && (
+            <p className="text-[10px] md:text-xs text-red-500 font-medium mt-0.5 md:mt-1">
+              Out of Stock
+            </p>
+          )}
         </div>
 
         {/* Bottom Info */}
         <div className="flex items-center justify-between mt-1 md:mt-auto pt-1 md:pt-2 border-t border-gray-50">
           <div className="flex items-center gap-0.5 md:gap-1">
             <span className="text-yellow-500 text-[10px] md:text-lg">★</span>
-            <span className="font-medium text-[10px] md:text-sm text-gray-600">{product.rating}</span>
+            <span className="font-medium text-[10px] md:text-sm text-gray-600">
+              {product.rating}
+            </span>
           </div>
 
           {product.unit && (

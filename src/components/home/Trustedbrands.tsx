@@ -1,25 +1,64 @@
 
+
+
+
 // "use client";
 
-// import React from 'react';
+// import React, { useState, useEffect } from 'react';
 // import Image from 'next/image';
 // import Link from 'next/link';
 // import { useGetAllBrandsQuery } from '@/redux/api/brandApi';
 
-// const TrustedBrands = () => {
-//   const { data: brandsResponse, isLoading } = useGetAllBrandsQuery({
-//     page: 1,
-//     limit: 20,
-//   });
+// // Brands Skeleton Loader
+// const BrandsSkeletonLoader = () => (
+//   <div className="flex gap-6 overflow-hidden justify-center items-center">
+//     {Array.from({ length: 6 }).map((_, index) => (
+//       <div
+//         key={index}
+//         className="w-[150px] sm:w-[170px] md:w-[190px] lg:w-[200px] h-[160px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center space-y-3 animate-pulse shrink-0"
+//       >
+//         <div className="h-16 w-16 rounded-full bg-gray-200" />
+//         <div className="h-3 w-1/2 bg-gray-200 rounded-full" />
+//       </div>
+//     ))}
+//   </div>
+// );
 
-//   const brands = brandsResponse?.data || [];
+// interface TrustedBrandsProps {
+//   initialBrands?: any[];
+// }
 
-//   if (isLoading) {
+// const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands }) => {
+//   const [isMounted, setIsMounted] = useState(false);
+
+//   useEffect(() => {
+//     setIsMounted(true);
+//   }, []);
+
+//   const { data: brandsResponse, isLoading } = useGetAllBrandsQuery(
+//     { page: 1, limit: 20 },
+//     { skip: !!initialBrands }
+//   );
+
+//   const brands = initialBrands || brandsResponse?.data || [];
+
+//   // ✅ Client mount হওয়ার আগ পর্যন্ত Skeleton লোডার দেখাবে
+//   if (!isMounted || (!initialBrands && isLoading)) {
 //     return (
-//       <section className="py-16 bg-[#f8f9f6]">
-//         <div className="container mx-auto px-4 text-center">
-//           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[var(--color-primary)] border-r-transparent"></div>
-//           <p className="mt-4 text-gray-500">Loading trusted brands...</p>
+//       <section className="relative py-16 bg-[#f8f9f6] overflow-hidden">
+//         <div className="container mx-auto px-4">
+//           <div className="text-center mb-12">
+//             <span className="inline-block mb-3 px-5 py-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-sm font-bold rounded-full">
+//               TOP BRANDS
+//             </span>
+//             <h2 className="text-4xl font-bold text-gray-900">
+//               Trusted Brands, Quality You Can Trust
+//             </h2>
+//             <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+//               We partner with the best brands to bring you authentic products every day.
+//             </p>
+//           </div>
+//           <BrandsSkeletonLoader />
 //         </div>
 //       </section>
 //     );
@@ -35,7 +74,6 @@
 //     );
 //   }
 
-//   // ✅ 3 বার ডুপ্লিকেট করুন - smooth loop এর জন্য
 //   const loopBrands = [...brands, ...brands, ...brands];
 
 //   return (
@@ -76,7 +114,7 @@
 //                         className="h-20 w-20 rounded-full flex items-center justify-center text-4xl font-bold text-white"
 //                         style={{ backgroundColor: 'var(--color-primary)' }}
 //                       >
-//                         {brand.name.slice(0, 1)}
+//                         {brand.name?.slice(0, 1)}
 //                       </div>
 //                     )}
 //                   </div>
@@ -137,7 +175,6 @@
 //           }
 //         }
 
-//         /* Hover করলে থামবে */
 //         .marquee-wrapper:hover .marquee-track {
 //           animation-play-state: paused;
 //         }
@@ -151,13 +188,32 @@
 
 
 
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useGetAllBrandsQuery } from '@/redux/api/brandApi';
+
+// Brand Interface
+export interface Brand {
+  _id: string;
+  name: string;
+  slug: string;
+  logo: string;
+  description?: string;
+  status: string;
+  isFeatured: boolean;
+  showInHome: boolean;
+  showInMenu: boolean;
+  order: number;
+  metaTitle?: string;
+  metaDescription?: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v?: number;
+  productCount: number;
+}
 
 // Brands Skeleton Loader
 const BrandsSkeletonLoader = () => (
@@ -175,25 +231,18 @@ const BrandsSkeletonLoader = () => (
 );
 
 interface TrustedBrandsProps {
-  initialBrands?: any[];
+  initialBrands?: Brand[];
 }
 
-const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands }) => {
+const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const { data: brandsResponse, isLoading } = useGetAllBrandsQuery(
-    { page: 1, limit: 20 },
-    { skip: !!initialBrands }
-  );
-
-  const brands = initialBrands || brandsResponse?.data || [];
-
-  // ✅ Client mount হওয়ার আগ পর্যন্ত Skeleton লোডার দেখাবে
-  if (!isMounted || (!initialBrands && isLoading)) {
+  // ✅ Client mount হওয়ার আগ পর্যন্ত Skeleton লোডার দেখাবে
+  if (!isMounted) {
     return (
       <section className="relative py-16 bg-[#f8f9f6] overflow-hidden">
         <div className="container mx-auto px-4">
@@ -214,7 +263,7 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands }) => {
     );
   }
 
-  if (brands.length === 0) {
+  if (initialBrands.length === 0) {
     return (
       <section className="py-16 bg-[#f8f9f6]">
         <div className="container mx-auto px-4 text-center">
@@ -224,7 +273,7 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands }) => {
     );
   }
 
-  const loopBrands = [...brands, ...brands, ...brands];
+  const loopBrands = [...initialBrands, ...initialBrands, ...initialBrands];
 
   return (
     <section className="relative py-16 bg-[#f8f9f6] overflow-hidden">
@@ -243,7 +292,7 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands }) => {
 
         <div className="marquee-wrapper">
           <div className="marquee-track">
-            {loopBrands.map((brand: any, index: number) => (
+            {loopBrands.map((brand: Brand, index: number) => (
               <div key={`${brand._id}-${index}`} className="marquee-item">
                 <Link
                   href={`/brands/${brand.slug}`}
@@ -261,7 +310,7 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands }) => {
                       />
                     ) : (
                       <div
-                        className="h-20 w-20 rounded-full flex items-center justify-center text-4xl font-bold text-white"
+                        className="h-20 w-20 rounded-full flex items-center justify-center text-4xl font-bold text-white uppercase"
                         style={{ backgroundColor: 'var(--color-primary)' }}
                       >
                         {brand.name?.slice(0, 1)}
@@ -269,7 +318,7 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands }) => {
                     )}
                   </div>
                   <p className="text-xs text-[var(--color-primary)] font-medium text-center">
-                    {brand.productCount || '50+'} Products
+                    {brand.productCount > 0 ? `${brand.productCount} Products` : '50+ Products'}
                   </p>
                 </Link>
               </div>

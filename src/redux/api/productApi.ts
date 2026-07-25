@@ -1,6 +1,3 @@
-
-
-
 import { baseApi } from "./baseApi";
 
 export const productApi = baseApi.injectEndpoints({
@@ -24,7 +21,15 @@ export const productApi = baseApi.injectEndpoints({
 
     // নতুন: slug দিয়ে category wise product fetch
     getProductsByCategorySlug: builder.query({
-      query: ({ slug, page = 1, limit = 10 }: { slug: string; page?: number; limit?: number }) => ({
+      query: ({
+        slug,
+        page = 1,
+        limit = 10,
+      }: {
+        slug: string;
+        page?: number;
+        limit?: number;
+      }) => ({
         url: `/products/category/${slug}`,
         params: { page, limit },
       }),
@@ -39,12 +44,17 @@ export const productApi = baseApi.injectEndpoints({
         }
         // pagination hole purono data er sathe notun data merge (duplicate bad diye)
         const existingIds = new Set(currentCache.data.map((p: any) => p._id));
-        const uniqueNew = newItems.data.filter((p: any) => !existingIds.has(p._id));
+        const uniqueNew = newItems.data.filter(
+          (p: any) => !existingIds.has(p._id),
+        );
         currentCache.data.push(...uniqueNew);
         currentCache.meta = newItems.meta;
       },
       forceRefetch: ({ currentArg, previousArg }) => {
-        return currentArg?.page !== previousArg?.page || currentArg?.slug !== previousArg?.slug;
+        return (
+          currentArg?.page !== previousArg?.page ||
+          currentArg?.slug !== previousArg?.slug
+        );
       },
       providesTags: ["Products"],
     }),
@@ -126,6 +136,7 @@ export const productApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Products"],
     }),
+  
   }),
 });
 
@@ -141,5 +152,5 @@ export const {
   useBulkUpdateStatusMutation,
   useBulkDeleteMutation,
   useGetFeaturedProdcutQuery,
-  useGetRelatedProductsQuery
+  useGetRelatedProductsQuery,
 } = productApi;

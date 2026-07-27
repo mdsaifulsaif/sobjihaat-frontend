@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, FreeMode } from "swiper/modules";
-import { useGetFeaturedProdcutQuery } from "@/redux/api/productApi";
 import ProductCard from "../shared/ProductCard";
+import ProductModal from "../shared/ProductModal";
 import "swiper/css";
 
 // Skeleton Loader
@@ -26,33 +26,27 @@ const SkeletonLoader = () => (
   </div>
 );
 
-const FeaturedProducts = () => {
-  const { data, isLoading } = useGetFeaturedProdcutQuery({ limit: 10 });
+interface FeaturedProductsProps {
+  initialProducts?: any[];
+}
 
-  const products = data?.data || [];
+const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [] }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
-  // Transform API data to ProductCard props
-  const transformedProducts = products.map((product: any) => {
-    const price = product.salePrice || product.regularPrice;
-    const mrp = product.regularPrice || 0;
-    const discount = product.discountPercent || 0;
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    return {
-      id: product._id,
-      name: product.name,
-      image: product.thumbnail || "/placeholder.png",
-      price: price,
-      originalPrice: mrp,
-      mrp: mrp,
-      discount: discount > 0 ? discount : undefined,
-      rating: product.rating || 0,
-      reviews: product.numReviews || 0,
-      categoryName: product.categoryID?.name || "",
-      unit: product.unit?.shortName || "",
-    };
-  });
+  const handleQuickView = (product: any) => {
+    setSelectedProduct(product);
+  };
 
-  if (isLoading) {
+  const closeModal = () => {
+    setSelectedProduct(null);
+  };
+
+  if (!isMounted) {
     return (
       <section className="py-8 md:py-12 bg-[var(--color-background)]">
         <div className="container mx-auto px-4">
@@ -73,7 +67,7 @@ const FeaturedProducts = () => {
     );
   }
 
-  if (products.length === 0) {
+  if (!initialProducts || initialProducts.length === 0) {
     return null;
   }
 
@@ -93,7 +87,7 @@ const FeaturedProducts = () => {
           </p>
         </div>
 
-        {/* Products Slider - Smooth Infinite Auto-play */}
+        {/* Products Slider */}
         <div className="-mx-2 md:-mx-4">
           <Swiper
             modules={[Autoplay, FreeMode]}
@@ -106,9 +100,7 @@ const FeaturedProducts = () => {
               1024: { slidesPerView: 5, spaceBetween: 20 },
               1280: { slidesPerView: 6, spaceBetween: 24 },
             }}
-            // ✅ Loop ON - Infinite smooth sliding
             loop={true}
-            // ✅ Autoplay ON
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
@@ -118,18 +110,25 @@ const FeaturedProducts = () => {
             speed={800}
             freeMode={true}
             grabCursor={true}
-            // ✅ Smooth transition
             slideToClickedSlide={false}
             className="featured-products-swiper"
           >
-            {transformedProducts.map((product: any) => (
-              <SwiperSlide key={product.id}>
-                <ProductCard product={product} />
+            {initialProducts.map((product: any) => (
+              <SwiperSlide key={product._id}>
+                <ProductCard
+                  product={product}
+                  onQuickView={() => handleQuickView(product)}
+                />
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
       </div>
+
+      {/* Quick View Modal */}
+      {selectedProduct && (
+        <ProductModal product={selectedProduct} onClose={closeModal} />
+      )}
     </section>
   );
 };

@@ -1,4 +1,5 @@
 
+
 // 'use client';
 
 // import React from 'react';
@@ -42,67 +43,72 @@
 
 // /* ---------- area icons (solid fill, used inside dashed circle) ---------- */
 
-// const CityIcon = ({ size = 24 }: { size?: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-//     <path d="M6 21V10l4-2.5V10l4-2.5V21" fill="var(--color-primary)" />
-//     <path d="M6 21V10l4-2.5V10l4-2.5V21H6Z" stroke="var(--color-primary)" strokeWidth="0.5" />
-//     <rect x="7.2" y="12" width="1.6" height="2" fill="#fff" />
-//     <rect x="11.2" y="12" width="1.6" height="2" fill="#fff" />
-//     <rect x="7.2" y="16" width="1.6" height="2" fill="#fff" />
-//     <rect x="11.2" y="16" width="1.6" height="2" fill="#fff" />
-//     <path d="M3 21h18" stroke="var(--color-primary)" strokeWidth="1.6" strokeLinecap="round" />
+// const DeliverIcon = ({ size = 24 }: { size?: number }) => (
+//   <svg 
+//     width={size} 
+//     height={size} 
+//     viewBox="0 0 24 24" 
+//     fill="none" 
+//     stroke="currentColor" 
+//     strokeWidth="2" 
+//     strokeLinecap="round" 
+//     strokeLinejoin="round"
+//   >
+//     <rect x="1" y="3" width="15" height="13"></rect>
+//     <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+//     <circle cx="5.5" cy="18.5" r="2.5"></circle>
+//     <circle cx="18.5" cy="18.5" r="2.5"></circle>
 //   </svg>
 // );
+// // const PinAreaIcon = ({ size = 24 }: { size?: number }) => (
+// //   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+// //     <path
+// //       d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"
+// //       fill="var(--color-primary)"
+// //     />
+// //     <circle cx="12" cy="9" r="2.6" fill="#fff" />
+// //   </svg>
+// // );
 
-// const PinAreaIcon = ({ size = 24 }: { size?: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-//     <path
-//       d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"
-//       fill="var(--color-primary)"
-//     />
-//     <circle cx="12" cy="9" r="2.6" fill="#fff" />
-//   </svg>
-// );
+// // const RoadAreaIcon = ({ size = 24 }: { size?: number }) => (
+// //   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+// //     <path
+// //       d="M9 21 11 3h2l2 18"
+// //       stroke="var(--color-primary)"
+// //       strokeWidth="1.8"
+// //       strokeLinecap="round"
+// //       strokeLinejoin="round"
+// //     />
+// //     <path d="M10.3 13h3.4" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" />
+// //   </svg>
+// // );
 
-// const RoadAreaIcon = ({ size = 24 }: { size?: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-//     <path
-//       d="M9 21 11 3h2l2 18"
-//       stroke="var(--color-primary)"
-//       strokeWidth="1.8"
-//       strokeLinecap="round"
-//       strokeLinejoin="round"
-//     />
-//     <path d="M10.3 13h3.4" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" />
-//   </svg>
-// );
+// // const SignpostAreaIcon = ({ size = 24 }: { size?: number }) => (
+// //   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+// //     <path d="M12 3v18" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" />
+// //     <path
+// //       d="M6 6h6l-1.5 2.5L12 11H6V6Z"
+// //       fill="var(--color-primary)"
+// //     />
+// //     <path
+// //       d="M12 9h6v3h-6"
+// //       fill="var(--color-primary)"
+// //     />
+// //   </svg>
+// // );
 
-// const SignpostAreaIcon = ({ size = 24 }: { size?: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-//     <path d="M12 3v18" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" />
-//     <path
-//       d="M6 6h6l-1.5 2.5L12 11H6V6Z"
-//       fill="var(--color-primary)"
-//     />
-//     <path
-//       d="M12 9h6v3h-6"
-//       fill="var(--color-primary)"
-//     />
-//   </svg>
-// );
-
-// const renderTierIcon = (icon: DeliveryTier['icon'], size?: number) => {
-//   switch (icon) {
-//     case 'city':
-//       return <CityIcon size={size} />;
-//     case 'pin':
-//       return <PinAreaIcon size={size} />;
-//     case 'road':
-//       return <RoadAreaIcon size={size} />;
-//     case 'signpost':
-//       return <SignpostAreaIcon size={size} />;
-//   }
-// };
+// // const renderTierIcon = (icon: DeliveryTier['icon'], size?: number) => {
+// //   switch (icon) {
+// //     case 'city':
+// //       return <CityIcon size={size} />;
+// //     case 'pin':
+// //       return <PinAreaIcon size={size} />;
+// //     case 'road':
+// //       return <RoadAreaIcon size={size} />;
+// //     case 'signpost':
+// //       return <SignpostAreaIcon size={size} />;
+// //   }
+// // };
 
 // /* ---------- wallet / tag icons used per row ---------- */
 
@@ -292,7 +298,8 @@
 // const MobileTierCard: React.FC<{ tier: DeliveryTier }> = ({ tier }) => (
 //   <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-4 shadow-sm">
 //     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-dashed border-[var(--color-primary)]/50">
-//       {renderTierIcon(tier.icon, 18)}
+//       {/* {renderTierIcon(tier.icon, 18)} */}
+//      {DeliverIcon({ size: 18 })}
 //     </div>
 //     <div className="min-w-0 flex-1">
 //       <p className="text-sm font-bold text-gray-900">{tier.area}</p>
@@ -314,7 +321,7 @@
 // const DeliveryCharges: React.FC = () => {
 //   // ✅ API Calls with proper arguments
 //   const { data: areasData, isLoading: areasLoading } = useGetAllAreasQuery({ limit: 20 });
-//   const { data: shippingData, isLoading: shippingLoading } = useGetZonesQuery('local'); // ✅ Pass 'local' as argument
+//   const { data: shippingData, isLoading: shippingLoading } = useGetZonesQuery('local');
 
 //   // Get areas
 //   const areas = areasData?.data || [];
@@ -352,15 +359,15 @@
     
 //     return tiers.map((tier: any, index: number) => {
 //       const areaName = areaNames[index] || `Zone ${index + 1}`;
-//       const desc = `Order amount ${formatCurrency(tier.min)} - ${formatCurrency(tier.max)}`;
+//       const desc = `৳${tier.min} – ৳${tier.max}`;
       
 //       return {
 //         id: index + 1,
 //         icon: iconMap[index % iconMap.length],
 //         area: areaName,
 //         desc: desc,
-//         charge: formatCurrency(tier.charge),
-//         freeAbove: tier.charge === 0 ? 'Free' : formatCurrency(tier.max || 0),
+//         charge: tier.charge === 0 ? 'Free' : formatCurrency(tier.charge),
+//         freeAbove: tier.charge === 0 ? '✓ Free' : formatCurrency(tier.max),
 //       };
 //     });
 //   };
@@ -459,10 +466,10 @@
 //               {deliveryData.map((tier) => (
 //                 <div key={tier.id} className="grid grid-cols-3 items-center px-8 py-6">
 //                   <div className="flex items-center gap-4">
-//                     <DashedIconWrap>{renderTierIcon(tier.icon)}</DashedIconWrap>
+//                     <DashedIconWrap>{DeliverIcon({ size: 18 })}</DashedIconWrap>
 //                     <div>
-//                       <p className="font-bold text-gray-900">{tier.area}</p>
-//                       <p className="text-sm text-gray-500">{tier.desc}</p>
+//                       {/* <p className="font-bold text-gray-900">{tier.area}</p> */}
+//                       <p className="font-bold text-gray-900">{tier.desc}</p>
 //                     </div>
 //                   </div>
 
@@ -471,7 +478,9 @@
 //                       <WalletIcon />
 //                     </SoftIconWrap>
 //                     <div>
-//                       <p className="text-2xl font-bold text-gray-900">{tier.charge}</p>
+//                       <p className={`text-2xl font-bold ${tier.charge === 'Free' ? 'text-green-600' : 'text-gray-900'}`}>
+//                         {tier.charge}
+//                       </p>
 //                       <p className="text-sm text-gray-400">Per Order</p>
 //                     </div>
 //                   </div>
@@ -485,9 +494,7 @@
 //                         {tier.freeAbove}
 //                       </p>
 //                       <p className="text-sm text-gray-400">
-//                         Minimum Order
-//                         <br />
-//                         (Free Delivery)
+//                         {tier.charge === 'Free' ? 'Free Delivery' : 'Free Above'}
 //                       </p>
 //                     </div>
 //                   </div>
@@ -560,26 +567,27 @@
 // export default DeliveryCharges;
 
 
+
+
 'use client';
 
 import React from 'react';
 import Image from 'next/image';
-import { useGetAllAreasQuery } from '@/redux/api/areaApi';
-import { useGetZonesQuery } from '@/redux/api/shippingApi';
 
 /* Brand color: --color-primary: #619d23 */
 
 interface DeliveryTier {
   id: number;
-  icon: 'city' | 'pin' | 'road' | 'signpost';
-  area: string;
-  desc: string;
+  orderRange: string;
   charge: string;
-  freeAbove: string;
+  freeCondition: string;
+}
+
+interface DeliveryChargesProps {
+  initialData?: any; // 👈 page.tsx থেকে আসা initialData প্রপস
 }
 
 /* ---------- dashed-circle wrapper for the per-row area icon ---------- */
-
 const DashedIconWrap: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-dashed border-[var(--color-primary)]/50">
     {children}
@@ -587,7 +595,6 @@ const DashedIconWrap: React.FC<{ children: React.ReactNode }> = ({ children }) =
 );
 
 /* ---------- filled light-bg wrapper for wallet / tag icons ---------- */
-
 const SoftIconWrap: React.FC<{ children: React.ReactNode; size?: 'sm' | 'md' }> = ({
   children,
   size = 'md',
@@ -601,17 +608,16 @@ const SoftIconWrap: React.FC<{ children: React.ReactNode; size?: 'sm' | 'md' }> 
   </div>
 );
 
-/* ---------- area icons (solid fill, used inside dashed circle) ---------- */
-
-const DeliverIcon = ({ size = 24 }: { size?: number }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
+/* ---------- icons ---------- */
+const DeliverIcon = ({ size = 20 }: { size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="var(--color-primary)"
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
   >
     <rect x="1" y="3" width="15" height="13"></rect>
@@ -620,57 +626,6 @@ const DeliverIcon = ({ size = 24 }: { size?: number }) => (
     <circle cx="18.5" cy="18.5" r="2.5"></circle>
   </svg>
 );
-// const PinAreaIcon = ({ size = 24 }: { size?: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-//     <path
-//       d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"
-//       fill="var(--color-primary)"
-//     />
-//     <circle cx="12" cy="9" r="2.6" fill="#fff" />
-//   </svg>
-// );
-
-// const RoadAreaIcon = ({ size = 24 }: { size?: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-//     <path
-//       d="M9 21 11 3h2l2 18"
-//       stroke="var(--color-primary)"
-//       strokeWidth="1.8"
-//       strokeLinecap="round"
-//       strokeLinejoin="round"
-//     />
-//     <path d="M10.3 13h3.4" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" />
-//   </svg>
-// );
-
-// const SignpostAreaIcon = ({ size = 24 }: { size?: number }) => (
-//   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-//     <path d="M12 3v18" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" />
-//     <path
-//       d="M6 6h6l-1.5 2.5L12 11H6V6Z"
-//       fill="var(--color-primary)"
-//     />
-//     <path
-//       d="M12 9h6v3h-6"
-//       fill="var(--color-primary)"
-//     />
-//   </svg>
-// );
-
-// const renderTierIcon = (icon: DeliveryTier['icon'], size?: number) => {
-//   switch (icon) {
-//     case 'city':
-//       return <CityIcon size={size} />;
-//     case 'pin':
-//       return <PinAreaIcon size={size} />;
-//     case 'road':
-//       return <RoadAreaIcon size={size} />;
-//     case 'signpost':
-//       return <SignpostAreaIcon size={size} />;
-//   }
-// };
-
-/* ---------- wallet / tag icons used per row ---------- */
 
 const WalletIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -696,8 +651,6 @@ const TagIcon = ({ size = 20 }: { size?: number }) => (
     <circle cx="15.5" cy="7.5" r="1.3" stroke="var(--color-primary)" strokeWidth="1.4" />
   </svg>
 );
-
-/* ---------- top feature icons (outline style, no card box) ---------- */
 
 const ScooterOutlineIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -771,8 +724,7 @@ const features = [
   { icon: <PinOutlineIcon />, title: 'Live Tracking', desc: 'Track your order in real-time' },
 ];
 
-/* ---------- right panel: rider over a faint city skyline with one floating pin ---------- */
-
+/* ---------- right panel ---------- */
 const RiderCityPanel: React.FC = () => (
   <div className="relative h-full w-full overflow-hidden rounded-2xl">
     <svg
@@ -782,64 +734,18 @@ const RiderCityPanel: React.FC = () => (
       className="absolute inset-0 h-full w-full"
     >
       <g fill="var(--color-primary)" opacity="0.08">
-        {/* cloud */}
         <ellipse cx="100" cy="60" rx="30" ry="16" />
         <ellipse cx="124" cy="52" rx="20" ry="13" />
-
-        {/* skyline silhouette */}
         <rect x="40" y="160" width="26" height="120" />
         <rect x="70" y="130" width="34" height="150" />
         <rect x="108" y="175" width="22" height="105" />
         <rect x="230" y="150" width="30" height="130" />
         <rect x="264" y="185" width="24" height="95" />
         <rect x="292" y="140" width="32" height="140" />
-
-        {/* window cut-outs */}
-        <g fill="#fff" opacity="0.7">
-          <rect x="47" y="172" width="5" height="7" />
-          <rect x="57" y="172" width="5" height="7" />
-          <rect x="47" y="190" width="5" height="7" />
-          <rect x="57" y="190" width="5" height="7" />
-          <rect x="78" y="145" width="5" height="7" />
-          <rect x="90" y="145" width="5" height="7" />
-          <rect x="78" y="163" width="5" height="7" />
-          <rect x="90" y="163" width="5" height="7" />
-          <rect x="238" y="165" width="5" height="7" />
-          <rect x="250" y="165" width="5" height="7" />
-          <rect x="300" y="155" width="5" height="7" />
-          <rect x="312" y="155" width="5" height="7" />
-        </g>
-
-        {/* single tree */}
-        <circle cx="200" cy="255" r="20" />
-        <rect x="196" y="270" width="8" height="22" />
       </g>
-
-      {/* faint ground line */}
       <path d="M0 285 H360" stroke="var(--color-primary)" strokeOpacity="0.1" strokeWidth="1.5" />
     </svg>
 
-    {/* single floating location pin, top-right, with dashed tail */}
-    <svg
-      viewBox="0 0 60 90"
-      className="absolute right-4 top-2 h-16 w-12 sm:right-6 sm:top-4 sm:h-20 sm:w-14"
-    >
-      <path
-        d="M30 24c-8.3 0-15 6.7-15 15 0 11.2 15 27 15 27s15-15.8 15-27c0-8.3-6.7-15-15-15Z"
-        fill="#9fc97f"
-      />
-      <circle cx="30" cy="39" r="7" fill="#fff" />
-      <path
-        d="M22 66 Q14 76 5 80"
-        fill="none"
-        stroke="#9fc97f"
-        strokeWidth="2"
-        strokeDasharray="3 5"
-        strokeLinecap="round"
-      />
-    </svg>
-
-    {/* rider image */}
     <div className="relative z-10 flex h-full items-end justify-center">
       <Image
         src="/bike1.png"
@@ -854,146 +760,81 @@ const RiderCityPanel: React.FC = () => (
 );
 
 /* ---------- mobile compact tier card ---------- */
-
 const MobileTierCard: React.FC<{ tier: DeliveryTier }> = ({ tier }) => (
   <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-4 shadow-sm">
     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-dashed border-[var(--color-primary)]/50">
-      {/* {renderTierIcon(tier.icon, 18)} */}
-     {DeliverIcon({ size: 18 })}
+      <DeliverIcon size={18} />
     </div>
     <div className="min-w-0 flex-1">
-      <p className="text-sm font-bold text-gray-900">{tier.area}</p>
-      <p className="text-xs text-gray-400">{tier.desc}</p>
+      <p className="text-sm font-bold text-gray-900">{tier.orderRange}</p>
+      <p className="text-xs text-gray-400">Order Amount</p>
     </div>
     <div className="text-right">
-      <p className="text-base font-bold text-gray-900">{tier.charge}</p>
+      <p className={`text-base font-bold ${tier.charge === 'Free' ? 'text-green-600' : 'text-gray-900'}`}>
+        {tier.charge}
+      </p>
       <p className="text-xs text-gray-400">per order</p>
     </div>
     <div className="border-l border-gray-100 pl-2 text-right">
-      <p className="text-base font-bold text-[var(--color-primary)]">{tier.freeAbove}</p>
-      <p className="text-xs text-gray-400">free above</p>
+      <p className="text-xs font-bold text-[var(--color-primary)]">{tier.freeCondition}</p>
+      <p className="text-[10px] text-gray-400">Status</p>
     </div>
   </div>
 );
 
 /* ---------- main component ---------- */
+const DeliveryCharges: React.FC<DeliveryChargesProps> = ({ initialData }) => {
+  // Extract tiers from initialData structure (API response: array or object format safely handled)
+  const shippingConfig = Array.isArray(initialData) ? initialData[0] : initialData;
+  const apiTiers = shippingConfig?.tiers || [];
 
-const DeliveryCharges: React.FC = () => {
-  // ✅ API Calls with proper arguments
-  const { data: areasData, isLoading: areasLoading } = useGetAllAreasQuery({ limit: 20 });
-  const { data: shippingData, isLoading: shippingLoading } = useGetZonesQuery('local');
+  const formatCurrency = (amount: number) => `৳${amount.toLocaleString('en-IN')}`;
 
-  // Get areas
-  const areas = areasData?.data || [];
-  
-  // Get shipping tiers
-  const tiers = shippingData?.data?.tiers || [];
-  
-  // Get rider commission
-  const riderCommission = shippingData?.data?.riderCommission || 90;
-
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return `৳${amount}`;
-  };
-
-  // Build delivery data from API
   const buildDeliveryData = (): DeliveryTier[] => {
-    if (tiers.length === 0) {
-      return [
-        {
-          id: 1,
-          icon: 'city',
-          area: 'Default Area',
-          desc: 'Standard delivery',
-          charge: '৳60',
-          freeAbove: '৳599',
-        }
-      ];
-    }
+    // 1. Static entry: First Order Delivery Charge Free
+    const list: DeliveryTier[] = [
+      {
+        id: 0,
+        orderRange: 'First Order Offer',
+        charge: 'Free',
+        freeCondition: '✓ 1st Order Special',
+      },
+    ];
 
-    const iconMap: ('city' | 'pin' | 'road' | 'signpost')[] = ['city', 'pin', 'road', 'signpost'];
-    
-    // Try to use area names from API
-    const areaNames = areas.map((a: any) => a.name);
-    
-    return tiers.map((tier: any, index: number) => {
-      const areaName = areaNames[index] || `Zone ${index + 1}`;
-      const desc = `৳${tier.min} – ৳${tier.max}`;
-      
-      return {
-        id: index + 1,
-        icon: iconMap[index % iconMap.length],
-        area: areaName,
-        desc: desc,
-        charge: tier.charge === 0 ? 'Free' : formatCurrency(tier.charge),
-        freeAbove: tier.charge === 0 ? '✓ Free' : formatCurrency(tier.max),
-      };
+    // 2. Map Dynamic Tiers from initialData
+    apiTiers.forEach((tier: { min: number; max: number; charge: number }, idx: number) => {
+      const isMaxUnlimited = tier.max >= 99999;
+      const orderRange = isMaxUnlimited
+        ? `${formatCurrency(tier.min)}+`
+        : `${formatCurrency(tier.min)} – ${formatCurrency(tier.max)}`;
+
+      const isFree = tier.charge === 0;
+
+      list.push({
+        id: idx + 1,
+        orderRange,
+        charge: isFree ? 'Free' : formatCurrency(tier.charge),
+        freeCondition: isFree
+          ? '✓ Free Delivery'
+          : `Orders above ${formatCurrency(tier.min)}`,
+      });
     });
+
+    return list;
   };
 
   const deliveryData = buildDeliveryData();
 
-  // Loading skeleton
-  if (areasLoading || shippingLoading) {
-    return (
-      <section className="bg-[#fbfcfa] px-3 py-10 sm:px-6 sm:py-12">
-        <div className="mx-auto container">
-          <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <div className="mb-3 h-6 w-40 rounded-full bg-gray-200 animate-pulse" />
-              <div className="h-10 w-64 rounded-lg bg-gray-200 animate-pulse" />
-              <div className="mt-2 h-5 w-48 rounded-lg bg-gray-200 animate-pulse" />
-            </div>
-          </div>
-          <div className="flex flex-col gap-6 lg:flex-row">
-            <div className="flex-1">
-              <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-8">
-                <div className="space-y-6">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="h-14 w-14 rounded-full bg-gray-200 animate-pulse" />
-                      <div className="flex-1">
-                        <div className="h-4 w-32 rounded bg-gray-200 animate-pulse" />
-                        <div className="mt-1 h-3 w-48 rounded bg-gray-200 animate-pulse" />
-                      </div>
-                      <div className="text-right">
-                        <div className="h-4 w-16 rounded bg-gray-200 animate-pulse" />
-                        <div className="mt-1 h-3 w-12 rounded bg-gray-200 animate-pulse" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="w-full lg:w-[320px]">
-              <div className="h-[260px] rounded-2xl bg-gray-200 animate-pulse sm:h-[320px]" />
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="bg-[#fbfcfa] px-3 py-10 sm:px-6 sm:py-12">
-      <div className="mx-auto container">
-        {/* ---------- header ---------- */}
+      <div className="container mx-auto">
+        {/* Header */}
         <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-3 py-1 text-xs font-bold tracking-wide text-[var(--color-primary)]">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 2 4 5v6c0 6 3.5 9 8 11 4.5-2 8-5 8-11V5l-8-3Z"
-                  fill="var(--color-primary)"
-                />
-                <path
-                  d="M9 12l2 2 4-4"
-                  stroke="#fff"
-                  strokeWidth="1.7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M12 2 4 5v6c0 6 3.5 9 8 11 4.5-2 8-5 8-11V5l-8-3Z" fill="var(--color-primary)" />
+                <path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               FAST. SAFE. RELIABLE
             </span>
@@ -1001,7 +842,7 @@ const DeliveryCharges: React.FC = () => {
               Delivery Charges
             </h2>
             <p className="mt-2 text-sm text-gray-500 sm:text-base lg:text-lg">
-              Affordable delivery across all areas
+              Affordable delivery rates based on your order value
             </p>
           </div>
 
@@ -1018,18 +859,20 @@ const DeliveryCharges: React.FC = () => {
           </div>
         </div>
 
-        {/* ---------- main row: table + rider panel ---------- */}
+        {/* Content Row */}
         <div className="flex flex-col gap-6 lg:flex-row">
-          {/* table (desktop) */}
+          {/* Desktop Table */}
           <div className="hidden flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm lg:block">
             <div className="divide-y divide-gray-100">
               {deliveryData.map((tier) => (
-                <div key={tier.id} className="grid grid-cols-3 items-center px-8 py-6">
+                <div key={tier.id} className="grid grid-cols-3 items-center px-8 py-5">
                   <div className="flex items-center gap-4">
-                    <DashedIconWrap>{DeliverIcon({ size: 18 })}</DashedIconWrap>
+                    <DashedIconWrap>
+                      <DeliverIcon size={20} />
+                    </DashedIconWrap>
                     <div>
-                      {/* <p className="font-bold text-gray-900">{tier.area}</p> */}
-                      <p className="font-bold text-gray-900">{tier.desc}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Order Value</p>
+                      <p className="text-lg font-bold text-gray-900">{tier.orderRange}</p>
                     </div>
                   </div>
 
@@ -1041,7 +884,7 @@ const DeliveryCharges: React.FC = () => {
                       <p className={`text-2xl font-bold ${tier.charge === 'Free' ? 'text-green-600' : 'text-gray-900'}`}>
                         {tier.charge}
                       </p>
-                      <p className="text-sm text-gray-400">Per Order</p>
+                      <p className="text-sm text-gray-400">Delivery Charge</p>
                     </div>
                   </div>
 
@@ -1050,12 +893,10 @@ const DeliveryCharges: React.FC = () => {
                       <TagIcon />
                     </SoftIconWrap>
                     <div>
-                      <p className="text-2xl font-bold text-[var(--color-primary)]">
-                        {tier.freeAbove}
+                      <p className="text-base font-bold text-[var(--color-primary)]">
+                        {tier.freeCondition}
                       </p>
-                      <p className="text-sm text-gray-400">
-                        {tier.charge === 'Free' ? 'Free Delivery' : 'Free Above'}
-                      </p>
+                      <p className="text-sm text-gray-400">Policy / Eligibility</p>
                     </div>
                   </div>
                 </div>
@@ -1063,14 +904,14 @@ const DeliveryCharges: React.FC = () => {
             </div>
           </div>
 
-          {/* mobile card list */}
+          {/* Mobile Tier List */}
           <div className="flex flex-col gap-3 lg:hidden">
             {deliveryData.map((tier) => (
               <MobileTierCard key={tier.id} tier={tier} />
             ))}
           </div>
 
-          {/* right rider + city panel */}
+          {/* Right Panel */}
           <div className="flex w-full flex-col gap-4 lg:w-[320px]">
             <div className="h-[260px] overflow-hidden rounded-2xl bg-[#fbfcfa] sm:h-[320px] lg:h-full lg:min-h-[360px]">
               <RiderCityPanel />
@@ -1079,45 +920,24 @@ const DeliveryCharges: React.FC = () => {
             <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
               <TruckOutlineIcon />
               <div>
-                <p className="font-bold text-gray-900">Free Delivery</p>
+                <p className="font-bold text-gray-900">First Order Free!</p>
                 <p className="text-sm text-gray-500">
-                  On orders above{' '}
-                  <span className="font-semibold text-[var(--color-primary)]">
-                    {deliveryData[0]?.freeAbove || '৳599'}
-                  </span>
+                  Enjoy <span className="font-semibold text-[var(--color-primary)]">100% Free Delivery</span> on your 1st order.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ---------- bottom note ---------- */}
+        {/* Footer Note */}
         <div className="relative mt-6 flex items-start gap-3 overflow-hidden rounded-2xl px-1 py-4 sm:px-2">
           <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]">
             <InfoIcon />
           </span>
           <p className="text-xs text-gray-700 sm:text-sm">
-            <span className="font-bold">Please Note:</span> Delivery charges may vary for remote
-            areas.
-            <br />
-            Our team will contact you if any additional charges apply.
+            <span className="font-bold">Please Note:</span> First order delivery charge is completely free.
+            Subsequent charges apply based on order ranges shown above.
           </p>
-
-          {/* faint decorative truck */}
-          <svg
-            width="64"
-            height="40"
-            viewBox="0 0 64 40"
-            className="absolute bottom-0 right-0 hidden opacity-15 sm:block"
-          >
-            <path d="M2 8h26 M2 16h20 M2 24h14" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" />
-            <g transform="translate(30,4)">
-              <rect x="0" y="6" width="20" height="14" rx="1.5" stroke="var(--color-primary)" strokeWidth="1.6" fill="none" />
-              <path d="M20 10h6l5 5v5h-11" stroke="var(--color-primary)" strokeWidth="1.6" fill="none" strokeLinejoin="round" />
-              <circle cx="6" cy="22" r="2.4" stroke="var(--color-primary)" strokeWidth="1.4" fill="none" />
-              <circle cx="24" cy="22" r="2.4" stroke="var(--color-primary)" strokeWidth="1.4" fill="none" />
-            </g>
-          </svg>
         </div>
       </div>
     </section>

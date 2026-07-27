@@ -15,6 +15,7 @@ import {
 import { AiOutlinePhone, AiOutlineMail } from "react-icons/ai";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { FiSend } from "react-icons/fi";
+import { Button } from "@/components/ui";
 
 const Footer: React.FC = () => {
     const categories = [
@@ -78,6 +79,11 @@ const Footer: React.FC = () => {
                                 </Link>
                             ))}
                         </div>
+                     <div className="mt-5">
+                        <Link href="/apply-rider">
+  <Button>Be a rider</Button>
+</Link>
+                     </div>
                     </div>
 
                     {/* Column 2: Categories */}

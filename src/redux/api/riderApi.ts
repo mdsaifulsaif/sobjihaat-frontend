@@ -88,7 +88,7 @@ export const riderApi = baseApi.injectEndpoints({
     // ==================== ADMIN RIDER MANAGEMENT ====================
     getAllRiders: builder.query({
       query: (params = {}) => ({
-        url: '/rider/admin/all',
+        url: '/admin/rider/all',
         params,
       }),
       providesTags: ['Riders'],

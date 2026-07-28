@@ -80,8 +80,8 @@ const Footer: React.FC = () => {
                             ))}
                         </div>
                      <div className="mt-5">
-                        <Link href="/apply-rider">
-  <Button>Be a rider</Button>
+                        <Link href="/rider-apply">
+  <Button >Be a rider</Button>
 </Link>
                      </div>
                     </div>

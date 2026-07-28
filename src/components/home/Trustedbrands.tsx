@@ -205,6 +205,9 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from "next/navigation";
+import SectionHeader from '../shared/SectionHeader';
+import { BiLeaf } from 'react-icons/bi';
 
 // Brand Interface
 export interface Brand {
@@ -248,6 +251,7 @@ interface TrustedBrandsProps {
 
 const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -298,9 +302,9 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
   const loopBrands = [...visibleBrands, ...visibleBrands, ...visibleBrands];
 
   return (
-    <section className="relative py-12 sm:py-16 bg-[#f8f9f6] overflow-hidden">
+    <section className="relative py-8 sm:py-10 bg-[#f8f9f6] overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8 sm:mb-12">
+        {/* <div className="text-center mb-8 sm:mb-12">
           <span className="inline-block mb-3 px-4 py-1.5 sm:px-5 sm:py-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs sm:text-sm font-bold rounded-full">
             TOP BRANDS
           </span>
@@ -310,10 +314,13 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
           <p className="mt-2 sm:mt-4 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
             We partner with the best brands to bring you authentic products every day.
           </p>
-        </div>
+        </div> */}
+        
+
+        <SectionHeader title="Our Trustedbrands" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
 
         <div className="marquee-wrapper">
-          <div className="marquee-track">
+          <div className="marquee-track py-5">
             {loopBrands.map((brand: Brand, index: number) => (
               <div key={`${brand._id}-${index}`} className="marquee-item">
                 <Link

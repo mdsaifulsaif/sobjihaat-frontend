@@ -139,13 +139,15 @@
 
 
 "use client";
-
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, FreeMode } from "swiper/modules";
 import ProductCard from "../shared/ProductCard";
 import ProductModal from "../shared/ProductModal";
 import "swiper/css";
+import SectionHeader from "../shared/SectionHeader";
+import { BiLeaf } from "react-icons/bi";
 
 // Skeleton Loader
 const SkeletonLoader = () => (
@@ -172,6 +174,7 @@ interface ComboProductsProps {
 
 const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
   useEffect(() => {
@@ -188,22 +191,8 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
 
   if (!isMounted) {
     return (
-      <section className="py-8 md:py-12 bg-[var(--color-background)]">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-6 md:mb-8">
-            <span className="inline-block mb-2 px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
-              🔥 COMBO DEALS
-            </span>
-            <h2 className="text-xl md:text-3xl font-bold text-[var(--color-text-primary)]">
-              Combo Offers
-            </h2>
-            <p className="text-sm text-[var(--color-text-muted)] mt-1">
-              Save more with our special combo deals
-            </p>
-          </div>
+    
           <SkeletonLoader />
-        </div>
-      </section>
     );
   }
 
@@ -215,20 +204,10 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
     <section className="py-8 md:py-12 bg-[var(--color-background)]">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-6 md:mb-8">
-          <span className="inline-block mb-2 px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">
-            🔥 COMBO DEALS
-          </span>
-          <h2 className="text-xl md:text-3xl font-bold text-[var(--color-text-primary)]">
-            Combo Offers
-          </h2>
-          <p className="text-sm text-[var(--color-text-muted)] mt-1">
-            Save more with our special combo deals
-          </p>
-        </div>
+       <SectionHeader title="Prodcut Categories" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
 
         {/* Combo Products Slider - Mobile 3 items */}
-        <div className="-mx-2 md:-mx-4">
+        <div className="-mx-2 py-10 md:-mx-4">
           <Swiper
             modules={[Autoplay, FreeMode]}
             spaceBetween={12}
@@ -312,15 +291,7 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
           </Swiper>
         </div>
 
-        {/* View All Button */}
-        <div className="text-center mt-8">
-          <a
-            href="/products?type=combo"
-            className="inline-block px-8 py-3 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700 transition-colors"
-          >
-            View All Combo Deals
-          </a>
-        </div>
+     
       </div>
 
       {/* Quick View Modal */}

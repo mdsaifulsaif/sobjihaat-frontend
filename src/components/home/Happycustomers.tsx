@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 
+import { useRouter } from "next/navigation";
+import SectionHeader from '../shared/SectionHeader';
+import { BiLeaf } from 'react-icons/bi';
+
 /* =========================================================================
    Brand color: --color-primary: #619d23
    This component expects the CSS variable to be defined globally, e.g.:
@@ -238,6 +242,8 @@ const TestimonialSkeleton = () => (
 export default function HappyCustomers({ initialReviews = [] }: HappyCustomersProps) {
   const [isMounted, setIsMounted] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -257,7 +263,7 @@ export default function HappyCustomers({ initialReviews = [] }: HappyCustomersPr
     <section className="bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
       <div className="mx-auto container">
         {/* ---------- Heading ---------- */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">
             <HeartIcon size={13} />
             OUR HAPPY CUSTOMERS
@@ -272,7 +278,9 @@ export default function HappyCustomers({ initialReviews = [] }: HappyCustomersPr
           <p className="mx-auto mt-4 max-w-md text-sm text-gray-500 sm:text-base">
             Real experiences from customers across Bangladesh
           </p>
-        </div>
+        </div> */}
+
+        <SectionHeader title="Happy Customers" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
 
         {/* ---------- Testimonial Marquee ---------- */}
         <div

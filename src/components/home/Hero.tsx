@@ -60,18 +60,25 @@ const Hero: React.FC = () => {
 
   return (
     <div className="mx-auto container px-4">
-      <div
+      {/* <div
         className="relative w-full overflow-hidden rounded-2xl bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${bannerUrl})`,
          minHeight: "480px",
          backgroundSize: "cover"
        }}
-      >
+      > */}
+
+      <div
+  className="relative w-full overflow-hidden   overflow-hidden rounded-2xl bg-center bg-no-repeat
+             bg-contain min-h-[180px] max-h-[50vh]
+             sm:bg-cover sm:min-h-[480px] sm:max-h-none"
+  style={{ backgroundImage: `url(${bannerUrl})` }}
+>
         {/* White gradient overlay — left side */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent z-0 pointer-events-none" />
 
         {/* Today's Delivery badge — top right */}
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-3 py-1.5 text-white shadow-md">
+        <div className="absolute  top-4  right-4 z-20 flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-3 py-1.5 text-white shadow-md">
           <FiClock size={13} />
           <div className="text-[11px] leading-tight">
             <p className="font-semibold">Today's Delivery</p>
@@ -80,9 +87,9 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Left content */}
-        <div className="relative z-10 flex flex-col justify-center px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 max-w-[65%] md:max-w-[55%] pb-20 md:pb-24">
+        <div className="relative top-7 z-10 flex flex-col justify-center px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 max-w-[65%] md:max-w-[55%] pb-20 md:pb-24">
           {/* Headline */}
-          <h1 className="font-['Montserrat_Alternates',sans-serif] text-[20px] sm:text-[28px] md:text-[36px] font-bold leading-[1.2] text-gray-900 mb-1 sm:mb-2">
+          <h1 className="font-['Montserrat_Alternates',sans-serif] text-[16px] md:text-[36px] font-bold leading-[1.2] text-gray-900 mb-1 ">
             Fresh Groceries
             <br />
             Delivered at your Doorstep
@@ -104,7 +111,7 @@ const Hero: React.FC = () => {
      
 
         {/* Bottom glass feature bar */}
-        <div className="absolute bottom-0 left-0 right-0 z-20">
+        <div className="absolute md:block hidden bottom-0 left-0 right-0 z-20">
           <div className="mx-3 mb-3 rounded-xl backdrop-blur-md bg-white/30 border border-white/40 shadow-sm px-4 py-2.5 flex items-center justify-between gap-2 overflow-x-auto">
             {features.map((f, i) => (
               <React.Fragment key={f.title}>

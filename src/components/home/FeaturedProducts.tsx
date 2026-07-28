@@ -138,13 +138,15 @@
 
 
 "use client";
-
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, FreeMode } from "swiper/modules";
 import ProductCard from "../shared/ProductCard";
 import ProductModal from "../shared/ProductModal";
 import "swiper/css";
+import SectionHeader from "../shared/SectionHeader";
+import { BiLeaf } from "react-icons/bi";
 
 // Skeleton Loader
 const SkeletonLoader = () => (
@@ -171,6 +173,7 @@ interface FeaturedProductsProps {
 
 const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [] }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
   useEffect(() => {
@@ -188,18 +191,8 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
   if (!isMounted) {
     return (
       <section className="py-8 md:py-12 bg-[var(--color-background)]">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-6 md:mb-8">
-            <span className="inline-block mb-2 px-3 py-1 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-full">
-              BEST SELLERS
-            </span>
-            <h2 className="text-xl md:text-3xl font-bold text-[var(--color-text-primary)]">
-              Featured Products
-            </h2>
-            <p className="text-sm text-[var(--color-text-muted)] mt-1">
-              Handpicked just for you
-            </p>
-          </div>
+        <div className="container mx-auto px-4 ">
+       
           <SkeletonLoader />
         </div>
       </section>
@@ -214,7 +207,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
     <section className="py-8 md:py-12 bg-[var(--color-background)]">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-6 md:mb-8">
+        {/* <div className="text-center mb-6 md:mb-8">
           <span className="inline-block mb-2 px-3 py-1 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-full">
             BEST SELLERS
           </span>
@@ -224,10 +217,12 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
           <p className="text-sm text-[var(--color-text-muted)] mt-1">
             Handpicked just for you
           </p>
-        </div>
+        </div> */}
+
+        <SectionHeader title="Featuerd Products" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
 
         {/* Products Slider - Mobile 3 items, clean display */}
-        <div className="-mx-2 md:-mx-4">
+        <div className="-mx-2 py-10 md:-mx-4">
           <Swiper
             modules={[Autoplay, FreeMode]}
             spaceBetween={12}
@@ -309,16 +304,6 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
-
-        {/* View All Button */}
-        <div className="text-center mt-8">
-          <a
-            href="/products"
-            className="inline-block px-8 py-3 bg-[var(--color-primary)] text-white rounded-full font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
-          >
-            View All Products
-          </a>
         </div>
       </div>
 

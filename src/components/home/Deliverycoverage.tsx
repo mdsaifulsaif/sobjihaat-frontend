@@ -283,12 +283,12 @@ const DeliveryCoverage: React.FC = () => {
             lg:      h-[480px]
         */}
         <div
-          className="relative h-72 overflow-hidden rounded-2xl border border-gray-100 shadow-sm sm:h-96 lg:h-[480px]"
-        >
+  className="relative isolate h-72 overflow-hidden rounded-2xl border border-gray-100 shadow-sm sm:h-96 lg:h-[480px]"
+>
           <LeafletMap />
 
           {/* Legend */}
-          <div className="absolute bottom-3 right-3 z-[1000] rounded-xl border border-gray-100 bg-white/95 px-3 py-2.5 shadow-md backdrop-blur-sm sm:bottom-4 sm:right-4 sm:px-4 sm:py-3">
+          <div className="absolute bottom-3 right-3 z-20 rounded-xl border border-gray-100 bg-white/95 px-3 py-2.5 shadow-md backdrop-blur-sm sm:bottom-4 sm:right-4 sm:px-4 sm:py-3">
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-800">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }}/>
               Currently Delivering

@@ -2,7 +2,7 @@
 
 
 "use client";
-
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Grid, Mousewheel } from "swiper/modules";
@@ -13,6 +13,8 @@ import { Category } from "@/types/category";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/grid";
+import SectionHeader from "../shared/SectionHeader";
+import { BiLeaf } from "react-icons/bi";
 
 /* =========================================================================
    Brand color: --color-primary: #619d23
@@ -76,6 +78,8 @@ interface HomeCategoryProps {
 const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) => {
   const [isMounted, setIsMounted] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -103,9 +107,9 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#fbfcfa] px-1 py-12 sm:px-6 lg:py-16">
+    <section className="relative overflow-hidden bg-[#fbfcfa] px-1 py-8 sm:px-6 lg:py-10">
       <div className="mx-auto container overflow-hidden">
-        <div className="text-center">
+        {/* <div className="text-center">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">
             <StarBadgeIcon />
             EXPLORE &amp; SHOP
@@ -122,9 +126,12 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
               <span className="absolute -bottom-0.5 left-0 h-[2px] w-full bg-[var(--color-primary)]" />
             </span>
           </p>
-        </div>
+        </div> */}
 
-        <div className="relative mt-10">
+      <SectionHeader title="Prodcut Categories" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
+
+ 
+        <div className="relative py-10">
           {!isMounted ? (
             <SkeletonLoader />
           ) : (
@@ -185,7 +192,7 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
           )}
         </div>
 
-        <div className="mt-8 text-center">
+        {/* <div className="mt-8 text-center">
           <button
             type="button"
             className="inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 px-6 py-3 text-sm font-bold text-[var(--color-primary)] transition hover:bg-[#eef3e6]"
@@ -194,7 +201,7 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
             View All Categories
             <ArrowRightIcon size={15} />
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

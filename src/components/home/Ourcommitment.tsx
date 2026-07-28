@@ -2,6 +2,9 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from "next/navigation";
+import SectionHeader from '../shared/SectionHeader';
+import { BiLeaf } from 'react-icons/bi';
 
 /* =========================================================================
    Brand color: --color-primary: #619d23
@@ -390,11 +393,12 @@ const stats: Stat[] = [
 /* ---------- main component ---------- */
 
 const OurCommitment: React.FC = () => {
+  const router = useRouter();
   return (
     <section className="relative overflow-hidden bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
       <div className="relative mx-auto container">
         {/* ---------- heading ---------- */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef5e3] px-4 py-1.5 text-xs font-bold tracking-wide text-[#4a7c1c]">
             <LeafIcon size={14} />
             OUR COMMITMENT
@@ -414,7 +418,9 @@ const OurCommitment: React.FC = () => {
             We are committed to bringing you the freshest products, fastest
             delivery and the best service every day.
           </p>
-        </div>
+        </div> */}
+
+        <SectionHeader title="Barisal, For Barisal" icon={<BiLeaf size={18} />}  onAction={() => router.push("/vegetables")} />
 
         {/* ---------- 6-up commitment grid ---------- */}
         <div className="mt-10 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-2">

@@ -153,3 +153,4 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
 };
 
 export default CategoryPageClient;
+

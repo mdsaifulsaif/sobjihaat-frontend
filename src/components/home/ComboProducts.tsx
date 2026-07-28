@@ -115,9 +115,7 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
             {initialProducts.map((product: any) => (
               <SwiperSlide key={product._id}>
                 <div className="relative">
-                  <span className="absolute top-2 left-2 z-20 bg-purple-600 text-white text-[8px] md:text-[10px] font-bold px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-full">
-                    COMBO
-                  </span>
+                  
                   <ProductCard
                     product={product}
                     onQuickView={() => handleQuickView(product)}

@@ -78,7 +78,7 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
       </aside>
 
       {/* Right Side - Product Content */}
-      <div className="flex-1 min-w-0 p-4">
+      <div className="flex-1 min-w-0 p-0">
         {/* Banner */}
         <div className="w-full h-25 md:h-30 rounded-3xl overflow-hidden relative bg-gradient-to-r from-[var(--color-primary)] to-purple-500 flex items-center px-5 md:px-8">
           <div className="text-white">
@@ -117,7 +117,7 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
 
           {/* Product Grid */}
           {products.length > 0 && (
-            <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-4">
               {products.map((product: any) => (
                 <div key={product._id} className="w-full">
                   <ProductCard

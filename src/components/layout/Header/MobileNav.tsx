@@ -39,7 +39,7 @@ export default function MobileNav({ onClose }: MobileNavProps) {
             {categories.map((cat: any) => (
               <Link
                 key={cat._id}
-                href={`/shop?category=${cat.slug}`}
+                href={`/category/${cat.slug}`}
                 onClick={onClose}
                 className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-all group"
               >

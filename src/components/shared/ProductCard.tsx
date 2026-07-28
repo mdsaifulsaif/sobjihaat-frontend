@@ -215,11 +215,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
             {productName}
           </p>
 
-          {!isInStock && (
+          {/* {!isInStock && (
             <p className="text-[10px] md:text-xs text-red-500 font-medium mt-0.5 md:mt-1">
               Out of Stock
             </p>
-          )}
+          )} */}
         </div>
 
         {/* Bottom Info */}

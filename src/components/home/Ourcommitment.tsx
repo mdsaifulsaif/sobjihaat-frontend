@@ -420,7 +420,10 @@ const OurCommitment: React.FC = () => {
           </p>
         </div> */}
 
-        <SectionHeader title="Barisal, For Barisal" icon={<BiLeaf size={18} />}  onAction={() => router.push("/vegetables")} />
+        <SectionHeader title="Barisal, For Barisal"
+         description="We are committed to bringing you the freshest products, fastest
+            delivery and the best service every day."
+        icon={<BiLeaf size={18} />}  onAction={() => router.push("/vegetables")} />
 
         {/* ---------- 6-up commitment grid ---------- */}
         <div className="mt-10 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-2">

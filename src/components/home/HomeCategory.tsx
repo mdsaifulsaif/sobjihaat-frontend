@@ -14,6 +14,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/grid";
 import SectionHeader from "../shared/SectionHeader";
+import SectionHeading from "../shared/SectionHeading";
 import { BiLeaf } from "react-icons/bi";
 
 /* =========================================================================
@@ -127,6 +128,8 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
             </span>
           </p>
         </div> */}
+
+        
 
       <SectionHeader title="Prodcut Categories" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
 

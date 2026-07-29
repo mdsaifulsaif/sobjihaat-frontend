@@ -199,7 +199,6 @@
 
 
 
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -209,7 +208,13 @@ import { useRouter } from "next/navigation";
 import SectionHeader from '../shared/SectionHeader';
 import { BiLeaf } from 'react-icons/bi';
 
-// Brand Interface
+// Swiper imports
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+
+import 'swiper/css';
+import 'swiper/css/autoplay';
+
 export interface Brand {
   _id: string;
   name: string;
@@ -230,7 +235,6 @@ export interface Brand {
   productCount: number;
 }
 
-// Brands Skeleton Loader
 const BrandsSkeletonLoader = () => (
   <div className="flex gap-4 overflow-hidden justify-center items-center">
     {Array.from({ length: 6 }).map((_, index) => (
@@ -257,7 +261,6 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
     setIsMounted(true);
   }, []);
 
-  // ✅ Client mount হওয়ার আগ পর্যন্ত Skeleton লোডার দেখাবে
   if (!isMounted) {
     return (
       <section className="relative py-12 sm:py-16 bg-[#f8f9f6] overflow-hidden">
@@ -269,9 +272,6 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
               Trusted Brands, Quality You Can Trust
             </h2>
-            <p className="mt-2 sm:mt-4 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
-              We partner with the best brands to bring you authentic products every day.
-            </p>
           </div>
           <BrandsSkeletonLoader />
         </div>
@@ -289,40 +289,40 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
     );
   }
 
-  // ✅ Mobile: 3 brands, Tablet: 4, Desktop: 6
-  const getVisibleBrands = () => {
-    if (typeof window === 'undefined') return initialBrands;
-    const width = window.innerWidth;
-    if (width < 640) return initialBrands.slice(0, 9); // 3 brands × 3 copies
-    if (width < 768) return initialBrands.slice(0, 12); // 4 brands × 3 copies
-    return initialBrands; // Full list
-  };
-
-  const visibleBrands = getVisibleBrands();
-  const loopBrands = [...visibleBrands, ...visibleBrands, ...visibleBrands];
-
   return (
     <section className="relative py-8 sm:py-10 bg-[#f8f9f6] overflow-hidden">
       <div className="container mx-auto px-4">
-        {/* <div className="text-center mb-8 sm:mb-12">
-          <span className="inline-block mb-3 px-4 py-1.5 sm:px-5 sm:py-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs sm:text-sm font-bold rounded-full">
-            TOP BRANDS
-          </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
-            Trusted Brands, Quality You Can Trust
-          </h2>
-          <p className="mt-2 sm:mt-4 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
-            We partner with the best brands to bring you authentic products every day.
-          </p>
-        </div> */}
-        
+        <SectionHeader 
+          title="Our Trusted Brands" 
+          icon={<BiLeaf size={18} />} 
+          actionLabel="See all" 
+          onAction={() => router.push("/vegetables")} 
+        />
 
-        <SectionHeader title="Our Trustedbrands" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
-
-        <div className="marquee-wrapper">
-          <div className="marquee-track py-5">
-            {loopBrands.map((brand: Brand, index: number) => (
-              <div key={`${brand._id}-${index}`} className="marquee-item">
+        <div className="mt-6 mask-gradient">
+          <Swiper
+            modules={[Autoplay]}
+            slidesPerView="auto"
+            spaceBetween={16}
+            loop={true}
+            speed={5000} // স্লাইড কত স্মুথ ও আস্তে চলবে (মিলি সেকেন্ড, বাড়াতে পারেন)
+            autoplay={{
+              delay: 0,
+              disableOnInteraction: false,
+            }}
+            allowTouchMove={true} // ইউজার চাইলে হাত দিয়েও টানতে পারবে
+            breakpoints={{
+              640: { spaceBetween: 20 },
+              768: { spaceBetween: 24 },
+            }}
+            className="trusted-brands-swiper py-2"
+          >
+            {initialBrands.map((brand: Brand) => (
+              <SwiperSlide 
+                key={brand._id} 
+                style={{ width: '150px' }}
+                className="sm:!w-[165px] md:!w-[185px] lg:!w-[195px] h-auto"
+              >
                 <Link
                   href={`/brands/${brand.slug}`}
                   className="group/card block bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center h-full"
@@ -331,7 +331,7 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
                     {brand.logo ? (
                       <Image
                         src={brand.logo}
-                        alt={brand.name}
+                        alt={brand.name || "Brand logo"}
                         width={80}
                         height={80}
                         className="object-contain transition-transform group-hover/card:scale-110 w-12 h-12 sm:w-16 sm:h-16 md:w-[110px] md:h-[110px]"
@@ -346,83 +346,25 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
                       </div>
                     )}
                   </div>
-                  <p className="text-[10px] sm:text-xs text-[var(--color-primary)] font-medium text-center">
+                  <p className="text-[10px] sm:text-xs text-[var(--color-primary)] font-medium text-center truncate w-full">
                     {brand.productCount > 0 ? `${brand.productCount} Products` : '50+ Products'}
                   </p>
                 </Link>
-              </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
         </div>
       </div>
 
-      <style jsx>{`
-        .marquee-wrapper {
-          position: relative;
-          overflow: hidden;
+      <style jsx global>{`
+        /* মারকিউ ইফেক্টকে লিনিয়ার করার জন্য */
+        .trusted-brands-swiper .swiper-wrapper {
+          transition-timing-function: linear !important;
+        }
+
+        .mask-gradient {
           mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
           -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
-        }
-
-        .marquee-track {
-          display: flex;
-          gap: 16px;
-          width: max-content;
-          animation: marquee-scroll 45s linear infinite;
-        }
-
-        .marquee-item {
-          width: 120px;
-          flex-shrink: 0;
-        }
-
-        @media (min-width: 480px) {
-          .marquee-item {
-            width: 140px;
-          }
-        }
-
-        @media (min-width: 640px) {
-          .marquee-track {
-            gap: 20px;
-          }
-          .marquee-item {
-            width: 160px;
-          }
-        }
-
-        @media (min-width: 768px) {
-          .marquee-track {
-            gap: 24px;
-          }
-          .marquee-item {
-            width: 180px;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .marquee-item {
-            width: 200px;
-          }
-        }
-
-        @keyframes marquee-scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-33.33%);
-          }
-        }
-
-        .marquee-wrapper:hover .marquee-track {
-          animation-play-state: paused;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .marquee-track {
-            animation: none;
-          }
         }
       `}</style>
     </section>

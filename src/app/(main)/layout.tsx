@@ -15,8 +15,6 @@ export default function MainLayout({
 }>) {
     return (
         <>
-           {/* <MinHeader/> */}
-           {/* <Navber /> */}
 
            <Header />
            

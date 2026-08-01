@@ -190,10 +190,13 @@
 
 
 
+
+
+
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import {
@@ -217,15 +220,16 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
 
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  // useSearchParams সরানো হয়েছে
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebounce(searchQuery, 400);
 
-  // আগের পেজ মনে রাখার জন্য (search এ ঢোকার আগের পেজ)
+  // আগের পেজ মনে রাখার জন্য
   const previousPathRef = useRef<string | null>(null);
+  const isInitialMount = useRef(true);
 
-  const wishlistCount = 5; // পরে Redux থেকে নেবেন
+  const wishlistCount = 5;
 
   // যখন সার্চ পেজে না থেকেও ইউজার টাইপ শুরু করে
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,8 +242,33 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
     }
   };
 
+  // URL থেকে q প্যারামিটার পড়ার ফাংশন (ক্লায়েন্ট সাইড)
+  const getQueryParamFromURL = () => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("q") || "";
+    }
+    return "";
+  };
+
+  // কম্পোনেন্ট মাউন্ট হলে এবং pathname পরিবর্তন হলে URL থেকে q প্যারামিটার সেট করা
+  useEffect(() => {
+    if (pathname === "/search") {
+      const q = getQueryParamFromURL();
+      if (q && q !== searchQuery) {
+        setSearchQuery(q);
+      }
+    }
+  }, [pathname]);
+
   // Debounced value অনুযায়ী নেভিগেশন/URL আপডেট
   useEffect(() => {
+    // প্রথম মাউন্টে skip করি যাতে অনাকাঙ্খিত নেভিগেশন না হয়
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     const trimmed = debouncedQuery.trim();
 
     if (trimmed) {
@@ -259,19 +288,18 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
         router.push("/");
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedQuery]);
-
-  // সার্চ পেজে থাকা অবস্থায় URL এর q প্যারাম দিয়ে input sync রাখা
-  useEffect(() => {
-    if (pathname === "/search") {
-      const q = searchParams.get("q") || "";
-      setSearchQuery((prev) => (prev !== q ? q : prev));
-    }
-  }, [pathname, searchParams]);
+  }, [debouncedQuery, pathname, router]);
 
   const clearSearch = () => {
     setSearchQuery("");
+    if (pathname === "/search") {
+      if (previousPathRef.current) {
+        router.push(previousPathRef.current);
+        previousPathRef.current = null;
+      } else {
+        router.push("/");
+      }
+    }
   };
 
   return (

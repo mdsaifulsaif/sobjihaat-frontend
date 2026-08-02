@@ -246,9 +246,8 @@
 
 
 
-
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiHeart } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "@/redux";
 import {
@@ -265,6 +264,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   const dispatch = useAppDispatch();
   const [isQuantityOpen, setIsQuantityOpen] = useState(false);
+  const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // ✅ সব ডেটা প্রসেস করা হচ্ছে এখানে
   const productId = product._id || product.id;
@@ -317,7 +317,53 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   );
   const quantity = cartItem?.quantity || 0;
 
-  // ✅ হ্যান্ডলার ফাংশন
+  // ===== Auto close after 5 seconds + exclusive open =====
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const startCloseTimer = () => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => {
+      setIsQuantityOpen(false);
+    }, 5000); // 5 seconds
+  };
+
+  const openQuantity = () => {
+    setIsQuantityOpen(true);
+    startCloseTimer();
+
+    // অন্য সব কার্ডকে বলো বন্ধ হয়ে যাও
+    window.dispatchEvent(
+      new CustomEvent("quantity-open", { detail: productId }),
+    );
+  };
+
+  const closeQuantity = () => {
+    setIsQuantityOpen(false);
+    clearCloseTimer();
+  };
+
+  // অন্য কার্ড খুললে এই কার্ড বন্ধ হয়ে যাবে
+  useEffect(() => {
+    const handleOtherOpen = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail !== productId) {
+        closeQuantity();
+      }
+    };
+
+    window.addEventListener("quantity-open", handleOtherOpen);
+    return () => {
+      window.removeEventListener("quantity-open", handleOtherOpen);
+      clearCloseTimer();
+    };
+  }, [productId]);
+
+  // ===== Handlers =====
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -342,13 +388,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
     if (!isInStock) return;
     if (quantity < totalStock) {
       dispatch(increaseQuantity(productId));
+      startCloseTimer(); // টাইমার রিসেট
     }
   };
 
   const handleDecrease = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (quantity > 0) dispatch(decreaseQuantity(productId));
+    if (quantity > 0) {
+      dispatch(decreaseQuantity(productId));
+      startCloseTimer(); // টাইমার রিসেট
+    }
   };
 
   const handleWishlist = (e: React.MouseEvent) => {
@@ -357,11 +407,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
     // wishlist functionality
   };
 
-  // Quantity controller toggle (mobile click + desktop hover)
   const handleQuantityToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsQuantityOpen((prev) => !prev);
+    if (isQuantityOpen) {
+      closeQuantity();
+    } else {
+      openQuantity();
+    }
   };
 
   return (
@@ -402,8 +455,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
         {isInStock && (
           <div
             className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-20"
-            onMouseEnter={() => setIsQuantityOpen(true)}
-            onMouseLeave={() => setIsQuantityOpen(false)}
+            onMouseEnter={() => {
+              openQuantity();
+            }}
+            onMouseLeave={() => {
+              closeQuantity();
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {quantity === 0 ? (
@@ -486,8 +543,3 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
 };
 
 export default ProductCard;
-
-
-
-
-

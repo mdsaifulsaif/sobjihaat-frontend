@@ -192,7 +192,6 @@
 
 
 
-
 // "use client";
 
 // import React, { useState, useEffect, useRef } from "react";
@@ -220,29 +219,7 @@
 
 //   const router = useRouter();
 //   const pathname = usePathname();
-//   // useSearchParams সরানো হয়েছে
 
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const debouncedQuery = useDebounce(searchQuery, 400);
-
-//   // আগের পেজ মনে রাখার জন্য
-//   const previousPathRef = useRef<string | null>(null);
-//   const isInitialMount = useRef(true);
-
-//   const wishlistCount = 5;
-
-//   // যখন সার্চ পেজে না থেকেও ইউজার টাইপ শুরু করে
-//   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const value = e.target.value;
-//     setSearchQuery(value);
-
-//     // প্রথমবার টাইপ করার সময় আগের পেজ সেভ করে রাখি
-//     if (pathname !== "/search" && previousPathRef.current === null) {
-//       previousPathRef.current = pathname;
-//     }
-//   };
-
-//   // URL থেকে q প্যারামিটার পড়ার ফাংশন (ক্লায়েন্ট সাইড)
 //   const getQueryParamFromURL = () => {
 //     if (typeof window !== "undefined") {
 //       const params = new URLSearchParams(window.location.search);
@@ -251,54 +228,66 @@
 //     return "";
 //   };
 
-//   // কম্পোনেন্ট মাউন্ট হলে এবং pathname পরিবর্তন হলে URL থেকে q প্যারামিটার সেট করা
+//   const [searchQuery, setSearchQuery] = useState(getQueryParamFromURL());
+  
+//   // ইউজার নিজে টাইপ করছে কিনা তা ট্র্যাক করার জন্য রেফ
+//   const isUserTyping = useRef(false);
+
+//   // ৪০০ মিলি সেকেন্ড (0.4 সেকেন্ড) থামলেই কেবল ডেবাউন্স ভ্যালু আপডেট হবে
+//   const debouncedQuery = useDebounce(searchQuery, 400);
+
+//   const wishlistCount = 5;
+
+//   // URL বা pathname পরিবর্তন হলে ইনপুট সিঙ্ক রাখা
 //   useEffect(() => {
 //     if (pathname === "/search") {
 //       const q = getQueryParamFromURL();
-//       if (q && q !== searchQuery) {
+//       if (!isUserTyping.current && q !== searchQuery) {
 //         setSearchQuery(q);
 //       }
+//     } else if (!isUserTyping.current) {
+//       setSearchQuery("");
 //     }
 //   }, [pathname]);
 
-//   // Debounced value অনুযায়ী নেভিগেশন/URL আপডেট
+//   // ডেবাউন্সড কুয়েরি অনুযায়ী রাউটিং
 //   useEffect(() => {
-//     // প্রথম মাউন্টে skip করি যাতে অনাকাঙ্খিত নেভিগেশন না হয়
-//     if (isInitialMount.current) {
-//       isInitialMount.current = false;
-//       return;
-//     }
-
 //     const trimmed = debouncedQuery.trim();
+//     const currentUrlQ = getQueryParamFromURL();
 
-//     if (trimmed) {
-//       const params = new URLSearchParams();
-//       params.set("q", trimmed);
-
-//       if (pathname === "/search") {
-//         router.replace(`/search?${params.toString()}`);
-//       } else {
-//         router.push(`/search?${params.toString()}`);
-//       }
-//     } else if (pathname === "/search" && debouncedQuery === "") {
-//       if (previousPathRef.current) {
-//         router.push(previousPathRef.current);
-//         previousPathRef.current = null;
-//       } else {
-//         router.push("/");
+//     if (isUserTyping.current) {
+//       // যদি ইনপুট ফিল্ড একদম খালি করে দেয় (length === 0) এবং আমরা অলরেডি সার্চ পেজে থাকি
+//       if (trimmed === "" && pathname === "/search" && currentUrlQ !== "") {
+//         router.push("/search"); // কুয়েরি ছাড়া শুধু /search এ পাঠাবে যাতে সব প্রোডাক্ট দেখায়
+//       } 
+//       // অথবা নতুন কোনো কুয়েরি টাইপ করলে
+//       else if (trimmed.length >= 2 && trimmed !== currentUrlQ) {
+//         router.push(`/search?q=${encodeURIComponent(trimmed)}`);
 //       }
 //     }
 //   }, [debouncedQuery, pathname, router]);
 
+//   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     isUserTyping.current = true; // ইউজার টাইপ শুরু করলেই ফ্ল্যাগ ট্রু হবে
+//     setSearchQuery(e.target.value);
+//   };
+
 //   const clearSearch = () => {
+//     isUserTyping.current = false;
 //     setSearchQuery("");
 //     if (pathname === "/search") {
-//       if (previousPathRef.current) {
-//         router.push(previousPathRef.current);
-//         previousPathRef.current = null;
-//       } else {
-//         router.push("/");
-//       }
+//       router.push("/search");
+//     }
+//   };
+
+//   const handleSearchSubmit = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     isUserTyping.current = false;
+//     const trimmed = searchQuery.trim();
+//     if (trimmed) {
+//       router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+//     } else {
+//       router.push("/search");
 //     }
 //   };
 
@@ -330,7 +319,7 @@
 
 //           {/* Desktop Search */}
 //           <div className="hidden md:flex flex-1 max-w-xl mx-8">
-//             <div className="relative w-full">
+//             <form onSubmit={handleSearchSubmit} className="relative w-full">
 //               <input
 //                 type="text"
 //                 placeholder="Search products, brands and more..."
@@ -340,6 +329,7 @@
 //               />
 //               {searchQuery ? (
 //                 <button
+//                   type="button"
 //                   onClick={clearSearch}
 //                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-200 text-gray-600 p-2.5 rounded-3xl hover:bg-gray-300 transition-all"
 //                   aria-label="Clear search"
@@ -347,11 +337,14 @@
 //                   <FiX size={18} />
 //                 </button>
 //               ) : (
-//                 <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-white px-6 py-2.5 rounded-3xl hover:bg-opacity-90 transition-all">
+//                 <button
+//                   type="submit"
+//                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-white px-6 py-2.5 rounded-3xl hover:bg-opacity-90 transition-all"
+//                 >
 //                   <FiSearch size={18} />
 //                 </button>
 //               )}
-//             </div>
+//             </form>
 //           </div>
 
 //           {/* Right Side */}
@@ -452,7 +445,7 @@
 
 //         {/* Mobile Search */}
 //         <div className="md:hidden pb-4">
-//           <div className="relative">
+//           <form onSubmit={handleSearchSubmit} className="relative">
 //             <input
 //               type="text"
 //               placeholder="Search products..."
@@ -462,17 +455,21 @@
 //             />
 //             {searchQuery ? (
 //               <button
+//                 type="button"
 //                 onClick={clearSearch}
 //                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-200 text-gray-600 p-2 rounded-3xl"
 //               >
 //                 <FiX size={18} />
 //               </button>
 //             ) : (
-//               <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-white px-5 py-2 rounded-3xl">
+//               <button
+//                 type="submit"
+//                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-white px-5 py-2 rounded-3xl"
+//               >
 //                 <FiSearch size={18} />
 //               </button>
 //             )}
-//           </div>
+//           </form>
 //         </div>
 //       </div>
 //     </header>
@@ -480,6 +477,8 @@
 // };
 
 // export default MinHeader;
+
+
 
 
 
@@ -524,8 +523,8 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
   // ইউজার নিজে টাইপ করছে কিনা তা ট্র্যাক করার জন্য রেফ
   const isUserTyping = useRef(false);
 
-  // ৪০০ মিলি সেকেন্ড (0.4 সেকেন্ড) থামলেই কেবল ডেবাউন্স ভ্যালু আপডেট হবে
-  const debouncedQuery = useDebounce(searchQuery, 400);
+  // ৩০০ মিলি সেকেন্ড (০.৩ সেকেন্ড) থামলেই কেবল ডেবাউন্স ভ্যালু আপডেট হবে
+  const debouncedQuery = useDebounce(searchQuery, 300);
 
   const wishlistCount = 5;
 
@@ -533,7 +532,6 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
   useEffect(() => {
     if (pathname === "/search") {
       const q = getQueryParamFromURL();
-      // যদি ইউজার নিজে টাইপ না করে থাকে, তবেই ইউআরএল থেকে কুয়েরি ইনপুটে বসবে
       if (!isUserTyping.current && q !== searchQuery) {
         setSearchQuery(q);
       }
@@ -542,26 +540,34 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
     }
   }, [pathname]);
 
-  // ডেবাউন্সড কুয়েরি অনুযায়ী রাউটিং (সার্চ পেজে বা অন্য পেজে যেখানেই হোক, টাইপ করলে ইউআরএল আপডেট হবে)
+  // ডেবাউন্সড কুয়েরি অনুযায়ী রাউটিং (এখন ১টি লেটার বা অক্ষর লিখলেও কাজ করবে)
   useEffect(() => {
     const trimmed = debouncedQuery.trim();
     const currentUrlQ = getQueryParamFromURL();
 
-    // শর্ত: ইউজার নিজে টাইপ করলে এবং বর্তমান ইউআরএলের কুয়েরি ও ডেবাউন্সড কুয়েরি এক না হলে আপডেট করবে
-    if (isUserTyping.current && trimmed.length >= 2 && trimmed !== currentUrlQ) {
-      router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+    if (isUserTyping.current) {
+      // যদি ইনপুট ফিল্ড একদম খালি করে দেয়
+      if (trimmed === "" && pathname === "/search" && currentUrlQ !== "") {
+        router.push("/search");
+      } 
+      // যদি ১ বা তার বেশি লেটার টাইপ করা হয় (minLength >= 1)
+      else if (trimmed.length >= 1 && trimmed !== currentUrlQ) {
+        router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+      }
     }
-  }, [debouncedQuery, router]);
+  }, [debouncedQuery, pathname, router]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    isUserTyping.current = true; // ইউজার টাইপ শুরু করলেই ফ্ল্যাগ ট্রু হবে
+    isUserTyping.current = true;
     setSearchQuery(e.target.value);
   };
 
   const clearSearch = () => {
     isUserTyping.current = false;
     setSearchQuery("");
-    router.push("/search");
+    if (pathname === "/search") {
+      router.push("/search");
+    }
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -570,6 +576,8 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
     const trimmed = searchQuery.trim();
     if (trimmed) {
       router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+    } else {
+      router.push("/search");
     }
   };
 

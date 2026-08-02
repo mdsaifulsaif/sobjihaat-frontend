@@ -245,7 +245,6 @@
 // export default ProductCard;
 
 
-
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { FiHeart } from "react-icons/fi";

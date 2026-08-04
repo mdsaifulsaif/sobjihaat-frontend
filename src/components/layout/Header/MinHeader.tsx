@@ -479,9 +479,6 @@
 // export default MinHeader;
 
 
-
-
-
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -519,14 +516,29 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
   };
 
   const [searchQuery, setSearchQuery] = useState(getQueryParamFromURL());
-  
-  // ইউজার নিজে টাইপ করছে কিনা তা ট্র্যাক করার জন্য রেফ
-  const isUserTyping = useRef(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // ← NEW
 
-  // ৩০০ মিলি সেকেন্ড (০.৩ সেকেন্ড) থামলেই কেবল ডেবাউন্স ভ্যালু আপডেট হবে
+  const isUserTyping = useRef(false);
+  const userMenuRef = useRef<HTMLDivElement>(null); // ← NEW
+
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   const wishlistCount = 5;
+
+  // Outside click → close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // URL বা pathname পরিবর্তন হলে ইনপুট সিঙ্ক রাখা
   useEffect(() => {
@@ -540,18 +552,15 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
     }
   }, [pathname]);
 
-  // ডেবাউন্সড কুয়েরি অনুযায়ী রাউটিং (এখন ১টি লেটার বা অক্ষর লিখলেও কাজ করবে)
+  // ডেবাউন্সড কুয়েরি অনুযায়ী রাউটিং
   useEffect(() => {
     const trimmed = debouncedQuery.trim();
     const currentUrlQ = getQueryParamFromURL();
 
     if (isUserTyping.current) {
-      // যদি ইনপুট ফিল্ড একদম খালি করে দেয়
       if (trimmed === "" && pathname === "/search" && currentUrlQ !== "") {
         router.push("/search");
-      } 
-      // যদি ১ বা তার বেশি লেটার টাইপ করা হয় (minLength >= 1)
-      else if (trimmed.length >= 1 && trimmed !== currentUrlQ) {
+      } else if (trimmed.length >= 1 && trimmed !== currentUrlQ) {
         router.push(`/search?q=${encodeURIComponent(trimmed)}`);
       }
     }
@@ -652,9 +661,12 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
               )}
             </Link>
 
-            {/* User / Login */}
-            <div className="relative group z-[9999]">
-              <button className="flex items-center gap-2 p-2 pr-3 hover:bg-gray-100 rounded-3xl transition-all">
+            {/* User / Login — CLICK based */}
+            <div className="relative z-[9999]" ref={userMenuRef}>
+              <button
+                onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                className="flex items-center gap-2 p-2 pr-3 hover:bg-gray-100 rounded-3xl transition-all"
+              >
                 <div className="w-9 h-9 bg-gray-100 rounded-2xl flex items-center justify-center font-bold text-lg text-[var(--color-primary)]">
                   {isAuthenticated && user?.firstName ? (
                     user.firstName.charAt(0).toUpperCase()
@@ -668,13 +680,24 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                     {isAuthenticated && user?.firstName
                       ? user.firstName.split(" ")[0]
                       : "Login"}
-                    <FiChevronDown size={14} />
+                    <FiChevronDown
+                      size={14}
+                      className={`transition-transform ${
+                        isUserMenuOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </p>
                 </div>
               </button>
 
               {/* User Dropdown */}
-              <div className="absolute right-0 top-[110%] w-64 bg-white rounded-2xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all z-50">
+              <div
+                className={`absolute right-0 top-[110%] w-64 bg-white rounded-2xl shadow-xl border border-gray-100 transition-all z-50 ${
+                  isUserMenuOpen
+                    ? "opacity-100 visible translate-y-0"
+                    : "opacity-0 invisible translate-y-2 pointer-events-none"
+                }`}
+              >
                 {!isAuthenticated ? (
                   <div className="p-6">
                     <h4 className="text-lg font-bold">Welcome!</h4>
@@ -683,13 +706,17 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                     </p>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => signIn()}
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          signIn();
+                        }}
                         className="flex-1 py-3 bg-[var(--color-primary)] text-white rounded-xl font-medium hover:opacity-90 transition-all"
                       >
                         SIGN IN
                       </button>
                       <Link
                         href="/register"
+                        onClick={() => setIsUserMenuOpen(false)}
                         className="flex-1 py-3 border border-gray-300 text-center rounded-xl font-medium hover:border-[var(--color-primary)] transition-all"
                       >
                         JOIN
@@ -706,22 +733,34 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                     {user?.role === "rider" && (
                       <Link
                         href="/rider-dashboard"
+                        onClick={() => setIsUserMenuOpen(false)}
                         className="block px-6 py-3 hover:bg-gray-50 text-[var(--color-primary)] font-medium"
                       >
                         Rider Dashboard
                       </Link>
                     )}
 
-                    <Link href="/profile" className="block px-6 py-3 hover:bg-gray-50">
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="block px-6 py-3 hover:bg-gray-50"
+                    >
                       My Profile
                     </Link>
-                    <Link href="/my-orders" className="block px-6 py-3 hover:bg-gray-50">
+                    <Link
+                      href="/my-orders"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="block px-6 py-3 hover:bg-gray-50"
+                    >
                       Order History
                     </Link>
 
                     <div className="border-t border-gray-100 my-1" />
                     <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
                       className="w-full text-left px-6 py-3 text-red-600 hover:bg-red-50"
                     >
                       Sign Out

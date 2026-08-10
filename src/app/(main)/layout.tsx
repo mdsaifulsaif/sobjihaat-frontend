@@ -18,7 +18,7 @@ export default function MainLayout({
 
            <Header />
            
-            <main className="min-h-screen pt-3">
+            <main className=" pt-3">
                 {children}
             </main>
                 <MiniCart/>

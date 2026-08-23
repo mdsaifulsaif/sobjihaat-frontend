@@ -131,6 +131,9 @@ const uiSlice = createSlice({
         clearCompare: (state) => {
             state.compareProducts = [];
         },
+                openMobileMenu: (state) => {
+            state.isMobileMenuOpen = true;
+        },
     },
 });
 
@@ -154,6 +157,7 @@ export const {
     addToCompare,
     removeFromCompare,
     clearCompare,
+     openMobileMenu, 
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -204,7 +204,7 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
     <section className="py-8 md:py-12 bg-[var(--color-background)]">
       <div className="container mx-auto px-4">
         {/* Header */}
-       <SectionHeader title="Prodcut Categories" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
+       <SectionHeader title="Combo Prodcucts" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
 
         {/* Combo Products Slider - Mobile 3 items */}
         <div className="-mx-2 py-10 md:-mx-4">

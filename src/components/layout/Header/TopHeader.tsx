@@ -1,10 +1,13 @@
 "use client";
 
 import React from 'react';
+import { useDispatch } from "react-redux";
 import { FiPhone, FiMail, FiMapPin, FiTwitter, FiFacebook, FiInstagram, FiLinkedin } from 'react-icons/fi';
 import { BsWhatsapp } from 'react-icons/bs';
+import { openComplainModal } from '@/redux/slices/uiSlice';
 
 const TopHeader: React.FC = () => {
+    const dispatch = useDispatch();
     return (
         <div className="bg-[#f8f8f8] border-b border-gray-200 py-1 hidden md:block">
             <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 flex justify-between items-center">
@@ -23,6 +26,7 @@ const TopHeader: React.FC = () => {
                 {/* Right Side: Links & Social */}
                 <div className="flex items-center gap-8">
                     <div className="flex items-center gap-4 text-[13px] text-gray-600 font-medium">
+                        <button onClick={() => dispatch(openComplainModal())} className="hover:text-[var(--color-primary)] transition-all">Have Complain?</button>
                         <a href="#" className="hover:text-[var(--color-primary)] transition-all">Track Order</a>
                         <a href="#" className="hover:text-[var(--color-primary)] transition-all">FAQ</a>
                         <a href="#" className="hover:text-[var(--color-primary)] transition-all border-l border-gray-300 pl-4 ml-2">English</a>

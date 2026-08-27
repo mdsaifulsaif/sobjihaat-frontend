@@ -1,4 +1,3 @@
-
 // "use client";
 
 // import React, { useState, useEffect } from "react";
@@ -679,9 +678,6 @@
 //                                     )}
 //                                 </button> */}
 
-
-
-
 //                 <button
 //                   type="submit"
 //                   disabled={isPlacingOrder}
@@ -919,9 +915,6 @@
 
 // export default CheckoutPage;
 
-
-
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -931,6 +924,7 @@ import { useAppDispatch, useAppSelector } from "@/redux";
 import { clearCart, setPlacingOrder } from "@/redux/slices/cartSlice";
 import { useCreateOrderMutation } from "@/redux/api/orderApi";
 import { useGetAllAreasQuery } from "@/redux/api/areaApi";
+import { useGetShippingPreviewQuery } from "@/redux/api/shippingApi";
 import {
   FiMapPin,
   FiCreditCard,
@@ -1004,7 +998,8 @@ const InputField = ({
 }) => (
   <div>
     <label className="block text-xs font-semibold text-[var(--color-text-primary)]/80 mb-1.5">
-      {label} {required && <span className="text-[var(--color-primary)]">*</span>}
+      {label}{" "}
+      {required && <span className="text-[var(--color-primary)]">*</span>}
     </label>
     {children}
   </div>
@@ -1077,9 +1072,26 @@ const CheckoutPage = () => {
     };
   }, [dispatch]);
 
-  const estimatedShipping =
-    formData.deliveryType === "local" ? (totalPrice >= 1000 ? 0 : 60) : 120;
+  // const estimatedShipping =
+  //   formData.deliveryType === "local" ? (totalPrice >= 1000 ? 0 : 60) : 120;
+  // const grandTotal = totalPrice + estimatedShipping;
+
+  const { data: shippingPreview, isFetching: isShippingLoading , error: shippingError } =
+    useGetShippingPreviewQuery(
+      {
+        deliveryType: formData.deliveryType,
+        subtotal: totalPrice,
+      },
+      {
+        skip: !totalPrice,
+      },
+    );
+
+  const estimatedShipping = shippingPreview?.data?.shippingCharge ?? 0;
   const grandTotal = totalPrice + estimatedShipping;
+
+
+console.log("shippingPreview:", shippingPreview, "error:", shippingError);
 
   const labelOptions: {
     value: "home" | "work" | "partner" | "other";
@@ -1109,11 +1121,7 @@ const CheckoutPage = () => {
       return;
     }
     // ✅ সময় নির্বাচন সম্পূর্ণ optional — শুধু toggle অন থাকলে ও খালি রাখলে error
-    if (
-      formData.deliveryType === "local" &&
-      wantsCustomTime &&
-      !customTime
-    ) {
+    if (formData.deliveryType === "local" && wantsCustomTime && !customTime) {
       toast.error("অনুগ্রহ করে ডেলিভারি সময় নির্বাচন করুন");
       return;
     }
@@ -1545,12 +1553,28 @@ const CheckoutPage = () => {
                       ৳{totalPrice.toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  {/* <div className="flex justify-between text-sm">
                     <span className="text-[var(--color-text-muted)]">
                       Delivery charge
                     </span>
                     <span className="font-semibold text-[var(--color-text-primary)]">
                       {estimatedShipping === 0 ? (
+                        <span className="text-[var(--color-primary)] font-bold">
+                          FREE
+                        </span>
+                      ) : (
+                        `৳${estimatedShipping}`
+                      )}
+                    </span>
+                  </div> */}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[var(--color-text-muted)]">
+                      Delivery charge
+                    </span>
+                    <span className="font-semibold text-[var(--color-text-primary)]">
+                      {isShippingLoading ? (
+                        <span className="inline-block w-10 h-3 bg-gray-100 rounded animate-pulse" />
+                      ) : estimatedShipping === 0 ? (
                         <span className="text-[var(--color-primary)] font-bold">
                           FREE
                         </span>
@@ -1581,7 +1605,8 @@ const CheckoutPage = () => {
                 {/* Submit (Desktop / normal in-page button) */}
                 <button
                   type="submit"
-                  disabled={isPlacingOrder}
+                  // disabled={isPlacingOrder}
+                  disabled={isPlacingOrder || isShippingLoading}
                   className="mt-5 hidden md:flex w-full items-center justify-center gap-2.5 py-4 bg-[var(--color-primary)] text-white rounded-xl font-bold text-sm tracking-wide hover:opacity-95 active:scale-[0.98] transition-all shadow-lg shadow-[var(--color-primary)]/25 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isPlacingOrder ? (

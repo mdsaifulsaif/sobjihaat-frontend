@@ -15,7 +15,7 @@ const RiderDashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <h1 className="text-2xl font-black text-gray-900">Rider Dashboard</h1>

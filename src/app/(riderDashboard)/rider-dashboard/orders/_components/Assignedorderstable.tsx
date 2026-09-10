@@ -524,7 +524,7 @@ const AssignedOrdersTable = () => {
                             </button>
                           )}
 
-                          {/* ধাপ ২: Mark Delivered */}
+                          {/* Mark Delivered */}
                           {!isTerminal && isOutForDelivery && (
                             <button
                               onClick={() => handleDelivered(order._id)}
@@ -538,7 +538,7 @@ const AssignedOrdersTable = () => {
                             </button>
                           )}
 
-                          {/* ধাপ ৩: Delivered হওয়ার পর Return অপশন এনাবল হবে */}
+                          {/*  Delivered হওয়ার পর Return অপশন এনাবল হবে */}
                           {isDelivered && (
                             <button
                               onClick={() => handleReturn(order._id)}

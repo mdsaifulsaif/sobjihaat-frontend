@@ -550,7 +550,7 @@ const AssignedOrdersTable = () => {
                             </button>
                           )}
 
-                          {/* ক্যান্সেল বাটন (রাইডারকে রাখতে চাইলে) */}
+                          {/*cancel button rider k rakte*/}
                           {!isTerminal && !isDelivered && (
                             <button
                               onClick={() => handleCancel(order._id)}

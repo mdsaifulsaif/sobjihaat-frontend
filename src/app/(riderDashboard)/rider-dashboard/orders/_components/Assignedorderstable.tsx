@@ -538,7 +538,7 @@ const AssignedOrdersTable = () => {
                             </button>
                           )}
 
-                          {/*  Delivered হওয়ার পর Return অপশন এনাবল হবে */}
+                          {/*  Delivered hober por return  */}
                           {isDelivered && (
                             <button
                               onClick={() => handleReturn(order._id)}

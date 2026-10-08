@@ -27,6 +27,10 @@ interface UIState {
 
     // Compare
     compareProducts: number[];
+
+        isComplainModalOpen: boolean;
+
+  
 }
 
 const initialState: UIState = {
@@ -41,6 +45,10 @@ const initialState: UIState = {
     notification: null,
     isFilterSidebarOpen: false,
     compareProducts: [],
+  
+
+// initialState-এ
+isComplainModalOpen: false,
 };
 
 const uiSlice = createSlice({
@@ -134,6 +142,21 @@ const uiSlice = createSlice({
                 openMobileMenu: (state) => {
             state.isMobileMenuOpen = true;
         },
+
+        // complaint modal 
+        // UIState interface-এ
+
+
+// reducers-এ
+openComplainModal: (state) => {
+  state.isComplainModalOpen = true;
+},
+closeComplainModal: (state) => {
+  state.isComplainModalOpen = false;
+},
+toggleComplainModal: (state) => {
+  state.isComplainModalOpen = !state.isComplainModalOpen;
+},
     },
 });
 
@@ -158,6 +181,10 @@ export const {
     removeFromCompare,
     clearCompare,
      openMobileMenu, 
+    //  complaint 
+    openComplainModal,
+  closeComplainModal,
+  toggleComplainModal,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

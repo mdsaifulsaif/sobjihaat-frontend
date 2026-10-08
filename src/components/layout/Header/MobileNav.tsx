@@ -22,7 +22,7 @@ export default function MobileNav({ onClose }: MobileNavProps) {
       {/* Categories Section with Small Images */}
       <div className="flex flex-col gap-2 border-t border-gray-100 pt-4">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          Categories
+          Categories22
         </p>
 
         {isLoading ? (

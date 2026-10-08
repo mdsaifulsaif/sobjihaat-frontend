@@ -7,6 +7,7 @@ import MinHeader from "@/components/layout/Header/MinHeader";
 import Navbar from "@/components/layout/Header/Navbar";
 import MiniCart from "@/components/shared/MiniCart";
 import FloatingCartButton from "@/components/shared/FloatingCartButton";
+import ComplainModal from "@/components/modals/ComplainModal";
 
 export default function MainLayout({
     children,
@@ -23,6 +24,7 @@ export default function MainLayout({
             </main>
                 <MiniCart/>
                 <FloatingCartButton />
+                <ComplainModal />
             <Footer />
         </>
     );

@@ -33,7 +33,7 @@ export const baseApi = createApi({
         'Stats', 'Orders', 'Products', 'Users', 'Analytics', 'PageContent',
         'SiteContent', 'Categories', 'Payments', 'Shipping', 'Coupons',
         'Reviews', 'Brands', 'Complaints', 'Area', 'Rider',
-        'RiderApplication', 'User', 'StoreSetting', 'Riders', 'RiderProfile','Brand','Area','Dashboard','Payout'
+        'RiderApplication', 'User', 'StoreSetting', 'Riders', 'Complaint', 'RiderProfile','Brand','Area','Dashboard','Payout'
     ],
     endpoints: () => ({}),
 });

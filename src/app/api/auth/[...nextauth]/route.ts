@@ -1,23 +1,27 @@
 
-
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
-// ✅ Module-level lock — একই সময়ে একাধিক parallel request আসলেও
-// শুধু একটাই refresh call backend এ যাবে, বাকি সব সেই একই promise শেয়ার করবে
+const REFRESH_LEAD_MS = 30_000;
+const SESSION_MAX_AGE_SEC = 7 * 24 * 60 * 60;
+
 let refreshPromise: Promise<any> | null = null;
 
 async function refreshAccessToken(token: any) {
-  // ইতিমধ্যে একটা refresh call চলমান থাকলে, নতুন call না করে সেটাই await করো
   if (refreshPromise) {
-    console.log("⏳ [JWT] Refresh already in progress, reusing existing promise...");
     return refreshPromise;
   }
 
   refreshPromise = (async () => {
     try {
-      console.log("🔄 [JWT] Token expired, calling refresh...");
+      if (!token.refreshToken) {
+        return {
+          ...token,
+          accessToken: undefined,
+          error: "RefreshAccessTokenError",
+        };
+      }
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`, {
         method: "POST",
@@ -27,29 +31,38 @@ async function refreshAccessToken(token: any) {
 
       const result = await res.json();
 
-      if (!res.ok || !result?.data?.accessToken) {
-        console.error("🔴 [JWT] Refresh failed:", result?.message);
-        return { ...token, error: "RefreshAccessTokenError" };
+      const accessToken = result?.data?.accessToken || result?.accessToken;
+      const accessTokenExpires = Number(
+        result?.data?.accessTokenExpires || result?.accessTokenExpires || 0
+      );
+
+      if (!res.ok || !accessToken) {
+        return {
+          ...token,
+          accessToken: undefined,
+          refreshToken: undefined,
+          accessTokenExpires: 0,
+          error: "RefreshAccessTokenError",
+        };
       }
 
       const newToken = {
         ...token,
-        accessToken: result.data.accessToken,
-        accessTokenExpires: result.data.accessTokenExpires,
+        accessToken,
+        accessTokenExpires,
+        error: undefined,
       };
-      delete newToken.error; // আগে কোনো error থাকলে মুছে দাও, refresh সফল হয়েছে
-
-      console.log(
-        "✅ [JWT] Refreshed, new expiry:",
-        new Date(newToken.accessTokenExpires).toISOString(),
-      );
 
       return newToken;
-    } catch (err) {
-      console.error("🔴 [JWT] Refresh request failed:", err);
-      return { ...token, error: "RefreshAccessTokenError" };
+    } catch {
+      return {
+        ...token,
+        accessToken: undefined,
+        refreshToken: undefined,
+        accessTokenExpires: 0,
+        error: "RefreshAccessTokenError",
+      };
     } finally {
-      // ✅ কাজ শেষে lock ছেড়ে দাও, পরের বার নতুন করে refresh করতে পারবে
       refreshPromise = null;
     }
   })();
@@ -64,8 +77,52 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        accessToken: { label: "Access Token", type: "text" },
+        refreshToken: { label: "Refresh Token", type: "text" },
+        accessTokenExpires: { label: "Access Token Expires", type: "text" },
+        userData: { label: "User Data", type: "text" },
       },
       async authorize(credentials) {
+        if (credentials?.accessToken && credentials?.refreshToken) {
+          let user: any = null;
+
+          if (credentials?.userData) {
+            try {
+              user = JSON.parse(credentials.userData);
+            } catch {
+              user = null;
+            }
+          }
+
+          if (!user) {
+            const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/get-me`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${credentials.accessToken}`,
+              },
+            });
+
+            const meResult = await meRes.json();
+
+            if (!meRes.ok || !meResult?.data) {
+              throw new Error(meResult?.message || "Could not create session");
+            }
+
+            user = meResult.data;
+          }
+
+          return {
+            id: user._id || user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            accessToken: credentials.accessToken,
+            refreshToken: credentials.refreshToken,
+            accessTokenExpires: Number(credentials.accessTokenExpires),
+          };
+        }
+
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password required");
         }
@@ -95,7 +152,7 @@ export const authOptions: NextAuthOptions = {
           role: user.role,
           accessToken: result.accessToken,
           refreshToken: result.refreshToken,
-          accessTokenExpires: result.accessTokenExpires,
+          accessTokenExpires: Number(result.accessTokenExpires),
         };
       },
     }),
@@ -108,6 +165,7 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
+    maxAge: SESSION_MAX_AGE_SEC,
   },
 
   pages: {
@@ -137,21 +195,19 @@ export const authOptions: NextAuthOptions = {
           const result = await res.json();
 
           if (!res.ok || !result?.accessToken) {
-            console.error("Google social login backend error:", result?.message);
             return false;
           }
 
           (user as any).accessToken = result.accessToken;
           (user as any).refreshToken = result.refreshToken;
-          (user as any).accessTokenExpires = result.accessTokenExpires;
+          (user as any).accessTokenExpires = Number(result.accessTokenExpires);
           (user as any).id = result.data._id;
           (user as any).role = result.data.role;
           (user as any).firstName = result.data.firstName;
           (user as any).lastName = result.data.lastName;
 
           return true;
-        } catch (err) {
-          console.error("Google social login failed:", err);
+        } catch {
           return false;
         }
       }
@@ -160,30 +216,29 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user }) {
-      // ---------- প্রথমবার login ----------
       if (user) {
         token.accessToken = (user as any).accessToken;
         token.refreshToken = (user as any).refreshToken;
-        token.accessTokenExpires = (user as any).accessTokenExpires;
+        token.accessTokenExpires = Number((user as any).accessTokenExpires);
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.firstName = (user as any).firstName;
         token.lastName = (user as any).lastName;
-
-        console.log(
-          "🟢 [JWT] First login, token expires at:",
-          new Date(token.accessTokenExpires as number).toISOString(),
-        );
+        delete token.error;
         return token;
       }
 
-      // ---------- Access token এখনো valid (এখনো মেয়াদ আছে) ----------
-      if (Date.now() < (token.accessTokenExpires as number) - 5_000) {
-        return token; // এখনো refresh লাগবে না
+      if (token.error === "RefreshAccessTokenError") {
+        return token;
       }
 
-      // ---------- Access token expire হয়ে গেছে/হতে যাচ্ছে — deduplicated refresh call ----------
-      return refreshAccessToken(token); // ✅ race-condition-safe
+      const expiresAt = Number(token.accessTokenExpires);
+
+      if (expiresAt && Date.now() < expiresAt - REFRESH_LEAD_MS) {
+        return token;
+      }
+
+      return refreshAccessToken(token);
     },
 
     async session({ session, token }) {
@@ -192,7 +247,7 @@ export const authOptions: NextAuthOptions = {
       session.user.role = token.role as string;
       session.user.firstName = token.firstName as string;
       session.user.lastName = token.lastName as string;
-      (session as any).error = token.error;
+      session.error = token.error as string | undefined;
       return session;
     },
   },
@@ -202,5 +257,3 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-
-

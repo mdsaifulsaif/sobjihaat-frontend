@@ -4,7 +4,7 @@ import CategoryPageClient from "../_component/CategoryPageClient";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
   const categoryName = slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
@@ -18,7 +18,7 @@ export async function generateMetadata({
 export default async function CategoryPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
   return <CategoryPageClient slug={slug} />;

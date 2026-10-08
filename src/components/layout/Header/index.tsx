@@ -3,7 +3,7 @@
 
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, Suspense } from "react";
 import MinHeader from "./MinHeader";
 import TopHeader from "./TopHeader";
 import MobileNav from "./MobileNav";
@@ -54,7 +54,9 @@ const Header: React.FC = () => {
     <>
       <header ref={headerRef} className="sticky top-0 z-50 bg-white">
         <TopHeader />
-        <MinHeader onToggleMobile={handleToggleMobileMenu} />
+        <Suspense fallback={<div className="h-16 bg-white" />}>
+          <MinHeader onToggleMobile={handleToggleMobileMenu} />
+        </Suspense>
       </header>
 
       <div

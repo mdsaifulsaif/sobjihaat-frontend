@@ -42,14 +42,12 @@ const RegisterPage = () => {
                 password: formData.password,
             }).unwrap();
 
-            toast.success('Account created! Please check your email to verify your account.', {
+            toast.success('Account created! Enter the 6-digit code we sent to your email.', {
                 duration: 5000,
                 icon: '📧',
             });
 
-            // ✅ fix: auto sign-in বাদ দেওয়া হলো — email verify না হওয়া পর্যন্ত
-            // backend login কে block করে (isVerified check), তাই auto-login সবসময় fail করত
-            router.push(`/verify-notice?email=${encodeURIComponent(formData.email)}`);
+            router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`);
         } catch (err: any) {
             toast.error(err?.data?.message || 'Registration failed. Try again.', {
                 duration: 4000

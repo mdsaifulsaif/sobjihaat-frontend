@@ -33,7 +33,18 @@ const LoginPage = () => {
         setIsLoading(false);
 
         if (res?.error) {
-            toast.error("Invalid email or password");
+            const errorMessage =
+                res.error !== "CredentialsSignin"
+                    ? res.error
+                    : "Invalid email or password";
+
+            toast.error(errorMessage);
+
+            if (errorMessage.toLowerCase().includes("verify your email")) {
+                setTimeout(() => {
+                    router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+                }, 1500);
+            }
             return;
         }
 

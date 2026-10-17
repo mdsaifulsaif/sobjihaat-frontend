@@ -22,8 +22,11 @@ import {
   FiClock,
   FiMapPin,
   FiPackage,
+  FiPower,
 } from "react-icons/fi";
 import { useSocket } from "@/lib/socket";
+import { useGetMyRiderProfileQuery, useUpdateRiderStatusMutation } from "@/redux/api/riderApi";
+import { toast } from "react-hot-toast";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -103,6 +106,28 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     markAsRead,
     markAllAsRead,
   } = useSocket();
+
+  // ✅ Rider Online Status State & Mutation
+  const { data: riderProfileData, refetch: refetchRiderProfile } = useGetMyRiderProfileQuery(undefined);
+  const [updateRiderStatus, { isLoading: isUpdatingStatus }] = useUpdateRiderStatusMutation();
+
+  const riderProfile = riderProfileData?.data;
+  const isOnline = riderProfile?.status === "online";
+
+  const handleToggleOnline = async () => {
+    const nextStatus = isOnline ? "offline" : "online";
+    try {
+      await updateRiderStatus({ status: nextStatus }).unwrap();
+      toast.success(
+        nextStatus === "online"
+          ? "আপনি এখন অনলাইন আছেন! 🛵"
+          : "আপনি এখন অফলাইনে আছেন। 💤"
+      );
+      refetchRiderProfile();
+    } catch (err: any) {
+      toast.error(err?.data?.message || "স্ট্যাটাস পরিবর্তন ব্যর্থ হয়েছে");
+    }
+  };
 
   // ✅ Request notification permission
   useEffect(() => {
@@ -378,19 +403,33 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               </div>
             )}
 
-            {/* Connection Status */}
-            <div
-              className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full ${
-                isConnected ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
+            {/* Rider Online / Offline Toggle Button */}
+            <button
+              onClick={handleToggleOnline}
+              disabled={isUpdatingStatus}
+              title={isOnline ? "অনলাইন আছেন (ক্লিক করে অফলাইন হন)" : "অফলাইন আছেন (ক্লিক করে অনলাইন হন)"}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-60 border ${
+                isOnline
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100"
+                  : "bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200"
               }`}
             >
               <span
-                className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
-              ></span>
-              <span className={`text-xs font-medium ${isConnected ? "text-green-700" : "text-red-700"}`}>
-                {isConnected ? "Online" : "Offline"}
+                className={`w-2.5 h-2.5 rounded-full ${
+                  isOnline ? "bg-emerald-500 animate-pulse ring-2 ring-emerald-300" : "bg-gray-400"
+                }`}
+              />
+              <span className="font-bold">
+                {isUpdatingStatus ? "Updating..." : isOnline ? "Online" : "Offline"}
               </span>
-            </div>
+              <span
+                className={`text-[10px] font-mono px-1 py-0.2 rounded-xs font-black uppercase ${
+                  isOnline ? "bg-emerald-200 text-emerald-800" : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                {isOnline ? "Active" : "Off"}
+              </span>
+            </button>
 
             {/* Notifications */}
             <div className="relative" ref={notificationRef}>

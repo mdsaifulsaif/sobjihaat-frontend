@@ -23,11 +23,11 @@ const RiderDashboardPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 bg-white p-1.5 rounded-md border border-gray-100 w-fit">
+        <div className="flex gap-2 mb-6 bg-white p-1.5 rounded-sm border border-gray-100 w-fit">
           <button
             onClick={() => setTab("available")}
             className={
-              "px-5 py-2 rounded-md text-sm font-bold transition-all " +
+              "px-5 py-2 rounded-sm text-sm font-bold transition-all " +
               (tab === "available"
                 ? "bg-[var(--color-primary)] text-white"
                 : "text-gray-500 hover:bg-gray-50")
@@ -38,7 +38,7 @@ const RiderDashboardPage = () => {
           <button
             onClick={() => setTab("assigned")}
             className={
-              "px-5 py-2 rounded-md text-sm font-bold transition-all " +
+              "px-5 py-2 rounded-sm text-sm font-bold transition-all " +
               (tab === "assigned"
                 ? "bg-[var(--color-primary)] text-white"
                 : "text-gray-500 hover:bg-gray-50")

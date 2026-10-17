@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
+  --radius-2xl: 0.25rem;
+  --radius-3xl: 0.25rem;
+  --radius: 0.25rem;
+}
+
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */
@@ -49,11 +60,11 @@
   --font-size-4xl: 2.25rem;
   --font-size-5xl: 3rem;
 
-  /* Border Radius */
+  /* Border Radius - Unified to sm */
   --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
   --radius-full: 9999px;
 
   /* Shadows */
@@ -108,7 +119,7 @@ h6 {
   padding: 0.75rem 1.5rem;
   font-weight: 500;
   font-size: 14px;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -157,7 +168,7 @@ h6 {
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border: 1px solid #E2E8F0;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   background-color: white;
 }
 

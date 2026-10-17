@@ -180,7 +180,7 @@ export const useSocket = () => {
     });
 
     socket.on("connect_error", (error) => {
-      console.error("🔴 Socket connect_error:", error);
+      console.warn("⚠️ Socket connect notice (retrying):", error?.message || error);
     });
 
     // ✅ backend rider-join handler নিজেই DB থেকে area খুঁজে এখানে পাঠায়
@@ -240,6 +240,7 @@ export const useSocket = () => {
   };
 
   return {
+    socket: socketRef.current,
     isConnected,
     notifications,
     unreadCount,

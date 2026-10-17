@@ -17,12 +17,28 @@ export default function MobileNav({ onClose }: MobileNavProps) {
 
   return (
     <div className="flex flex-col gap-6">
-  
+      <div className="flex flex-col gap-1">
+        <Link
+          href="/track-order"
+          onClick={onClose}
+          className="flex items-center justify-between p-2.5 rounded-sm bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold text-sm hover:bg-[var(--color-primary)]/20 transition-all"
+        >
+          <span>🚚 Track Order</span>
+          <span className="text-xs bg-[var(--color-primary)] text-white px-2 py-0.5 rounded-sm">Live</span>
+        </Link>
+        <Link
+          href="/my-orders"
+          onClick={onClose}
+          className="flex items-center gap-2 p-2.5 rounded-sm text-gray-700 font-semibold text-sm hover:bg-gray-100 transition-all"
+        >
+          <span>📦 My Orders</span>
+        </Link>
+      </div>
 
       {/* Categories Section with Small Images */}
       <div className="flex flex-col gap-2 border-t border-gray-100 pt-4">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          Categories22
+          Categories
         </p>
 
         {isLoading ? (

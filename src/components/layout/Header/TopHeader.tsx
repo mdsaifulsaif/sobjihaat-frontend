@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { useDispatch } from "react-redux";
 import { FiPhone, FiMail, FiMapPin, FiTwitter, FiFacebook, FiInstagram, FiLinkedin } from 'react-icons/fi';
 import { BsWhatsapp } from 'react-icons/bs';
@@ -26,10 +27,10 @@ const TopHeader: React.FC = () => {
                 {/* Right Side: Links & Social */}
                 <div className="flex items-center gap-8">
                     <div className="flex items-center gap-4 text-[13px] text-gray-600 font-medium">
-                        <button onClick={() => dispatch(openComplainModal())} className="hover:text-[var(--color-primary)] transition-all">Have Complain?</button>
-                        <a href="#" className="hover:text-[var(--color-primary)] transition-all">Track Order</a>
-                        <a href="#" className="hover:text-[var(--color-primary)] transition-all">FAQ</a>
-                        <a href="#" className="hover:text-[var(--color-primary)] transition-all border-l border-gray-300 pl-4 ml-2">English</a>
+                        <button onClick={() => dispatch(openComplainModal())} className="hover:text-[var(--color-primary)] transition-all cursor-pointer">Have Complain?</button>
+                        <Link href="/track-order" className="hover:text-[var(--color-primary)] transition-all font-semibold text-gray-700">Track Order</Link>
+                        <Link href="/#faq" className="hover:text-[var(--color-primary)] transition-all">FAQ</Link>
+                        <span className="text-gray-400 border-l border-gray-300 pl-4 ml-2">বাংলা / En</span>
                     </div>
                     <div className="flex items-center gap-3 text-gray-400">
                         {[FiFacebook, FiTwitter, FiInstagram, FiLinkedin].map((Icon, i) => (

@@ -248,11 +248,12 @@ import {
   useGetMyAssignedOrdersQuery,
   useMarkOutForDeliveryMutation,
   useMarkDeliveredMutation,
+  useMarkReturnedMutation,
   useRejectOrderMutation,
-  // useMarkReturnedMutation, // আপনার API-তে রিটার্ন করার কোনো Mutation থাকলে এখানে ইমপোর্ট করে নিবেন
 } from "@/redux/api/orderApi";
+import { useGetMyRiderProfileQuery } from "@/redux/api/riderApi";
 import { toast } from "react-hot-toast";
-import { FiTruck, FiCheck, FiPhone, FiRefreshCw, FiXCircle, FiCopy, FiRotateCcw } from "react-icons/fi";
+import { FiTruck, FiCheck, FiPhone, FiRefreshCw, FiXCircle, FiCopy, FiRotateCcw, FiAlertCircle, FiX } from "react-icons/fi";
 import { RiderOrder, TERMINAL_STATUSES, getAreaLabel } from "../../../../../types/rider-order.types";
 
 const BRAND = "var(--color-primary)";
@@ -300,10 +301,17 @@ const AssignedOrdersTable = () => {
     refetch,
   } = useGetMyAssignedOrdersQuery(undefined, { pollingInterval: 15000 });
 
+  const { data: profileData } = useGetMyRiderProfileQuery(undefined);
+  const isOnline = profileData?.data?.status === "online";
+
   const [markOutForDelivery, { isLoading: isMarkingOut }] = useMarkOutForDeliveryMutation();
   const [markDelivered, { isLoading: isMarkingDelivered }] = useMarkDeliveredMutation();
-  const [rejectOrder, { isLoading: isCancelling }] = useRejectOrderMutation();
-  // const [markReturned] = useMarkReturnedMutation(); // রিটার্ন API থাকলে এখানে ব্যবহার করবেন
+  const [markReturned, { isLoading: isMarkingReturned }] = useMarkReturnedMutation();
+
+  const [returnModalOrder, setReturnModalOrder] = useState<RiderOrder | null>(null);
+  const [returnReason, setReturnReason] = useState("Damaged Goods");
+  const [returnCondition, setReturnCondition] = useState<"damaged" | "good" | "wrong_item">("damaged");
+  const [returnNote, setReturnNote] = useState("");
 
   const allOrders: RiderOrder[] = Array.isArray(assignedData?.data)
     ? assignedData.data
@@ -315,9 +323,13 @@ const AssignedOrdersTable = () => {
     ? allOrders
     : allOrders.filter((o) => o.status !== "cancelled" && o.status !== "returned");
 
-  const isBusy = isMarkingOut || isMarkingDelivered || isCancelling;
+  const isBusy = isMarkingOut || isMarkingDelivered || isMarkingReturned;
 
   const handleOutForDelivery = async (id: string) => {
+    if (!isOnline) {
+      toast.error("আগে অনলাইন হন! ডেলিভারি শুরু করার আগে অনলাইন হওয়া আবশ্যক।");
+      return;
+    }
     setActingOrderId(id);
     try {
       await markOutForDelivery(id).unwrap();
@@ -330,6 +342,10 @@ const AssignedOrdersTable = () => {
   };
 
   const handleDelivered = async (id: string) => {
+    if (!isOnline) {
+      toast.error("আগে অনলাইন হন! ডেলিভারি সম্পন্ন করার আগে অনলাইন হওয়া আবশ্যক।");
+      return;
+    }
     setActingOrderId(id);
     try {
       await markDelivered(id).unwrap();
@@ -341,31 +357,26 @@ const AssignedOrdersTable = () => {
     }
   };
 
-  const handleReturn = async (id: string) => {
-    const confirmed = window.confirm("Ei order ki return hisebe mark korte chao?");
-    if (!confirmed) return;
-
-    setActingOrderId(id);
-    try {
-      // await markReturned(id).unwrap(); // API কল এখানে হবে
-      toast.success("Order marked as returned");
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to mark as returned");
-    } finally {
-      setActingOrderId(null);
+  const handleConfirmReturn = async () => {
+    if (!returnModalOrder) return;
+    if (!isOnline) {
+      toast.error("আগে অনলাইন হন!");
+      return;
     }
-  };
-
-  const handleCancel = async (id: string) => {
-    const confirmed = window.confirm("Ei order cancel korte chao? Ei kaj revert kora jabe na.");
-    if (!confirmed) return;
-
-    setActingOrderId(id);
+    setActingOrderId(returnModalOrder._id);
     try {
-      await rejectOrder(id).unwrap();
-      toast.success("Order cancelled");
+      await markReturned({
+        id: returnModalOrder._id,
+        returnReason,
+        returnCondition,
+        returnNote,
+      }).unwrap();
+      toast.success("অর্ডার সফলভাবে রিটার্ন হিসেবে রিপোর্ট করা হয়েছে!");
+      setReturnModalOrder(null);
+      setReturnNote("");
+      refetch();
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to cancel order");
+      toast.error(err?.data?.message || "রিটার্ন আপডেট করতে ব্যর্থ হয়েছে");
     } finally {
       setActingOrderId(null);
     }
@@ -378,8 +389,18 @@ const AssignedOrdersTable = () => {
 
   return (
     <div className="space-y-4">
+      {/* Offline warning banner */}
+      {!isOnline && (
+        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-4 py-3 rounded-sm shadow-xs">
+          <FiAlertCircle size={16} className="text-amber-600 flex-shrink-0" />
+          <span>
+            আপনি এখন অফলাইনে আছেন। কোনো অ্যাকশন করতে দয়া করে উপরের টগল বাটনে ক্লিক করে আগে অনলাইন হন।
+          </span>
+        </div>
+      )}
+
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-sm border border-gray-200 p-4 shadow-xs">
         <label className="flex items-center gap-2 text-sm font-medium text-gray-600 cursor-pointer">
           <input
             type="checkbox"
@@ -538,27 +559,21 @@ const AssignedOrdersTable = () => {
                             </button>
                           )}
 
-                          {/*  Delivered hober por return  */}
-                          {isDelivered && (
+                          {/* Out for delivery বা Delivered অবস্থায় রিটার্ন / ড্যামেজ রিপোর্ট */}
+                          {(isOutForDelivery || isDelivered) && (
                             <button
-                              onClick={() => handleReturn(order._id)}
+                              onClick={() => {
+                                if (!isOnline) {
+                                  toast.error("আগে অনলাইন হন!");
+                                  return;
+                                }
+                                setReturnModalOrder(order);
+                              }}
                               disabled={isBusy}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-orange-600 text-white rounded-md text-xs font-bold hover:opacity-95 transition-all disabled:opacity-50 w-full justify-center"
+                              className="flex items-center gap-1 px-3 py-1.5 bg-orange-600 text-white rounded-sm text-xs font-bold hover:bg-orange-700 transition-all disabled:opacity-50 w-full justify-center"
                             >
                               <FiRotateCcw size={14} />
-                              {actingOrderId === order._id ? "..." : "Mark Returned"}
-                            </button>
-                          )}
-
-                          {/*cancel button rider k rakte*/}
-                          {!isTerminal && !isDelivered && (
-                            <button
-                              onClick={() => handleCancel(order._id)}
-                              disabled={isBusy}
-                              className="flex items-center gap-1 px-3 py-1.5 border border-red-200 text-red-600 rounded-md text-xs font-bold hover:bg-red-50 transition-all disabled:opacity-50 w-full justify-center"
-                            >
-                              <FiXCircle size={14} />
-                              {actingOrderId === order._id && isCancelling ? "..." : "Cancel"}
+                              {actingOrderId === order._id ? "..." : "Report Return"}
                             </button>
                           )}
                         </div>
@@ -571,6 +586,133 @@ const AssignedOrdersTable = () => {
           </div>
         )}
       </div>
+
+      {/* ✅ Rider Return Modal */}
+      {returnModalOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-4 bg-orange-500 text-white flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-base flex items-center gap-2">
+                  <FiRotateCcw /> অর্ডার রিটার্ন রিপোর্ট
+                </h3>
+                <p className="text-xs text-orange-100 mt-0.5 font-mono">
+                  #{returnModalOrder.orderNumber}
+                </p>
+              </div>
+              <button
+                onClick={() => setReturnModalOrder(null)}
+                className="p-1 hover:bg-orange-600 rounded-sm text-white transition-colors"
+              >
+                <FiX size={18} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-sm text-gray-700">
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1.5">
+                  রিটার্নের কারণ (Return Reason)
+                </label>
+                <select
+                  value={returnReason}
+                  onChange={(e) => setReturnReason(e.target.value)}
+                  className="w-full border border-gray-300 rounded-sm px-3 py-2 text-sm outline-none focus:border-orange-500"
+                >
+                  <option value="Damaged Goods">পণ্য ক্ষতিগ্রস্ত/নষ্ট (Damaged Goods)</option>
+                  <option value="Wrong Item Delivered">ভুল পণ্য এসেছে (Wrong Items)</option>
+                  <option value="Customer Refused">গ্রাহক নিতে চাননি (Customer Refused)</option>
+                  <option value="Customer Unreachable">গ্রাহকের ফোন বন্ধ / ঠিকানা মেলেনি (Unreachable)</option>
+                  <option value="Other">অন্যান্য কারণ (Other)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1.5">
+                  পণ্যের বর্তমান অবস্থা (Condition)
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setReturnCondition("damaged")}
+                    className={`py-2 px-3 text-xs font-semibold rounded-sm border text-left flex items-center gap-1.5 transition-all ${
+                      returnCondition === "damaged"
+                        ? "border-red-500 bg-red-50 text-red-700 font-bold"
+                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                    নষ্ট (Damaged)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReturnCondition("good")}
+                    className={`py-2 px-3 text-xs font-semibold rounded-sm border text-left flex items-center gap-1.5 transition-all ${
+                      returnCondition === "good"
+                        ? "border-green-500 bg-green-50 text-green-700 font-bold"
+                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
+                    অক্ষত (Good Condition)
+                  </button>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  {returnCondition === "good"
+                    ? "পণ্যটি অক্ষত অবস্থায় রয়েছে, গুদামে ফেরত দিলে স্টকে যোগ হবে।"
+                    : "পণ্য নষ্ট হয়ে গেছে, বিক্রয়যোগ্য স্টকে যোগ হবে না।"}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1.5">
+                  অতিরিক্ত বিবরণ / নোট (Optional)
+                </label>
+                <textarea
+                  rows={2}
+                  value={returnNote}
+                  onChange={(e) => setReturnNote(e.target.value)}
+                  placeholder="যেমন: টমেটো চেপে নষ্ট হয়েছে / গ্রাহক বাসায় ছিলেন না..."
+                  className="w-full border border-gray-300 rounded-sm p-2 text-xs outline-none focus:border-orange-500"
+                />
+              </div>
+
+              <div className="bg-gray-50 rounded-sm p-3 text-xs text-gray-500 space-y-1">
+                <div className="flex justify-between">
+                  <span>অর্ডারের মোট মূল্য:</span>
+                  <span className="font-bold text-gray-800">৳{returnModalOrder.totalAmount}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>পেমেন্ট মাধ্যম:</span>
+                  <span className="font-semibold uppercase text-gray-700">{returnModalOrder.paymentMethod}</span>
+                </div>
+                <p className="text-[11px] text-orange-600 font-medium pt-1 border-t border-gray-200">
+                  {returnModalOrder.paymentMethod === "cod"
+                    ? "⚠️ ক্যাশ অন ডেলিভারি: গ্রাহকের কাছ থেকে কোনো টাকা সংগ্রহ করা হবে না।"
+                    : "💳 অনলাইন পেইড: গ্রাহকের একাউন্টে রিফান্ড প্রক্রিয়া শুরু হবে।"}
+                </p>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setReturnModalOrder(null)}
+                  className="flex-1 py-2 text-xs font-semibold text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors"
+                >
+                  বাতিল করুন
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmReturn}
+                  disabled={isBusy}
+                  className="flex-1 py-2 text-xs font-bold text-white bg-orange-600 rounded-sm hover:bg-orange-700 transition-colors disabled:opacity-50"
+                >
+                  {isBusy ? "আপডেট হচ্ছে..." : "রিটার্ন কনফার্ম করুন"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

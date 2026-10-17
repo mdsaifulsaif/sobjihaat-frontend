@@ -1179,22 +1179,20 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
     }
   };
 
-  if (status === "loading") {
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login?redirect=/checkout");
+    } else if (status === "authenticated" && (!items || items.length === 0)) {
+      router.push("/cart");
+    }
+  }, [status, items, router]);
+
+  if (status === "loading" || status === "unauthenticated" || !items || items.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-gray-200 border-t-[var(--color-primary)] rounded-full animate-spin" />
       </div>
     );
-  }
-
-  if (status === "unauthenticated") {
-    router.push("/login?redirect=/checkout");
-    return null;
-  }
-
-  if (!items || items.length === 0) {
-    router.push("/cart");
-    return null;
   }
 
   return (

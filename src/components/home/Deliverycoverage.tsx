@@ -80,102 +80,130 @@ function LeafletMap() {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    let isCancelled = false;
+
     (async () => {
-      const L = (await import('leaflet')).default;
+      try {
+        const L = (await import('leaflet')).default;
+        if (isCancelled || !containerRef.current) return;
 
-      /* Fix marker icons for Next.js / webpack */
-      // @ts-ignore
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        iconUrl:       'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl:     'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      });
+        // Leaflet attaches _leaflet_id to the container element
+        if ((containerRef.current as any)._leaflet_id) {
+          return;
+        }
 
-      /* Map — start with a placeholder center; fitBounds will correct it */
-      const map = L.map(containerRef.current!, {
-        center: [22.700, 90.365],
-        zoom: 14,
-        zoomControl: true,
-        scrollWheelZoom: false,
-        attributionControl: false,
-      });
-      mapRef.current = map;
+        /* Fix marker icons for Next.js / webpack */
+        // @ts-ignore
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+          iconUrl:       'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl:     'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
 
-      /* Tile */
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-      }).addTo(map);
+        /* Map — start with a placeholder center; fitBounds will correct it */
+        const map = L.map(containerRef.current, {
+          center: [22.700, 90.365],
+          zoom: 14,
+          zoomControl: true,
+          scrollWheelZoom: false,
+          attributionControl: false,
+        });
 
-      /* Build all polygons & markers, collect bounds */
-      const allLatLngs: [number, number][] = [];
+        if (isCancelled) {
+          map.remove();
+          return;
+        }
 
-      zones.forEach((zone) => {
-        const isActive  = zone.status === 'active';
-        const color     = isActive ? PRIMARY : COMING;
+        mapRef.current = map;
 
-        /* Zone polygon */
-        const poly = L.polygon(zone.polygon as [number,number][], {
-          color,
-          weight:      isActive ? 2   : 1.5,
-          dashArray:   isActive ? undefined : '6 5',
-          fillColor:   color,
-          fillOpacity: isActive ? 0.18 : 0.10,
+        /* Tile */
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          maxZoom: 19,
         }).addTo(map);
 
-        zone.polygon.forEach(([lat, lng]) => allLatLngs.push([lat, lng]));
+        /* Build all polygons & markers, collect bounds */
+        const allLatLngs: [number, number][] = [];
 
-        /* Custom label icon: pin SVG + area name below */
-        const pinSvg = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" viewBox="0 0 30 40">
-            <defs>
-              <filter id="sh${zone.id}" x="-30%" y="-10%" width="160%" height="150%">
-                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.22"/>
-              </filter>
-            </defs>
-            <g filter="url(#sh${zone.id})">
-              <path d="M15 1C8 1 2 7 2 14c0 10.5 13 25 13 25S28 24.5 28 14C28 7 22 1 15 1Z" fill="${color}"/>
-              <circle cx="15" cy="13.5" r="5.5" fill="white"/>
-              <circle cx="15" cy="13.5" r="2.8" fill="${color}"/>
-            </g>
-          </svg>`;
+        zones.forEach((zone) => {
+          const isActive  = zone.status === 'active';
+          const color     = isActive ? PRIMARY : COMING;
 
-        const labelHtml = `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none">
-            ${pinSvg}
-            <div style="
-              background:white;
-              border:1px solid #e5e7eb;
-              border-radius:8px;
-              padding:3px 10px;
-              font-size:12px;
-              font-weight:700;
-              color:#1f2937;
-              white-space:nowrap;
-              box-shadow:0 2px 8px rgba(0,0,0,0.10);
-              line-height:1.4;
-            ">${zone.name}</div>
-          </div>`;
+          /* Zone polygon */
+          L.polygon(zone.polygon as [number,number][], {
+            color,
+            weight:      isActive ? 2   : 1.5,
+            dashArray:   isActive ? undefined : '6 5',
+            fillColor:   color,
+            fillOpacity: isActive ? 0.18 : 0.10,
+          }).addTo(map);
 
-        L.marker(zone.center, {
-          icon: L.divIcon({
-            html:       labelHtml,
-            className:  '',
-            iconSize:   [120, 80],
-            iconAnchor: [60, 78], /* bottom of pin aligns to coord */
-          }),
-        }).addTo(map);
-      });
+          zone.polygon.forEach(([lat, lng]) => allLatLngs.push([lat, lng]));
 
-      /* Auto-fit map so ALL zones are visible with padding */
-      if (allLatLngs.length) {
-        map.fitBounds(allLatLngs as [number,number][], { padding: [40, 40] });
+          /* Custom label icon: pin SVG + area name below */
+          const pinSvg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" viewBox="0 0 30 40">
+              <defs>
+                <filter id="sh${zone.id}" x="-30%" y="-10%" width="160%" height="150%">
+                  <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.22"/>
+                </filter>
+              </defs>
+              <g filter="url(#sh${zone.id})">
+                <path d="M15 1C8 1 2 7 2 14c0 10.5 13 25 13 25S28 24.5 28 14C28 7 22 1 15 1Z" fill="${color}"/>
+                <circle cx="15" cy="13.5" r="5.5" fill="white"/>
+                <circle cx="15" cy="13.5" r="2.8" fill="${color}"/>
+              </g>
+            </svg>`;
+
+          const labelHtml = `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none">
+              ${pinSvg}
+              <div style="
+                background:white;
+                border:1px solid #e5e7eb;
+                border-radius:8px;
+                padding:3px 10px;
+                font-size:12px;
+                font-weight:700;
+                color:#1f2937;
+                white-space:nowrap;
+                box-shadow:0 2px 8px rgba(0,0,0,0.10);
+                line-height:1.4;
+              ">${zone.name}</div>
+            </div>`;
+
+          L.marker(zone.center, {
+            icon: L.divIcon({
+              html:       labelHtml,
+              className:  '',
+              iconSize:   [120, 80],
+              iconAnchor: [60, 78], /* bottom of pin aligns to coord */
+            }),
+          }).addTo(map);
+        });
+
+        /* Auto-fit map so ALL zones are visible with padding */
+        if (allLatLngs.length && !isCancelled) {
+          map.fitBounds(allLatLngs as [number,number][], { padding: [40, 40] });
+        }
+      } catch (err) {
+        console.warn("Leaflet map initialization warning:", err);
       }
     })();
 
     return () => {
-      mapRef.current?.remove();
-      mapRef.current = null;
+      isCancelled = true;
+      if (mapRef.current) {
+        try {
+          mapRef.current.remove();
+        } catch (e) {
+          // ignore
+        }
+        mapRef.current = null;
+      }
+      if (containerRef.current && (containerRef.current as any)._leaflet_id) {
+        delete (containerRef.current as any)._leaflet_id;
+      }
     };
   }, []);
 

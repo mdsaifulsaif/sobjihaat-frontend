@@ -253,7 +253,7 @@ const AvailableOrdersTable = () => {
 
   const handleAccept = async (id: string) => {
     if (!isOnline) {
-      toast.error("Order accept korte hole age online status e jete hobe");
+      toast.error("আগে অনলাইন হন! অর্ডার গ্রহণ করার আগে অনলাইন হওয়া আবশ্যক।");
       return;
     }
     setActingOrderId(id);
@@ -288,14 +288,14 @@ const AvailableOrdersTable = () => {
     <div className="space-y-4">
       {/* Offline warning banner */}
       {!isOnline && (
-        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-4 py-3 rounded-lg">
-          <FiAlertCircle size={16} />
-          Tumi ekhon offline. Order accept korte hole age online status e jao.
+        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-4 py-3 rounded-sm shadow-xs">
+          <FiAlertCircle size={16} className="text-amber-600 flex-shrink-0" />
+          আপনি এখন অফলাইনে আছেন। কোনো অর্ডার গ্রহণ করতে দয়া করে উপরের টগল বাটনে ক্লিক করে আগে অনলাইন হন।
         </div>
       )}
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-sm border border-gray-200 p-4 shadow-xs">
         <label className="flex items-center gap-2 text-sm font-medium text-gray-600 cursor-pointer">
           <input
             type="checkbox"

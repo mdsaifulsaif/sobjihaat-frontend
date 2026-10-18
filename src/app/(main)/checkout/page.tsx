@@ -942,6 +942,7 @@ import {
   FiMoreHorizontal,
   FiUser,
   FiCheck,
+  FiAlertTriangle,
 } from "react-icons/fi";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
@@ -1028,6 +1029,46 @@ const CheckoutPage = () => {
   const [orderMode, setOrderMode] = useState<"normal" | "preorder">("normal");
   const [wantsCustomTime, setWantsCustomTime] = useState(false);
   const [customTime, setCustomTime] = useState("");
+
+  // ✅ Location Verification state (Check if customer orders from outside Barisal)
+  const [deviceCoords, setDeviceCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [isOutsideLocation, setIsOutsideLocation] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          setDeviceCoords({ lat, lng });
+
+          // Barisal Center coordinate
+          const barisalLat = 22.7055;
+          const barisalLng = 90.3555;
+          const R = 6371; // km
+          const dLat = ((lat - barisalLat) * Math.PI) / 180;
+          const dLng = ((lng - barisalLng) * Math.PI) / 180;
+          const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos((barisalLat * Math.PI) / 180) *
+              Math.cos((lat * Math.PI) / 180) *
+              Math.sin(dLng / 2) *
+              Math.sin(dLng / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          const distanceKm = R * c;
+
+          // If distance > 25km (e.g., Dhaka/Khulna is >100km away), flag as outside
+          if (distanceKm > 25) {
+            setIsOutsideLocation(true);
+          }
+        },
+        () => {
+          // Geolocation unavailable or ignored — defaults safely to false
+        },
+        { timeout: 8000, maximumAge: 600000 }
+      );
+    }
+  }, []);
 
   // ✅ city & email field সরিয়ে দেওয়া হয়েছে — এগুলো ছাড়াই backend order নেবে
   const [formData, setFormData] = useState({
@@ -1148,6 +1189,8 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
       },
       paymentMethod: formData.paymentMethod,
       specialInstructions: formData.specialInstructions || undefined,
+      isOutsideLocation,
+      orderPlacedCoords: deviceCoords || undefined,
     };
 
     // ✅ Pre-order হলে সবসময় deliveryDate = tomorrow, কিন্তু deliveryTime শুধু user বেছে নিলেই যাবে
@@ -1599,6 +1642,21 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                     * Final delivery charge confirmed after review
                   </p>
                 </div>
+
+                {/* Outside location notice */}
+                {isOutsideLocation && (
+                  <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start gap-2.5">
+                    <FiAlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={16} />
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-amber-900">
+                        বরিশাল শহরের বাইরে থেকে অর্ডার করছেন?
+                      </p>
+                      <p className="text-[11px] text-amber-700 leading-relaxed">
+                        অর্ডারের পর আমাদের ডেলিভারি টিম আপনার ডেলিভারি ঠিকানা ও রিসিভার নিশ্চিত করতে ফোনে যোগাযোগ করতে পারে।
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Submit (Desktop / normal in-page button) */}
                 <button

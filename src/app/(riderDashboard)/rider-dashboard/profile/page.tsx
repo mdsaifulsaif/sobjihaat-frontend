@@ -58,9 +58,9 @@ export default function RiderProfilePage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="relative">
-          <div className="h-16 w-16 animate-spin rounded-full border-4 border-[#5CAF90]/20 border-t-[#5CAF90]" />
+          <div className="h-16 w-16 animate-spin rounded-full border-4 border-[#619d23]/20 border-t-[#619d23]" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <FiTruck className="text-[#5CAF90] text-xl" />
+            <FiTruck className="text-[#619d23] text-xl" />
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@ export default function RiderProfilePage() {
         </p>
         <button
           onClick={() => refetch()}
-          className="px-6 py-2.5 bg-[#5CAF90] text-white rounded-xl font-medium hover:bg-[#4A9A7D] transition-all shadow-lg shadow-[#5CAF90]/20"
+          className="px-6 py-2.5 bg-[#619d23] text-white rounded-xl font-medium hover:bg-[#548a1e] transition-all shadow-lg shadow-[#619d23]/20"
         >
           Try Again
         </button>
@@ -120,8 +120,8 @@ export default function RiderProfilePage() {
       label: 'Earnings',
       value: `৳${rider.totalEarnings || 0}`,
       icon: FiDollarSign,
-      color: '#22C55E',
-      bgColor: 'rgba(34, 197, 94, 0.12)',
+      color: '#619d23',
+      bgColor: 'rgba(97, 157, 35, 0.12)',
     },
     {
       label: 'Pending Payout',
@@ -135,7 +135,7 @@ export default function RiderProfilePage() {
   const quickActions = [
     { label: 'Dashboard', href: '/rider-dashboard', icon: FiHome, color: '#3B82F6' },
     { label: 'Orders', href: '/rider-dashboard/orders', icon: FiTruck, color: '#8B5CF6' },
-    { label: 'Earnings', href: '/rider-dashboard/earnings', icon: FiDollarSign, color: '#22C55E' },
+    { label: 'Earnings', href: '/rider-dashboard/earnings', icon: FiDollarSign, color: '#619d23' },
     { label: 'Payout', href: '/rider-dashboard/payout', icon: FiCreditCard, color: '#F59E0B' },
   ];
 
@@ -145,8 +145,8 @@ export default function RiderProfilePage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <span className="bg-[#5CAF90]/10 p-2 rounded-xl">
-              <FiUser className="text-[#5CAF90]" size={20} />
+            <span className="bg-[#619d23]/10 p-2 rounded-xl">
+              <FiUser className="text-[#619d23]" size={20} />
             </span>
             My Profile
           </h1>
@@ -166,7 +166,7 @@ export default function RiderProfilePage() {
       {/* ===== Profile Card ===== */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
         {/* Cover */}
-        <div className="relative h-28 bg-gradient-to-r from-[#5CAF90] to-[#4A9A7D]">
+        <div className="relative h-28 bg-gradient-to-r from-[#619d23] to-[#548a1e]">
           <div className="absolute inset-0 opacity-20">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full" />
             <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white rounded-full" />
@@ -178,11 +178,11 @@ export default function RiderProfilePage() {
           <div className="flex flex-col items-center gap-4 -mt-12 sm:flex-row sm:items-end">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-[#5CAF90]/30 border-4 border-white">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#619d23] to-[#548a1e] flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-[#619d23]/30 border-4 border-white">
                 {rider.fullName?.charAt(0)?.toUpperCase() ?? 'R'}
               </div>
               {rider.isActive && (
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#619d23] rounded-full border-2 border-white flex items-center justify-center">
                   <FiCheckCircle className="text-white text-xs" />
                 </div>
               )}
@@ -199,7 +199,7 @@ export default function RiderProfilePage() {
                   <button
                     onClick={() => setShowStatusMenu(!showStatusMenu)}
                     disabled={isUpdating}
-                    className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all hover:shadow-md"
+                    className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all hover:shadow-md cursor-pointer"
                     style={{
                       backgroundColor: statusStyle.bg,
                       color: statusStyle.text,
@@ -220,7 +220,7 @@ export default function RiderProfilePage() {
                           <button
                             key={status}
                             onClick={() => handleStatusChange(status)}
-                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all hover:bg-gray-50"
+                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all hover:bg-gray-50 cursor-pointer"
                           >
                             <span
                               className="w-2 h-2 rounded-full"
@@ -228,7 +228,7 @@ export default function RiderProfilePage() {
                             />
                             <span className="capitalize">{s.label}</span>
                             {rider.status === status && (
-                              <FiCheckCircle className="ml-auto text-[#5CAF90]" size={14} />
+                              <FiCheckCircle className="ml-auto text-[#619d23]" size={14} />
                             )}
                           </button>
                         );
@@ -322,8 +322,8 @@ export default function RiderProfilePage() {
         {/* Assigned Areas */}
         <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <div className="p-1.5 bg-blue-50 rounded-lg">
-              <FiMapPin className="text-blue-500" size={18} />
+            <div className="p-1.5 bg-[#619d23]/10 rounded-lg">
+              <FiMapPin className="text-[#619d23]" size={18} />
             </div>
             <h3 className="font-semibold text-gray-800">Assigned Areas</h3>
             <span className="ml-auto text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
@@ -335,7 +335,7 @@ export default function RiderProfilePage() {
               rider.assignedAreas.map((area: { _id: string; name: string }) => (
                 <span
                   key={area._id}
-                  className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-blue-100"
+                  className="px-3 py-1.5 bg-[#619d23]/10 text-[#619d23] rounded-lg text-sm font-medium flex items-center gap-1.5 border border-[#619d23]/20"
                 >
                   <FiMapPin size={12} />
                   {area.name}
@@ -354,7 +354,7 @@ export default function RiderProfilePage() {
               <FiCreditCard className="text-purple-500" size={18} />
             </div>
             <h3 className="font-semibold text-gray-800">NID Verification</h3>
-            <span className="ml-auto inline-flex items-center gap-1 text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full">
+            <span className="ml-auto inline-flex items-center gap-1 text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
               <FiCheckCircle size={12} />
               Verified
             </span>
@@ -372,7 +372,7 @@ export default function RiderProfilePage() {
               <p className="text-xs text-gray-500">NID Number</p>
               <p className="font-medium text-gray-800">{rider.nidNumber || 'N/A'}</p>
               <div className="mt-2 flex items-center gap-2 text-xs">
-                <span className="flex items-center gap-1 text-green-600">
+                <span className="flex items-center gap-1 text-[#619d23] font-medium">
                   <FiCheckCircle size={14} />
                   Verified
                 </span>
@@ -389,7 +389,7 @@ export default function RiderProfilePage() {
       {/* ===== Quick Actions ===== */}
       <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
         <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <FiActivity className="text-[#5CAF90]" size={18} />
+          <FiActivity className="text-[#619d23]" size={18} />
           Quick Actions
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -399,7 +399,7 @@ export default function RiderProfilePage() {
               <Link
                 key={action.label}
                 href={action.href}
-                className="flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-[#5CAF90] hover:shadow-md transition-all group bg-gray-50/50"
+                className="flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:border-[#619d23] hover:shadow-md transition-all group bg-gray-50/50"
               >
                 <div className="flex items-center gap-3">
                   <div
@@ -410,7 +410,7 @@ export default function RiderProfilePage() {
                   </div>
                   <span className="text-sm font-medium text-gray-700">{action.label}</span>
                 </div>
-                <FiChevronRight size={16} className="text-gray-400 group-hover:text-[#5CAF90] transition-colors" />
+                <FiChevronRight size={16} className="text-gray-400 group-hover:text-[#619d23] transition-colors" />
               </Link>
             );
           })}

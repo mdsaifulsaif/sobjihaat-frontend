@@ -201,7 +201,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#5CAF90] border-r-transparent"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#619d23] border-r-transparent"></div>
           <p className="mt-2 text-sm text-gray-500">Loading rider data...</p>
         </div>
       </div>
@@ -230,7 +230,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-700/50">
           {sidebarOpen && (
             <Link href="/rider-dashboard" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center font-bold text-lg shadow-md">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#619d23] to-[#548a1e] flex items-center justify-center font-bold text-lg shadow-md">
                 <FiTruck className="text-white" size={22} />
               </div>
               <div>
@@ -276,7 +276,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   }}
                   className={`
                     flex items-center justify-between px-4 py-3 rounded-md transition-all duration-200
-                    ${active ? "bg-[#5CAF90] text-white shadow-md" : "text-gray-300 hover:bg-white/10 hover:text-white"}
+                    ${active ? "bg-[#619d23] text-white shadow-md shadow-[#619d23]/25" : "text-gray-300 hover:bg-white/10 hover:text-white"}
                   `}
                 >
                   <div className="flex items-center gap-3">
@@ -310,7 +310,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         href={sub.href}
                         className={`
                           block px-4 py-2 rounded-md text-sm transition-colors
-                          ${pathname === sub.href ? "text-[#5CAF90] bg-[#5CAF90]/10" : "text-gray-400 hover:text-white hover:bg-white/5"}
+                          ${pathname === sub.href ? "text-[#619d23] bg-[#619d23]/10" : "text-gray-400 hover:text-white hover:bg-white/5"}
                         `}
                       >
                         {sub.name}
@@ -424,7 +424,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-96 max-h-[500px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
                   {/* Header */}
-                  <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#5CAF90]/5 to-[#4A9A7D]/5">
+                  <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#619d23]/5 to-[#548a1e]/5">
                     <div>
                       <h3 className="font-semibold text-gray-800">Notifications</h3>
                       <p className="text-xs text-gray-500">
@@ -434,7 +434,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     {notifications.length > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs text-[#5CAF90] hover:text-[#4A9A7D] font-medium hover:underline"
+                        className="text-xs text-[#619d23] hover:text-[#548a1e] font-medium hover:underline"
                       >
                         Mark all read
                       </button>
@@ -457,7 +457,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                           key={notification.id}
                           onClick={() => handleNotificationClick(notification)}
                           className={`w-full text-left p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                            !notification.read ? "bg-[#5CAF90]/5 border-l-4 border-l-[#5CAF90]" : ""
+                            !notification.read ? "bg-[#619d23]/5 border-l-4 border-l-[#619d23]" : ""
                           }`}
                         >
                           <div className="flex items-start gap-3">
@@ -481,13 +481,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                   </span>
                                 </p>
                                 {!notification.read && (
-                                  <span className="w-2 h-2 bg-[#5CAF90] rounded-full flex-shrink-0 mt-1.5"></span>
+                                  <span className="w-2 h-2 bg-[#619d23] rounded-full flex-shrink-0 mt-1.5"></span>
                                 )}
                               </div>
 
                               <div className="mt-1 space-y-1">
                                 <p className="text-xs text-gray-600">
-                                  <span className="font-medium text-[#5CAF90]">{notification.totalAmount} TK</span>
+                                  <span className="font-medium text-[#619d23]">{notification.totalAmount} TK</span>
                                   {" • "}
                                   {notification.itemCount} item{notification.itemCount > 1 ? "s" : ""}
                                   {" • "}
@@ -527,7 +527,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <div className="p-3 border-t border-gray-100 bg-gray-50">
                       <Link
                         href="/rider-dashboard/orders"
-                        className="block text-center text-sm text-[#5CAF90] hover:text-[#4A9A7D] font-medium"
+                        className="block text-center text-sm text-[#619d23] hover:text-[#548a1e] font-medium"
                         onClick={() => setShowNotifications(false)}
                       >
                         View all orders →
@@ -539,16 +539,21 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </div>
 
             {/* Profile */}
-            <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 rounded-md px-3 py-2 transition-colors">
-              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center text-white font-bold shadow-md">
+            <Link
+              href="/rider-dashboard/profile"
+              className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 rounded-md px-3 py-2 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#619d23] to-[#548a1e] flex items-center justify-center text-white font-bold shadow-md">
                 <FiTruck className="text-white" size={18} />
               </div>
               <div className="hidden sm:block">
-                <p className="text-sm font-semibold text-gray-800">Rider User</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {riderProfile?.fullName || "Rider User"}
+                </p>
                 <p className="text-xs text-gray-500">Delivery Rider</p>
               </div>
               <FiChevronDown className="hidden sm:block text-gray-400" />
-            </div>
+            </Link>
           </div>
         </header>
 

@@ -127,6 +127,7 @@ export const orderApi = baseApi.injectEndpoints({
             providesTags: ['Orders'],
         }),
     }),
+    overrideExisting: true,
 });
 
 export const {

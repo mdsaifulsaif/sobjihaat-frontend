@@ -155,18 +155,11 @@ export default function RiderProfilePage() {
         <div className="flex gap-2">
           <button
             onClick={() => refetch()}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all cursor-pointer"
           >
             <FiRefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
             Refresh
           </button>
-          <Link
-            href="/rider-dashboard/settings"
-            className="flex items-center gap-2 px-4 py-2 bg-[#5CAF90] text-white rounded-xl text-sm font-medium hover:bg-[#4A9A7D] transition-all shadow-md shadow-[#5CAF90]/20"
-          >
-            <FiEdit2 size={16} />
-            Edit Profile
-          </Link>
         </div>
       </div>
 

@@ -119,6 +119,13 @@ export const orderApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Orders'],
         }),
+        getOrderDetails: builder.query({
+            query: (id) => ({
+                url: `/order/details/${id}`,
+                method: 'GET',
+            }),
+            providesTags: ['Orders'],
+        }),
     }),
 });
 
@@ -137,4 +144,5 @@ export const {
     useMarkOutForDeliveryMutation,
     useMarkDeliveredMutation,
     useMarkReturnedMutation,
+    useGetOrderDetailsQuery,
 } = orderApi;

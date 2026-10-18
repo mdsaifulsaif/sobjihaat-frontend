@@ -8,7 +8,6 @@ import {
   FiHome,
   FiUsers,
   FiShoppingCart,
-  FiSettings,
   FiLogOut,
   FiMenu,
   FiX,
@@ -17,7 +16,6 @@ import {
   FiChevronDown,
   FiCreditCard,
   FiTruck,
-  FiActivity,
   FiDollarSign,
   FiClock,
   FiMapPin,
@@ -80,12 +78,6 @@ const menuItems: MenuItem[] = [
     badge: "5",
     badgeColor: "bg-yellow-500",
   },
-];
-
-const settingsItems = [
-  { name: "General", href: "/rider-dashboard/settings", icon: FiSettings },
-  { name: "Location", href: "/rider-dashboard/location", icon: FiTruck },
-  { name: "Status", href: "/rider-dashboard/status", icon: FiActivity },
 ];
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
@@ -330,26 +322,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             );
           })}
 
-          {sidebarOpen && (
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mt-8 mb-3">Settings</p>
-          )}
-
-          {settingsItems.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-200
-                  ${active ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white"}
-                `}
-              >
-                <item.icon size={20} />
-                {sidebarOpen && <span className="font-medium">{item.name}</span>}
-              </Link>
-            );
-          })}
         </nav>
 
         {/* Bottom Section */}

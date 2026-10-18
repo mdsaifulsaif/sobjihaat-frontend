@@ -141,6 +141,13 @@ export const useSocket = () => {
       return;
     }
 
+    // ✅ Vercel বা অন্য পরিবেশে socket disable করা থাকলে connect করবে না
+    if (process.env.NEXT_PUBLIC_USE_SOCKET === "false") {
+      console.log("ℹ️ Socket is disabled (NEXT_PUBLIC_USE_SOCKET === 'false')");
+      setIsLoading(false);
+      return;
+    }
+
     const userID = session.user.id; // ✅ backend এর User._id — এটাই room match করার key
     const role = (session.user as any)?.role;
 

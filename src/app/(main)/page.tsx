@@ -22,7 +22,7 @@ export default async function Home() {
     serverFetch<any>('/products?productType=combo&status=active&limit=10'), 
    serverFetch<any>('/shipping/local'),
    serverFetch<any>('/reviews/featured?limit=10'),
-   serverFetch<any>('/area'),
+   serverFetch<any>('/area', { cache: 'no-store' }),
   ]);
 
   return (
@@ -38,8 +38,7 @@ export default async function Home() {
       <OurCommitment />
       <HappyCustomers initialReviews={reviewsData?.data} />
       <AppDownloadPromo />
-       {/* <DeliveryCoverage areas={areasData?.data || []} /> */}
-       <DeliveryCoverage />
+      <DeliveryCoverage areas={areasData?.data || []} />
       <Faq />
     </>
   );

@@ -11,7 +11,6 @@ import {
   FiCheckCircle,
   FiShield,
   FiTruck,
-  FiTag,
   FiMessageSquare,
 } from 'react-icons/fi';
 import { useCreateSubscriptionMutation } from '@/redux/api/subscriptionApi';
@@ -28,8 +27,12 @@ interface SubscriptionModalProps {
     salePrice?: number;
     subscriptionDiscountPercent?: number;
     subscriptionFrequency?: 'weekly' | 'monthly' | 'both';
+    frequency?: 'weekly' | 'monthly' | 'both';
     variantID?: string;
     variantName?: string;
+    items?: any[];
+    idealFor?: string;
+    category?: string;
   } | null;
 }
 
@@ -38,22 +41,28 @@ export default function SubscriptionModal({
   onClose,
   product,
 }: SubscriptionModalProps) {
-  const [frequency, setFrequency] = useState<'weekly' | 'monthly'>('monthly');
-  const [preferredDay, setPreferredDay] = useState('মাসের ১–৩ তারিখ');
+  const initialFreq =
+    product?.frequency === 'weekly' || product?.subscriptionFrequency === 'weekly'
+      ? 'weekly'
+      : 'monthly';
+
+  const [frequency, setFrequency] = useState<'weekly' | 'monthly'>(initialFreq);
+  const [preferredDay, setPreferredDay] = useState(
+    initialFreq === 'weekly' ? 'Every Friday (8 AM - 12 PM)' : '1st – 3rd of the Month'
+  );
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [deliveryInstructions, setDeliveryInstructions] = useState('');
   const [paymentPreference, setPaymentPreference] = useState<'cod' | 'bkash'>('cod');
   const [isSuccess, setIsSuccess] = useState(false);
-  const [submittedData, setSubmittedData] = useState<any>(null);
 
   const [createSubscription, { isLoading }] = useCreateSubscriptionMutation();
 
   if (!isOpen || !product) return null;
 
   const basePrice = product.salePrice || product.regularPrice;
-  const discountPercent = product.subscriptionDiscountPercent || 8; // Default 8% discount for subscribers
+  const discountPercent = product.subscriptionDiscountPercent || 8;
   const discountAmount = Math.round((basePrice * discountPercent) / 100);
   const discountedPrice = basePrice - discountAmount;
   const deliveryFee = 0; // Free delivery for subscribers
@@ -62,9 +71,9 @@ export default function SubscriptionModal({
   const handleFrequencyChange = (newFreq: 'weekly' | 'monthly') => {
     setFrequency(newFreq);
     if (newFreq === 'weekly') {
-      setPreferredDay('প্রতি শুক্রবার');
+      setPreferredDay('Every Friday (8 AM - 12 PM)');
     } else {
-      setPreferredDay('মাসের ১–৩ তারিখ');
+      setPreferredDay('1st – 3rd of the Month');
     }
   };
 
@@ -72,13 +81,13 @@ export default function SubscriptionModal({
     e.preventDefault();
 
     if (!customerName.trim()) {
-      return toast.error('অনুগ্রহ করে আপনার নাম লিখুন');
+      return toast.error('Please enter your full name');
     }
     if (!customerPhone.trim() || customerPhone.replace(/[^0-9]/g, '').length < 11) {
-      return toast.error('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন');
+      return toast.error('Please enter a valid 11-digit phone number');
     }
     if (!deliveryAddress.trim()) {
-      return toast.error('ডেলিভারি ঠিকানা প্রদান করুন');
+      return toast.error('Please provide your complete delivery address');
     }
 
     try {
@@ -102,29 +111,25 @@ export default function SubscriptionModal({
         paymentPreference: paymentPreference,
       };
 
-      const res = await createSubscription(payload).unwrap();
-      setSubmittedData({
-        ...payload,
-        id: res?.data?._id || 'SUB-' + Math.floor(100000 + Math.random() * 900000),
-      });
+      await createSubscription(payload).unwrap();
       setIsSuccess(true);
-      toast.success('আপনার সাবস্ক্রিপশন সফলভাবে গৃহীত হয়েছে!');
+      toast.success('Your subscription has been confirmed successfully!');
     } catch (err: any) {
-      toast.error(err?.data?.message || 'সাবস্ক্রিপশন তৈরি করা সম্ভব হয়নি, আবার চেষ্টা করুন');
+      toast.error(err?.data?.message || 'Failed to create subscription, please try again');
     }
   };
 
   const handleWhatsAppConfirm = () => {
     const rawNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801604321819';
     const message = encodeURIComponent(
-      `আসসালামু আলাইকুম! আমি সবজিহাট থেকে একটি মাসিক/সাপ্তাহিক সাবস্ক্রিপশন অর্ডার করেছি:\n\n` +
-      `📦 প্যাকেজ: ${product.name} ${product.variantName ? `(${product.variantName})` : ''}\n` +
-      `🔄 শিডিউল: ${frequency === 'weekly' ? 'সাপ্তাহিক' : 'মাসিক'} (${preferredDay})\n` +
-      `💰 প্রতি ডেলিভারিতে বিল: ৳${totalPerDelivery}\n` +
-      `👤 নাম: ${customerName}\n` +
-      `📱 ফোন: ${customerPhone}\n` +
-      `📍 ঠিকানা: ${deliveryAddress}\n\n` +
-      `দয়া করে আমার সাবস্ক্রিপশনটি কনফার্ম করুন। ধন্যবাদ!`
+      `Hello SobjiHut! I have placed a recurring subscription order:\n\n` +
+      `📦 Package: ${product.name} ${product.variantName ? `(${product.variantName})` : ''}\n` +
+      `🔄 Schedule: ${frequency === 'weekly' ? 'Weekly' : 'Monthly'} (${preferredDay})\n` +
+      `💰 Amount Per Delivery: ৳${totalPerDelivery} (Free Shipping)\n` +
+      `👤 Name: ${customerName}\n` +
+      `📱 Phone: ${customerPhone}\n` +
+      `📍 Address: ${deliveryAddress}\n\n` +
+      `Please confirm my subscription schedule. Thank you!`
     );
     window.open(`https://wa.me/${rawNumber}?text=${message}`, '_blank');
   };
@@ -136,12 +141,12 @@ export default function SubscriptionModal({
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden my-6 border border-emerald-100">
+      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden my-6 border border-[#619d23]/20">
         {/* Header Strip */}
-        <div className="bg-gradient-to-r from-emerald-600 via-[#5CAF90] to-teal-600 p-5 text-white relative">
+        <div className="bg-gradient-to-r from-[#619d23] via-[#6fae2b] to-[#52861c] p-5 text-white relative">
           <button
             onClick={handleClose}
-            className="absolute right-4 top-4 w-9 h-9 rounded-full bg-black/20 hover:bg-black/30 flex items-center justify-center text-white transition-all"
+            className="absolute right-4 top-4 w-9 h-9 rounded-full bg-black/20 hover:bg-black/30 flex items-center justify-center text-white transition-all cursor-pointer"
           >
             <FiX size={20} />
           </button>
@@ -152,10 +157,10 @@ export default function SubscriptionModal({
             </span>
             <div>
               <span className="text-[11px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full inline-block mb-0.5">
-                সবজিহাট অটো ডেলিভারি
+                SobjiHut Auto-Delivery
               </span>
               <h2 className="text-xl font-black text-white">
-                {isSuccess ? 'সাবস্ক্রিপশন কনফার্মড!' : 'প্যাকেজ সাবস্ক্রিপশন সেটআপ'}
+                {isSuccess ? 'Subscription Confirmed!' : 'Set Up Your Subscription'}
               </h2>
             </div>
           </div>
@@ -166,59 +171,59 @@ export default function SubscriptionModal({
           {isSuccess ? (
             /* Success State */
             <div className="text-center py-4 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-3xl shadow-inner">
+              <div className="w-16 h-16 rounded-full bg-[#619d23]/10 text-[#619d23] mx-auto flex items-center justify-center text-3xl shadow-inner">
                 <FiCheckCircle />
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-gray-900">অভিনন্দন {customerName}!</h3>
+                <h3 className="text-xl font-black text-gray-900">Congratulations {customerName}!</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  আপনার <span className="font-bold text-emerald-700">"{product.name}"</span> সাবস্ক্রিপশন সফলভাবে গ্রহণ করা হয়েছে।
+                  Your subscription for <span className="font-bold text-[#619d23]">"{product.name}"</span> has been scheduled successfully.
                 </p>
               </div>
 
-              <div className="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-left space-y-2 text-xs text-gray-700">
+              <div className="bg-[#619d23]/8 border border-[#619d23]/20 rounded-2xl p-4 text-left space-y-2 text-xs text-gray-700">
                 <div className="flex justify-between border-b border-emerald-100/80 pb-2">
-                  <span className="text-gray-500">ডেলিভারি সাইকেল:</span>
+                  <span className="text-gray-500">Delivery Cycle:</span>
                   <span className="font-bold text-gray-900 capitalize">
-                    {frequency === 'weekly' ? 'প্রতি সপ্তাহে' : 'প্রতি মাসে'} ({preferredDay})
+                    {frequency === 'weekly' ? 'Weekly' : 'Monthly'} ({preferredDay})
                   </span>
                 </div>
                 <div className="flex justify-between border-b border-emerald-100/80 pb-2">
-                  <span className="text-gray-500">প্রতি ডেলিভারিতে বিল:</span>
-                  <span className="font-extrabold text-emerald-700 text-sm">৳{totalPerDelivery}</span>
+                  <span className="text-gray-500">Amount Per Delivery:</span>
+                  <span className="font-extrabold text-[#619d23] text-sm">৳{totalPerDelivery}</span>
                 </div>
                 <div className="flex justify-between border-b border-emerald-100/80 pb-2">
-                  <span className="text-gray-500">ডেলিভারি চার্জ:</span>
-                  <span className="font-bold text-emerald-600 uppercase">ফ্রি (FREE)</span>
+                  <span className="text-gray-500">Delivery Charge:</span>
+                  <span className="font-bold text-[#619d23] uppercase">FREE (৳0)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">পেমেন্ট মেথড:</span>
-                  <span className="font-bold text-gray-900">
-                    {paymentPreference === 'cod' ? 'ক্যাশ অন ডেলিভারি (পণ্য পেয়ে টাকা)' : 'বিকাশ (ডেলিভারির সময়)'}
+                  <span className="text-gray-500">Payment Method:</span>
+                  <span className="font-bold text-gray-900 uppercase">
+                    {paymentPreference === 'cod' ? 'Cash on Delivery' : 'bKash on Delivery'}
                   </span>
                 </div>
               </div>
 
               <p className="text-xs text-gray-500">
-                প্রতিটি ডেলিভারির ১ দিন পূর্বে আমাদের প্রতিনিধি কল অথবা WhatsApp-এ যোগাযোগ করবেন।
+                Our support team will notify you via SMS or WhatsApp 24 hours prior to each delivery.
               </p>
 
               <div className="pt-2 flex flex-col sm:flex-row gap-3">
                 <button
                   type="button"
                   onClick={handleWhatsAppConfirm}
-                  className="flex-1 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all"
+                  className="flex-1 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <FiMessageSquare size={18} />
-                  <span>WhatsApp-এ কনফার্মেশন পাঠান</span>
+                  <span>Send WhatsApp Confirmation</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="py-3 px-5 rounded-xl border border-gray-200 text-gray-700 font-bold text-sm hover:bg-gray-50 transition-all"
+                  className="py-3 px-5 rounded-xl border border-gray-200 text-gray-700 font-bold text-sm hover:bg-gray-50 transition-all cursor-pointer"
                 >
-                  ঠিক আছে
+                  Close
                 </button>
               </div>
             </div>
@@ -235,56 +240,85 @@ export default function SubscriptionModal({
                 <div className="flex-1 min-w-0">
                   <h4 className="font-extrabold text-gray-900 text-sm truncate">{product.name}</h4>
                   {product.variantName && (
-                    <span className="text-xs text-emerald-600 font-bold block">
-                      সাইজ: {product.variantName}
+                    <span className="text-xs text-[#619d23] font-bold block">
+                      Size: {product.variantName}
                     </span>
                   )}
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm font-black text-emerald-700">৳{discountedPrice}</span>
+                    <span className="text-sm font-black text-[#619d23]">৳{discountedPrice}</span>
                     <span className="text-xs text-gray-400 line-through">৳{basePrice}</span>
-                    <span className="text-[10px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">
-                      {discountPercent}% ছাড়
+                    <span className="text-[10px] bg-[#619d23]/10 text-[#619d23] font-bold px-1.5 py-0.5 rounded">
+                      {discountPercent}% OFF
                     </span>
                   </div>
                 </div>
               </div>
 
+              {/* Package Items Checklist (if available) */}
+              {product.items && product.items.length > 0 && (
+                <div className="bg-[#619d23]/8 border border-[#619d23]/20 rounded-2xl p-3.5 space-y-2">
+                  <span className="text-[11px] font-black text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <FiCheckCircle className="text-[#619d23]" />
+                    Items Included in this Box ({product.items.length}):
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-1">
+                    {product.items.map((it: any, idx: number) => {
+                      const itemText =
+                        typeof it === "string"
+                          ? it
+                          : it.quantity
+                          ? `${it.itemName} (${it.quantity})`
+                          : it.itemName;
+                      return (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-1.5 text-xs text-gray-700 bg-white/90 px-2 py-1 rounded-lg border border-[#619d23]/15"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#619d23] shrink-0"></span>
+                          <span className="truncate">{itemText}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Step 1: Frequency Selector */}
               <div>
                 <label className="text-xs font-bold text-gray-700 block mb-2 flex items-center gap-1.5">
-                  <FiRepeat className="text-emerald-600" /> কত দিন পর পর ডেলিভারি চান?
+                  <FiRepeat className="text-[#619d23]" /> How often would you like delivery?
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => handleFrequencyChange('monthly')}
-                    className={`p-3 rounded-2xl border-2 text-left transition-all ${
+                    className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer ${
                       frequency === 'monthly'
-                        ? 'border-emerald-600 bg-emerald-50/60 shadow-xs'
+                        ? 'border-[#619d23] bg-[#619d23]/8 shadow-xs'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-gray-900">মাসিক (Monthly)</span>
-                      {frequency === 'monthly' && <FiCheckCircle className="text-emerald-600" />}
+                      <span className="text-xs font-black text-gray-900">Monthly</span>
+                      {frequency === 'monthly' && <FiCheckCircle className="text-[#619d23]" />}
                     </div>
-                    <p className="text-[11px] text-gray-500 mt-0.5">প্রতি মাসে ১ বার অটো ডেলিভারি</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">1 automated delivery per month</p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleFrequencyChange('weekly')}
-                    className={`p-3 rounded-2xl border-2 text-left transition-all ${
+                    className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer ${
                       frequency === 'weekly'
-                        ? 'border-emerald-600 bg-emerald-50/60 shadow-xs'
+                        ? 'border-[#619d23] bg-[#619d23]/8 shadow-xs'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-gray-900">সাপ্তাহিক (Weekly)</span>
-                      {frequency === 'weekly' && <FiCheckCircle className="text-emerald-600" />}
+                      <span className="text-xs font-black text-gray-900">Weekly</span>
+                      {frequency === 'weekly' && <FiCheckCircle className="text-[#619d23]" />}
                     </div>
-                    <p className="text-[11px] text-gray-500 mt-0.5">প্রতি সপ্তাহে তাজা প্যাকেজ</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">Fresh items delivered weekly</p>
                   </button>
                 </div>
               </div>
@@ -292,25 +326,25 @@ export default function SubscriptionModal({
               {/* Step 2: Preferred Delivery Time/Day */}
               <div>
                 <label className="text-xs font-bold text-gray-700 block mb-2 flex items-center gap-1.5">
-                  <FiCalendar className="text-emerald-600" /> পছন্দের ডেলিভারি সময় / দিন
+                  <FiCalendar className="text-[#619d23]" /> Preferred Delivery Window / Day
                 </label>
                 <select
                   value={preferredDay}
                   onChange={(e) => setPreferredDay(e.target.value)}
-                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-800 outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-800 outline-none focus:ring-2 focus:ring-[#619d23]"
                 >
                   {frequency === 'monthly' ? (
                     <>
-                      <option value="মাসের ১–৩ তারিখ">মাসের ১ থেকে ৩ তারিখের মধ্যে (বেতন পরবর্তী সেরা)</option>
-                      <option value="মাসের ৫–৭ তারিখ">মাসের ৫ থেকে ৭ তারিখের মধ্যে</option>
-                      <option value="মাসের ১০–১২ তারিখ">মাসের ১০ থেকে ১২ তারিখের মধ্যে</option>
-                      <option value="মাসের ১৫–১৮ তারিখ">মাসের মাঝামাঝি (১৫ থেকে ১৮ তারিখ)</option>
+                      <option value="1st – 3rd of the Month">1st to 3rd of every month (Post-salary)</option>
+                      <option value="5th – 7th of the Month">5th to 7th of every month</option>
+                      <option value="10th – 12th of the Month">10th to 12th of every month</option>
+                      <option value="Mid-Month (15th – 18th)">Mid-month (15th to 18th)</option>
                     </>
                   ) : (
                     <>
-                      <option value="প্রতি শুক্রবার">প্রতি শুক্রবার সকাল ৮টা – দুপুর ১২টা</option>
-                      <option value="প্রতি রবিবার">প্রতি রবিবার সকাল ৯টা – দুপুর ১টা</option>
-                      <option value="প্রতি মঙ্গলবার">প্রতি মঙ্গলবার সকাল ৯টা – দুপুর ১টা</option>
+                      <option value="Every Friday (8 AM - 12 PM)">Every Friday (8:00 AM – 12:00 PM)</option>
+                      <option value="Every Sunday (9 AM - 1 PM)">Every Sunday (9:00 AM – 1:00 PM)</option>
+                      <option value="Every Tuesday (9 AM - 1 PM)">Every Tuesday (9:00 AM – 1:00 PM)</option>
                     </>
                   )}
                 </select>
@@ -321,21 +355,21 @@ export default function SubscriptionModal({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-bold text-gray-700 block mb-1 flex items-center gap-1">
-                      <FiUser className="text-emerald-600" /> আপনার নাম *
+                      <FiUser className="text-[#619d23]" /> Your Full Name *
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="পুরো নাম লিখুন"
+                      placeholder="e.g. Saiful Islam"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                      className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#619d23] bg-white"
                     />
                   </div>
 
                   <div>
                     <label className="text-xs font-bold text-gray-700 block mb-1 flex items-center gap-1">
-                      <FiPhone className="text-emerald-600" /> মোবাইল / WhatsApp নম্বর *
+                      <FiPhone className="text-[#619d23]" /> Phone / WhatsApp Number *
                     </label>
                     <input
                       type="tel"
@@ -343,32 +377,32 @@ export default function SubscriptionModal({
                       placeholder="017XXXXXXXX"
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                      className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#619d23] bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700 block mb-1 flex items-center gap-1">
-                    <FiMapPin className="text-emerald-600" /> ডেলিভারি ঠিকানা (বাসা/অফিস) *
+                    <FiMapPin className="text-[#619d23]" /> Complete Delivery Address *
                   </label>
                   <textarea
                     rows={2}
                     required
-                    placeholder="বাড়ি নং, রোড নং, এলাকা, ল্যান্ডমার্ক লিখুন"
+                    placeholder="House/Apartment no, Street, Area, Landmark"
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                    className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#619d23] bg-white"
                   />
                 </div>
 
                 <div>
                   <input
                     type="text"
-                    placeholder="বিশেষ কোনো নির্দেশনা থাকলে লিখুন (ঐচ্ছিক)"
+                    placeholder="Any specific instructions for our delivery rider (Optional)"
                     value={deliveryInstructions}
                     onChange={(e) => setDeliveryInstructions(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50/50"
+                    className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#619d23] bg-gray-50/50"
                   />
                 </div>
               </div>
@@ -376,7 +410,7 @@ export default function SubscriptionModal({
               {/* Step 4: Payment preference */}
               <div className="pt-2 border-t border-gray-100">
                 <label className="text-xs font-bold text-gray-700 block mb-1.5">
-                  পেমেন্ট মাধ্যম (প্রতি ডেলিভারিতে)
+                  Payment Method (Pay Upon Each Delivery)
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="flex items-center gap-2 p-2.5 rounded-xl border border-gray-200 bg-gray-50/50 cursor-pointer">
@@ -385,9 +419,9 @@ export default function SubscriptionModal({
                       name="payment"
                       checked={paymentPreference === 'cod'}
                       onChange={() => setPaymentPreference('cod')}
-                      className="text-emerald-600 focus:ring-emerald-500"
+                      className="text-[#619d23] focus:ring-[#619d23]"
                     />
-                    <span className="text-xs font-bold text-gray-800">ক্যাশ অন ডেলিভারি (COD)</span>
+                    <span className="text-xs font-bold text-gray-800">Cash on Delivery (COD)</span>
                   </label>
                   <label className="flex items-center gap-2 p-2.5 rounded-xl border border-gray-200 bg-gray-50/50 cursor-pointer">
                     <input
@@ -395,40 +429,40 @@ export default function SubscriptionModal({
                       name="payment"
                       checked={paymentPreference === 'bkash'}
                       onChange={() => setPaymentPreference('bkash')}
-                      className="text-emerald-600 focus:ring-emerald-500"
+                      className="text-[#619d23] focus:ring-[#619d23]"
                     />
-                    <span className="text-xs font-bold text-gray-800">বিকাশ (ডেলিভারিতে)</span>
+                    <span className="text-xs font-bold text-gray-800">bKash (On Delivery)</span>
                   </label>
                 </div>
               </div>
 
               {/* Price Calculation Summary Strip */}
-              <div className="bg-emerald-50/90 border border-emerald-100 rounded-2xl p-3.5 space-y-1.5 text-xs">
+              <div className="bg-[#619d23]/8 border border-[#619d23]/20 rounded-2xl p-3.5 space-y-1.5 text-xs">
                 <div className="flex justify-between text-gray-600">
-                  <span>প্যাকেজের মূল মূল্য:</span>
+                  <span>Regular Package Price:</span>
                   <span>৳{basePrice}</span>
                 </div>
-                <div className="flex justify-between text-emerald-700 font-bold">
-                  <span>সাবস্ক্রাইবার স্পেশাল ছাড় ({discountPercent}%):</span>
+                <div className="flex justify-between text-[#619d23] font-bold">
+                  <span>Subscriber Discount ({discountPercent}%):</span>
                   <span>-৳{discountAmount}</span>
                 </div>
-                <div className="flex justify-between text-emerald-700 font-bold">
-                  <span>ডেলিভারি চার্জ:</span>
-                  <span className="uppercase text-emerald-600">ফ্রি (০ টাকা)</span>
+                <div className="flex justify-between text-[#619d23] font-bold">
+                  <span>Delivery Charge:</span>
+                  <span className="uppercase text-[#619d23]">FREE (৳0)</span>
                 </div>
-                <div className="border-t border-emerald-200/80 pt-1.5 flex justify-between items-center text-gray-900 font-black text-sm">
-                  <span>প্রতি ডেলিভারিতে খরচ:</span>
-                  <span className="text-emerald-700 text-base">৳{totalPerDelivery}</span>
+                <div className="border-t border-[#619d23]/20 pt-1.5 flex justify-between items-center text-gray-900 font-black text-sm">
+                  <span>Total Amount per Delivery:</span>
+                  <span className="text-[#619d23] text-base">৳{totalPerDelivery}</span>
                 </div>
               </div>
 
               {/* Trust Badges */}
               <div className="flex items-center justify-between text-[11px] text-gray-500 px-1">
                 <span className="flex items-center gap-1">
-                  <FiShield className="text-emerald-600" /> যেকোনো মাসে পজ বা বাতিলযোগ্য
+                  <FiShield className="text-[#619d23]" /> Pause, skip, or cancel anytime
                 </span>
                 <span className="flex items-center gap-1">
-                  <FiTruck className="text-emerald-600" /> হোম ডেলিভারি
+                  <FiTruck className="text-[#619d23]" /> 100% Free Doorstep Delivery
                 </span>
               </div>
 
@@ -436,10 +470,10 @@ export default function SubscriptionModal({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-[#5CAF90] hover:from-emerald-700 hover:to-emerald-600 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/25 transition-all transform active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#619d23] to-[#76b533] hover:from-[#52861c] hover:to-[#619d23] text-white font-extrabold text-sm shadow-lg shadow-[#619d23]/25 transition-all transform active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <FiRepeat size={18} className={isLoading ? 'animate-spin' : ''} />
-                <span>{isLoading ? 'সাবস্ক্রিপশন সম্পন্ন হচ্ছে...' : 'সাবস্ক্রিপশন কনফার্ম করুন'}</span>
+                <span>{isLoading ? 'Processing Subscription...' : 'Confirm Subscription'}</span>
               </button>
             </form>
           )}

@@ -25,7 +25,6 @@ import {
   FiRepeat,
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
-import SubscriptionModal from '@/components/shared/SubscriptionModal';
 import { addToCart, increaseQuantity, decreaseQuantity } from '@/redux/slices/cartSlice';
 import { toggleWishlist } from '@/redux/slices/wishlistSlice';
 import { useCreateReviewMutation, useGetProductReviewsQuery } from '@/redux/api/reviewApi';
@@ -188,7 +187,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
 
   const [detailSubTab, setDetailSubTab] = useState('description');
   const [isDescExpanded, setIsDescExpanded] = useState(false);
-  const [isSubModalOpen, setIsSubModalOpen] = useState(false);
 
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
@@ -768,19 +766,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                   <span className="text-sm sm:text-base font-semibold">Order via WhatsApp (হোয়াটসঅ্যাপে অর্ডার)</span>
                 </button>
 
-                {/* Recurring Subscription Option if enabled */}
-                {(product as any)?.isSubscriptionAvailable && (
-                  <button
-                    type="button"
-                    onClick={() => setIsSubModalOpen(true)}
-                    className="mt-3 w-full bg-gradient-to-r from-emerald-600 to-[#5CAF90] hover:from-emerald-700 hover:to-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-md shadow-emerald-500/20 hover:shadow-lg transition-all duration-200 cursor-pointer active:scale-[0.99]"
-                  >
-                    <FiRepeat size={20} className="text-white" />
-                    <span className="text-sm sm:text-base font-extrabold">
-                      Subscribe & Save ({(product as any).subscriptionDiscountPercent || 8}% ছাড়ে অটো সাবস্ক্রিপশন)
-                    </span>
-                  </button>
-                )}
+                {/* End of purchase options */}
 
                 {!inStock && (
                   <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2">
@@ -1157,28 +1143,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
         </div>
       </div>
 
-      {/* Subscription Modal */}
-      {product && (
-        <SubscriptionModal
-          isOpen={isSubModalOpen}
-          onClose={() => setIsSubModalOpen(false)}
-          product={{
-            _id: product._id,
-            name: selectedVariant
-              ? `${product.name} (${selectedVariant.weightOrVolume} ${selectedVariant.unitShortName || 'kg'})`
-              : product.name,
-            thumbnail: product.thumbnail,
-            regularPrice: mrp,
-            salePrice: price,
-            subscriptionDiscountPercent: (product as any)?.subscriptionDiscountPercent,
-            subscriptionFrequency: (product as any)?.subscriptionFrequency,
-            variantID: selectedVariant?._id,
-            variantName: selectedVariant
-              ? `${selectedVariant.weightOrVolume} ${selectedVariant.unitShortName || 'kg'}`
-              : undefined,
-          }}
-        />
-      )}
+
     </div>
   );
 };

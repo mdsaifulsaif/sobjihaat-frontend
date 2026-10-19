@@ -1,7 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux';
 import {
     removeFromCart,
@@ -15,12 +16,17 @@ import {
     FiMinus,
     FiArrowRight,
     FiShoppingBag,
-    FiChevronLeft
+    FiChevronLeft,
+    FiTag
 } from 'react-icons/fi';
 import EmptyState from '@/components/shared/EmptyState';
+import SmartUpsellNudge from '@/components/cart/SmartUpsellNudge';
+import AvailableCouponsDrawer from '@/components/cart/AvailableCouponsDrawer';
 import { toast } from 'react-hot-toast';
 
 const CartPage = () => {
+    const router = useRouter();
+    const [isCouponDrawerOpen, setIsCouponDrawerOpen] = useState(false);
     const { items, totalPrice } = useAppSelector((state) => state.cart);
     const dispatch = useAppDispatch();
 
@@ -48,10 +54,18 @@ const CartPage = () => {
         <div className="bg-gray-50/50 min-h-screen pb-20">
             <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 pt-8">
                 {/* Breadcrumb / Back button */}
-                <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[var(--color-primary)] mb-8 transition-colors group">
+                <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[var(--color-primary)] mb-6 transition-colors group">
                     <FiChevronLeft className="group-hover:-translate-x-1 transition-transform" />
                     Back to Shopping
                 </Link>
+
+                {/* Smart Upselling Nudge Banner */}
+                <div className="mb-8">
+                    <SmartUpsellNudge
+                        currentSubtotal={totalPrice}
+                        onApplyCoupon={(code) => router.push(`/checkout?coupon=${encodeURIComponent(code)}`)}
+                    />
+                </div>
 
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* Cart Items List */}
@@ -161,6 +175,20 @@ const CartPage = () => {
                                 </div>
                             </div>
 
+                            {/* View Available Coupons Trigger */}
+                            <button
+                                type="button"
+                                onClick={() => setIsCouponDrawerOpen(true)}
+                                className="w-full mb-4 py-3 px-4 bg-emerald-50 hover:bg-emerald-100/70 text-[#5CAF90] border border-emerald-200 rounded-md font-bold text-xs flex items-center justify-between transition-all group cursor-pointer"
+                            >
+                                <span className="flex items-center gap-2">
+                                    <FiTag size={14} /> View Available Coupons
+                                </span>
+                                <span className="text-[10px] bg-[#5CAF90] text-white px-2 py-0.5 rounded-full font-extrabold group-hover:scale-105 transition-transform">
+                                    Offers
+                                </span>
+                            </button>
+
                             <Link
                                 href="/checkout"
                                 className="w-full flex items-center justify-center gap-3 py-5 bg-gray-900 text-white rounded-md font-bold text-sm tracking-widest hover:bg-[var(--color-primary)] transition-all shadow-xl shadow-gray-200 hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] group"
@@ -185,6 +213,14 @@ const CartPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Available Coupons Drawer */}
+            <AvailableCouponsDrawer
+                isOpen={isCouponDrawerOpen}
+                onClose={() => setIsCouponDrawerOpen(false)}
+                currentSubtotal={totalPrice}
+                onApplyCoupon={(code) => router.push(`/checkout?coupon=${encodeURIComponent(code)}`)}
+            />
         </div>
     );
     

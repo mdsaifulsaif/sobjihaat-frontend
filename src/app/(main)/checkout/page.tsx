@@ -917,14 +917,17 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/redux";
 import { clearCart, setPlacingOrder } from "@/redux/slices/cartSlice";
 import { useCreateOrderMutation } from "@/redux/api/orderApi";
 import { useGetAllAreasQuery } from "@/redux/api/areaApi";
 import { useGetShippingPreviewQuery } from "@/redux/api/shippingApi";
+import { useApplyCouponMutation } from "@/redux/api/couponApi";
+import SmartUpsellNudge from "@/components/cart/SmartUpsellNudge";
+import AvailableCouponsDrawer from "@/components/cart/AvailableCouponsDrawer";
 import {
   FiMapPin,
   FiCreditCard,
@@ -943,6 +946,7 @@ import {
   FiUser,
   FiCheck,
   FiAlertTriangle,
+  FiX,
 } from "react-icons/fi";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
@@ -1009,12 +1013,14 @@ const InputField = ({
 const inputClass =
   "w-full px-4 py-3 bg-[var(--color-surface)] border border-gray-200 rounded-xl outline-none focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 focus:bg-white transition-all text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]";
 
-const CheckoutPage = () => {
+const CheckoutContent = () => {
   const { items, totalPrice } = useAppSelector((state) => state.cart);
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [createOrder, { isLoading: isPlacingOrder }] = useCreateOrderMutation();
+  const [applyCouponMutation, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
 
   const { data: areasResponse, isLoading: isLoadingAreas } =
     useGetAllAreasQuery({});
@@ -1024,6 +1030,56 @@ const CheckoutPage = () => {
 
   const [showCoupon, setShowCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discountAmount: number;
+    discountType?: string;
+  } | null>(null);
+  const [isCouponDrawerOpen, setIsCouponDrawerOpen] = useState(false);
+
+  const handleApplyCoupon = async (codeToApply?: string) => {
+    const code = (codeToApply || couponCode).trim().toUpperCase();
+    if (!code) {
+      toast.error("Please enter a coupon code");
+      return;
+    }
+    try {
+      const res: any = await applyCouponMutation({
+        code,
+        subtotal: totalPrice,
+      }).unwrap();
+
+      const discount = res?.data?.discountAmount || 0;
+      setAppliedCoupon({
+        code: res?.data?.code || code,
+        discountAmount: discount,
+        discountType: res?.data?.discountType,
+      });
+      setCouponCode(res?.data?.code || code);
+      setShowCoupon(true);
+      toast.success(res?.message || `Coupon ${code} applied successfully!`);
+    } catch (err: any) {
+      toast.error(
+        err?.data?.message || err?.message || "Invalid or ineligible coupon code"
+      );
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    toast.success("Coupon removed");
+  };
+
+  // Auto-apply if coupon param in URL (?coupon=SOBJI50)
+  useEffect(() => {
+    const couponFromQuery = searchParams?.get("coupon");
+    if (couponFromQuery && totalPrice > 0 && !appliedCoupon) {
+      setCouponCode(couponFromQuery);
+      setShowCoupon(true);
+      handleApplyCoupon(couponFromQuery);
+    }
+  }, [searchParams, totalPrice]);
 
   // ✅ Delivery Time state
   const [orderMode, setOrderMode] = useState<"normal" | "preorder">("normal");
@@ -1129,7 +1185,8 @@ const CheckoutPage = () => {
     );
 
   const estimatedShipping = shippingPreview?.data?.shippingCharge ?? 0;
-  const grandTotal = totalPrice + estimatedShipping;
+  const couponDiscount = appliedCoupon?.discountAmount ?? 0;
+  const grandTotal = Math.max(0, totalPrice + estimatedShipping - couponDiscount);
 
 
 console.log("shippingPreview:", shippingPreview, "error:", shippingError);
@@ -1191,6 +1248,8 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
       specialInstructions: formData.specialInstructions || undefined,
       isOutsideLocation,
       orderPlacedCoords: deviceCoords || undefined,
+      couponCode: appliedCoupon ? appliedCoupon.code : undefined,
+      couponDiscount: couponDiscount > 0 ? couponDiscount : undefined,
     };
 
     // ✅ Pre-order হলে সবসময় deliveryDate = tomorrow, কিন্তু deliveryTime শুধু user বেছে নিলেই যাবে
@@ -1528,38 +1587,109 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                   ))}
                 </div>
 
+                {/* Smart Upsell Nudge Bar */}
+                <div className="mb-4">
+                  <SmartUpsellNudge
+                    currentSubtotal={totalPrice}
+                    onApplyCoupon={(code: string) => handleApplyCoupon(code)}
+                    appliedCouponCode={appliedCoupon?.code}
+                  />
+                </div>
+
                 {/* Coupon */}
                 <div className="mb-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowCoupon(!showCoupon)}
-                    className="flex items-center gap-2 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors w-full"
-                  >
-                    <FiTag size={13} />
-                    {showCoupon ? "Hide coupon" : "Have a coupon code?"}
-                    <FiChevronDown
-                      size={13}
-                      className={`ml-auto transition-transform ${showCoupon ? "rotate-180" : ""}`}
-                    />
-                  </button>
-
-                  {showCoupon && (
-                    <div className="mt-2.5 flex gap-2">
-                      <input
-                        type="text"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
-                        placeholder="Enter coupon code"
-                        className={`${inputClass} flex-1`}
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setShowCoupon(!showCoupon)}
+                      className="flex items-center gap-2 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors"
+                    >
+                      <FiTag size={13} />
+                      {appliedCoupon ? "Coupon applied" : showCoupon ? "Hide coupon" : "Have a coupon code?"}
+                      <FiChevronDown
+                        size={13}
+                        className={`transition-transform ${showCoupon ? "rotate-180" : ""}`}
                       />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsCouponDrawerOpen(true)}
+                      className="text-[11px] font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-full border border-amber-200/80 transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                    >
+                      <span>🎟️</span>
+                      <span>Available Coupons</span>
+                    </button>
+                  </div>
+
+                  {appliedCoupon ? (
+                    <div className="mt-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between shadow-sm animate-fadeIn">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                          ✓
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                            <span className="font-mono tracking-wider">{appliedCoupon.code}</span>
+                            <span className="text-[11px] text-emerald-700 font-semibold">
+                              (-৳{appliedCoupon.discountAmount.toLocaleString()})
+                            </span>
+                          </p>
+                          <p className="text-[10px] text-emerald-600">কুপন ডিসকাউন্ট সফলভাবে যুক্ত হয়েছে</p>
+                        </div>
+                      </div>
                       <button
                         type="button"
-                        className="px-4 py-2.5 bg-[var(--color-primary)] text-white text-xs font-bold rounded-xl hover:opacity-90 transition-opacity flex-shrink-0"
+                        onClick={handleRemoveCoupon}
+                        className="px-2 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg flex items-center gap-1 transition"
                       >
-                        Apply
+                        <FiX size={13} /> Remove
                       </button>
                     </div>
-                  )}
+                  ) : showCoupon ? (
+                    <div className="mt-2.5 space-y-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          placeholder="Enter coupon code (e.g. SOBJI50)"
+                          className={`${inputClass} flex-1 uppercase font-mono tracking-wider text-xs`}
+                          disabled={isApplyingCoupon}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleApplyCoupon();
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCoupon()}
+                          disabled={isApplyingCoupon || !couponCode.trim()}
+                          className="px-4 py-2.5 bg-[var(--color-primary)] text-white text-xs font-bold rounded-xl hover:opacity-90 transition-opacity flex-shrink-0 disabled:opacity-50 flex items-center gap-1.5"
+                        >
+                          {isApplyingCoupon ? (
+                            <>
+                              <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Applying...
+                            </>
+                          ) : (
+                            "Apply"
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-[var(--color-text-muted)] flex items-center justify-between">
+                        <span>কুপন কোড বড় হাতের অক্ষরে লিখুন</span>
+                        <button
+                          type="button"
+                          onClick={() => setIsCouponDrawerOpen(true)}
+                          className="text-[var(--color-primary)] font-semibold hover:underline"
+                        >
+                          কুপন তালিকা দেখুন →
+                        </button>
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
 
                 {/* Selected delivery time summary */}
@@ -1594,20 +1724,6 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                       ৳{totalPrice.toLocaleString()}
                     </span>
                   </div>
-                  {/* <div className="flex justify-between text-sm">
-                    <span className="text-[var(--color-text-muted)]">
-                      Delivery charge
-                    </span>
-                    <span className="font-semibold text-[var(--color-text-primary)]">
-                      {estimatedShipping === 0 ? (
-                        <span className="text-[var(--color-primary)] font-bold">
-                          FREE
-                        </span>
-                      ) : (
-                        `৳${estimatedShipping}`
-                      )}
-                    </span>
-                  </div> */}
                   <div className="flex justify-between text-sm">
                     <span className="text-[var(--color-text-muted)]">
                       Delivery charge
@@ -1624,12 +1740,26 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                       )}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--color-text-muted)]">
-                      Discount
-                    </span>
-                    <span className="font-semibold text-green-600">-৳0</span>
-                  </div>
+                  {couponDiscount > 0 ? (
+                    <div className="flex justify-between text-sm animate-fadeIn">
+                      <span className="text-[var(--color-text-muted)] flex items-center gap-1.5">
+                        <span>Coupon Discount</span>
+                        <span className="px-1.5 py-0.5 text-[10px] font-bold rounded bg-emerald-100 text-emerald-800 uppercase font-mono">
+                          {appliedCoupon?.code}
+                        </span>
+                      </span>
+                      <span className="font-semibold text-emerald-600">
+                        -৳{couponDiscount.toLocaleString()}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--color-text-muted)]">
+                        Discount
+                      </span>
+                      <span className="font-semibold text-gray-400">৳0</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center pt-3 border-t border-gray-100">
                     <span className="text-sm font-bold text-[var(--color-text-primary)]">
                       Total
@@ -1878,7 +2008,33 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
           </div>
         </form>
       </div>
+
+      {/* Available Coupons Drawer */}
+      <AvailableCouponsDrawer
+        isOpen={isCouponDrawerOpen}
+        onClose={() => setIsCouponDrawerOpen(false)}
+        currentSubtotal={totalPrice}
+        onApplyCoupon={(code: string) => {
+          handleApplyCoupon(code);
+          setIsCouponDrawerOpen(false);
+        }}
+        appliedCouponCode={appliedCoupon?.code}
+      />
     </div>
+  );
+};
+
+const CheckoutPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-9 h-9 border-3 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 };
 

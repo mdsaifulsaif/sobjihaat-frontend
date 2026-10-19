@@ -39,6 +39,17 @@ export const couponApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Coupons']
         }),
+        getAvailableCoupons: builder.query<{
+            success: boolean;
+            message: string;
+            data: any[];
+        }, void>({
+            query: () => ({
+                url: '/coupons/available',
+                method: 'GET'
+            }),
+            providesTags: ['Coupons']
+        }),
         applyCoupon: builder.mutation({
             query: (data) => ({
                 url: '/coupons/apply',
@@ -52,6 +63,7 @@ export const couponApi = baseApi.injectEndpoints({
 export const {
     useGetCouponsQuery,
     useGetCouponByIdQuery,
+    useGetAvailableCouponsQuery,
     useCreateCouponMutation,
     useUpdateCouponMutation,
     useDeleteCouponMutation,

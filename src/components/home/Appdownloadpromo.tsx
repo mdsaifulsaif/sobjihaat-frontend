@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useSubscribeNewsletterMutation } from '@/redux/api/subscriberApi';
+import toast from 'react-hot-toast';
 
 /* =========================================================================
    Brand color: --color-primary: #619d23
@@ -77,6 +79,7 @@ const StoreBadge: React.FC<{ store: 'google' | 'apple' }> = ({ store }) => (
 
 const AppDownloadPromo: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [subscribeNewsletter, { isLoading: isSubscribing }] = useSubscribeNewsletterMutation();
 
   return (
     <section className="px-4 py-8 sm:px-6 bg-[#eef3e6]">
@@ -115,7 +118,17 @@ const AppDownloadPromo: React.FC = () => {
               </div>
 
               <form
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!email.trim()) return;
+                  try {
+                    await subscribeNewsletter({ email: email.trim() }).unwrap();
+                    toast.success("Thank you! You'll be notified when our app launches.");
+                    setEmail("");
+                  } catch (err: any) {
+                    toast.error(err?.data?.message || "Failed to submit. Please try again.");
+                  }
+                }}
                 className="flex w-full flex-col gap-2 sm:flex-row"
               >
                 <input
@@ -128,9 +141,10 @@ const AppDownloadPromo: React.FC = () => {
                 />
                 <button
                   type="submit"
-                  className="whitespace-nowrap rounded-lg bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+                  disabled={isSubscribing}
+                  className="whitespace-nowrap rounded-lg bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50 cursor-pointer"
                 >
-                  Notify Me
+                  {isSubscribing ? "Submitting..." : "Notify Me"}
                 </button>
               </form>
             </div>

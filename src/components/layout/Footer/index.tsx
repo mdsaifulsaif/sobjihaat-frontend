@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
     FaFacebookF,
@@ -16,8 +16,30 @@ import { AiOutlinePhone, AiOutlineMail } from "react-icons/ai";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { FiSend } from "react-icons/fi";
 import { Button } from "@/components/ui";
+import { useSubscribeNewsletterMutation } from "@/redux/api/subscriberApi";
+import toast from "react-hot-toast";
 
 const Footer: React.FC = () => {
+    const [newsletterEmail, setNewsletterEmail] = useState("");
+    const [subscribeNewsletter, { isLoading: isSubscribing }] = useSubscribeNewsletterMutation();
+
+    const handleNewsletterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const trimmed = newsletterEmail.trim();
+        if (!trimmed) {
+            toast.error("Please enter a valid email address");
+            return;
+        }
+
+        try {
+            await subscribeNewsletter({ email: trimmed }).unwrap();
+            toast.success("Thank you! You have subscribed to our newsletter.");
+            setNewsletterEmail("");
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Failed to subscribe. Please try again.");
+        }
+    };
+
     const categories = [
         "Electronics",
         "Fashion & Clothing",
@@ -45,18 +67,25 @@ const Footer: React.FC = () => {
                         <h2 className="text-2xl font-semibold text-white mb-2">Subscribe to our newsletter</h2>
                         <p className="text-gray-400">Get all the latest information on Events, Sales and Offers.</p>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4">
                         <div className="relative flex-grow">
                             <input
                                 type="email"
+                                required
+                                value={newsletterEmail}
+                                onChange={(e) => setNewsletterEmail(e.target.value)}
                                 placeholder="Email address here..."
-                                className="w-full bg-[#2a2a2a] border border-gray-700 rounded-md py-3 px-4 outline-none focus:border-[var(--color-primary)] transition-all"
+                                className="w-full bg-[#2a2a2a] border border-gray-700 rounded-md py-3 px-4 outline-none focus:border-[var(--color-primary)] transition-all text-white placeholder-gray-500"
                             />
                         </div>
-                        <button className="bg-[var(--color-primary)] text-white px-8 py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all">
-                            SUBSCRIBE <FiSend />
+                        <button
+                            type="submit"
+                            disabled={isSubscribing}
+                            className="bg-[var(--color-primary)] text-white px-8 py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-50 cursor-pointer shrink-0"
+                        >
+                            {isSubscribing ? "SUBSCRIBING..." : "SUBSCRIBE"} <FiSend />
                         </button>
-                    </div>
+                    </form>
                 </div>
 
                 {/* Main Footer Content */}

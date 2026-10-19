@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useMemo, useState } from 'react';
+import RequestAreaModal from './RequestAreaModal';
 
 /* ─── Known Barisal coordinates fallback mapping ─── */
 const KNOWN_COORDINATES: Record<string, [number, number]> = {
@@ -274,6 +275,7 @@ const defaultFallbackZones: Zone[] = [
 
 const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
   const [displayAreas, setDisplayAreas] = useState<AreaItem[]>(areas);
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
 
   useEffect(() => {
     setDisplayAreas(areas);
@@ -413,6 +415,7 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
               <p className="text-xs text-gray-400">We'd love to deliver to you!</p>
             </div>
             <button
+              onClick={() => setIsRequestModalOpen(true)}
               className="shrink-0 rounded-xl px-3 py-2 text-xs font-bold text-white hover:opacity-90 transition-opacity sm:px-4 sm:text-sm cursor-pointer"
               style={{ backgroundColor: 'var(--color-primary, #5CAF90)' }}
             >
@@ -512,6 +515,7 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
             </div>
           </div>
           <button
+            onClick={() => setIsRequestModalOpen(true)}
             className="w-full shrink-0 rounded-xl px-5 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 sm:w-auto cursor-pointer"
             style={{ backgroundColor: 'var(--color-primary, #5CAF90)' }}
           >
@@ -519,6 +523,12 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
           </button>
         </div>
       </div>
+
+      {/* Request Area Delivery Modal */}
+      <RequestAreaModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+      />
     </section>
   );
 };

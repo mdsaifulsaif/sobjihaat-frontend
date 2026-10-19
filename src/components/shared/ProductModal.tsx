@@ -27,7 +27,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { addToCart, increaseQuantity, decreaseQuantity } from '@/redux/slices/cartSlice';
 import { toggleWishlist } from '@/redux/slices/wishlistSlice';
 import { useCreateReviewMutation, useGetProductReviewsQuery } from '@/redux/api/reviewApi';
-import { useGetRelatedProductsQuery } from '@/redux/api/productApi';
+import { useGetRelatedProductsQuery, useGetProductByIdQuery } from '@/redux/api/productApi';
 import { useSession } from 'next-auth/react';
 import Button from '@/components/ui/Button';
 import ProductCard from '@/components/shared/ProductCard';
@@ -48,6 +48,7 @@ interface Variant {
   regularPrice: number;
   salePrice: number;
   stock: number;
+  sku?: string;
 }
 
 interface ComboItem {
@@ -69,6 +70,9 @@ interface Product {
   description?: string;
   categoryID?: { name: string; _id: string };
   categoryDetails?: { name: string; _id: string };
+  category?: any;
+  categoryName?: string;
+  sku?: string;
   brandID?: { name: string; _id: string; logo?: string };
   brandDetails?: { name: string; _id: string; logo?: string };
   regularPrice: number;
@@ -252,6 +256,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
 
   const [createReview] = useCreateReviewMutation();
 
+  // Full product details query (ensure category & SKU if missing from card)
+  const { data: fullProductData } = useGetProductByIdQuery(productId, {
+    skip: !productId,
+  });
+  const fullProduct = (fullProductData as any)?.data;
+
   // ✅ সঠিকভাবে categoryId বের করা - উভয় জায়গা থেকে
   const categoryId = useMemo(() => {
     if (!product) return '';
@@ -264,12 +274,47 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
     if (product.categoryID?._id) {
       return product.categoryID._id;
     }
+    if (fullProduct?.categoryID?._id) {
+      return fullProduct.categoryID._id;
+    }
     // যদি string হয়
     if (typeof product.categoryID === 'string') {
       return product.categoryID;
     }
     return '';
-  }, [product]);
+  }, [product, fullProduct]);
+
+  // Display Category Name Resolution
+  const displayCategoryName = useMemo(() => {
+    return (
+      product?.categoryDetails?.name ||
+      product?.categoryID?.name ||
+      fullProduct?.categoryID?.name ||
+      fullProduct?.categoryDetails?.name ||
+      (typeof product?.category === 'string' ? product.category : product?.category?.name) ||
+      (product as any)?.categoryName ||
+      (typeof fullProduct?.category === 'string' ? fullProduct.category : fullProduct?.category?.name) ||
+      ''
+    );
+  }, [product, fullProduct]);
+
+  // Display SKU Resolution
+  const displaySku = useMemo(() => {
+    const rawSku =
+      selectedVariant?.sku ||
+      product?.sku ||
+      (product as any)?.sku ||
+      fullProduct?.variants?.find((v: any) => v._id === selectedVariant?._id)?.sku ||
+      fullProduct?.sku;
+
+    if (rawSku && String(rawSku).trim().length > 0) {
+      return String(rawSku).trim();
+    }
+    if (productId && typeof productId === 'string') {
+      return `SH-${productId.slice(-6).toUpperCase()}`;
+    }
+    return '';
+  }, [selectedVariant, product, fullProduct, productId]);
 
   // Related products
   const { data: relatedData, isLoading: relatedLoading } = useGetRelatedProductsQuery(
@@ -421,7 +466,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
     const unitPrice = price;
     const totalPrice = unitPrice * orderQty;
 
-    const skuCode = (product as any)?.sku || product._id || 'N/A';
+    const skuCode = displaySku || (product as any)?.sku || product._id || 'N/A';
     const productUrl = typeof window !== 'undefined'
       ? `${window.location.origin}/product/${product._id}`
       : `https://sobjihaat.com/product/${product._id}`;
@@ -549,11 +594,19 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
             {/* Right: Details */}
             <div className="md:w-[55%] p-6 md:p-8">
               <div>
-                {(product.categoryID?.name || product.categoryDetails?.name) && (
-                  <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">
-                    {product.categoryID?.name || product.categoryDetails?.name}
-                  </p>
-                )}
+                {/* Category & SKU Badges */}
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  {displayCategoryName && (
+                    <span className="text-[11px] uppercase tracking-wider font-semibold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2.5 py-0.5 rounded-md">
+                      {displayCategoryName}
+                    </span>
+                  )}
+                  {displaySku && (
+                    <span className="text-[11px] text-gray-500 font-medium bg-gray-100 px-2.5 py-0.5 rounded-md">
+                      SKU: <span className="font-semibold text-gray-700">{displaySku}</span>
+                    </span>
+                  )}
+                </div>
 
                 <h2 className="text-2xl font-bold mt-1 leading-tight">{product.name}</h2>
 
@@ -734,6 +787,28 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                   <span className="text-sm text-gray-600">
                     Delivery within 40 - 60 minutes in Barisal city
                   </span>
+                </div>
+
+                {/* Product Metadata Strip */}
+                <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
+                  {displayCategoryName && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-400">Category:</span>
+                      <span className="font-semibold text-gray-700">{displayCategoryName}</span>
+                    </div>
+                  )}
+                  {displaySku && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-400">SKU:</span>
+                      <span className="font-semibold text-gray-700">{displaySku}</span>
+                    </div>
+                  )}
+                  {product.productType && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-400">Type:</span>
+                      <span className="font-semibold text-gray-700 capitalize">{product.productType}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

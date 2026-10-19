@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import {
   FiRepeat,
@@ -18,7 +18,11 @@ import { addToCart } from '@/redux/slices/cartSlice';
 import SubscriptionModal from '@/components/shared/SubscriptionModal';
 import toast from 'react-hot-toast';
 
-export default function SubscriptionPackages() {
+interface Props {
+  initialProducts?: any[];
+}
+
+export default function SubscriptionPackages({ initialProducts = [] }: Props) {
   const [activeTab, setActiveTab] = useState<'veggie' | 'cleaning'>('cleaning');
   const [selectedSubProduct, setSelectedSubProduct] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,6 +48,66 @@ export default function SubscriptionPackages() {
     );
     toast.success(`${pkg.name} কার্টে যোগ করা হয়েছে!`);
   };
+
+  // 1. Dynamic items from MongoDB database
+  const dbCleaningProducts = useMemo(() => {
+    if (!initialProducts || initialProducts.length === 0) return [];
+    return initialProducts
+      .filter((p: any) => 
+        p.isSubscriptionAvailable && (
+          p.subscriptionFrequency === 'monthly' ||
+          p.categoryDetails?.name?.toLowerCase().includes('clean') ||
+          p.name?.includes('ক্লিনিং') ||
+          p.name?.includes('হাইজিন')
+        )
+      )
+      .map((p: any) => ({
+        _id: p._id,
+        name: p.name,
+        category: p.categoryDetails?.name || 'Cleaning & Household',
+        sku: p.sku || 'CLN-BOX',
+        thumbnail: p.thumbnail || p.images?.[0] || '/images/monthly_cleaning_box.jpg',
+        badge: p.subscriptionDiscountPercent ? `${p.subscriptionDiscountPercent}% ছাড় সহ` : 'মাসিক প্যাকেজ',
+        frequencyText: 'প্রতি মাসে ১ বার',
+        frequency: 'monthly' as const,
+        regularPrice: p.regularPrice,
+        subscriptionDiscountPercent: p.subscriptionDiscountPercent || 8,
+        salePrice: p.salePrice || Math.round(p.regularPrice * 0.92),
+        items: p.description?.includes('রয়েছে:') 
+          ? p.description.split('রয়েছে:')[1].split(',').map((s: string) => s.trim())
+          : (p.lowdown && p.lowdown.length > 0 ? p.lowdown : [p.shortDescription || 'প্রয়োজনীয় সকল সামগ্রী অন্তর্ভুক্ত']),
+        idealFor: p.shortDescription || 'মাসিক হোম কেয়ার ও ক্লিনিং প্রয়োজন',
+      }));
+  }, [initialProducts]);
+
+  const dbVeggieProducts = useMemo(() => {
+    if (!initialProducts || initialProducts.length === 0) return [];
+    return initialProducts
+      .filter((p: any) => 
+        p.isSubscriptionAvailable && (
+          p.subscriptionFrequency === 'weekly' ||
+          p.categoryDetails?.name?.toLowerCase().includes('veg') ||
+          p.name?.includes('সবজি')
+        )
+      )
+      .map((p: any) => ({
+        _id: p._id,
+        name: p.name,
+        category: p.categoryDetails?.name || 'Fresh Vegetables',
+        sku: p.sku || 'VEG-BOX',
+        thumbnail: p.thumbnail || p.images?.[0] || '/images/weekly_veggie_box.jpg',
+        badge: p.subscriptionDiscountPercent ? `${p.subscriptionDiscountPercent}% ছাড় সহ` : 'সাপ্তাহিক প্যাকেজ',
+        frequencyText: 'প্রতি সপ্তাহে ১ বার',
+        frequency: 'weekly' as const,
+        regularPrice: p.regularPrice,
+        subscriptionDiscountPercent: p.subscriptionDiscountPercent || 8,
+        salePrice: p.salePrice || Math.round(p.regularPrice * 0.92),
+        items: p.description?.includes('থাকবে:') 
+          ? p.description.split('থাকবে:')[1].split(',').map((s: string) => s.trim())
+          : (p.lowdown && p.lowdown.length > 0 ? p.lowdown : [p.shortDescription || 'তাজা শাকসবজি অন্তর্ভুক্ত']),
+        idealFor: p.shortDescription || 'সাপ্তাহিক তাজা শাকসবজির প্রয়োজন',
+      }));
+  }, [initialProducts]);
 
   const cleaningPackages = [
     {
@@ -165,7 +229,9 @@ export default function SubscriptionPackages() {
     },
   ];
 
-  const currentPackages = activeTab === 'cleaning' ? cleaningPackages : veggiePackages;
+  const currentPackages = activeTab === 'cleaning' 
+    ? (dbCleaningProducts.length > 0 ? dbCleaningProducts : cleaningPackages)
+    : (dbVeggieProducts.length > 0 ? dbVeggieProducts : veggiePackages);
 
   return (
     <section className="py-12 bg-gradient-to-b from-white via-emerald-50/20 to-white relative overflow-hidden" id="subscriptions">
@@ -254,7 +320,7 @@ export default function SubscriptionPackages() {
                     বক্সের ভেতরের আইটেমসমূহ:
                   </p>
                   <ul className="space-y-1.5">
-                    {pkg.items.slice(0, 5).map((item, idx) => (
+                    {pkg.items.slice(0, 5).map((item: any, idx: number) => (
                       <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
                         <FiCheckCircle className="text-emerald-500 shrink-0 mt-0.5 text-xs" />
                         <span className="line-clamp-1">{item}</span>

@@ -16,11 +16,12 @@ import { serverFetch } from '@/services/api';
 
 export default async function Home() {
 
-  const [categoriesData, brandsData, featuredData, comboData, shippingData, reviewsData, areasData] = await Promise.all([
+  const [categoriesData, brandsData, featuredData, comboData, subscriptionProductsData, shippingData, reviewsData, areasData] = await Promise.all([
     serverFetch<any>('/categories?status=active&isDeleted=false&limit=20'),
     serverFetch<any>('/brands?page=1&limit=20'),
     serverFetch<any>('/products/featured?limit=10'),
     serverFetch<any>('/products?productType=combo&status=active&limit=10'),
+    serverFetch<any>('/products?isSubscriptionAvailable=true&status=active&limit=20'),
     serverFetch<any>('/shipping/local'),
     serverFetch<any>('/reviews/featured?limit=10'),
     serverFetch<any>('/area', { cache: 'no-store' }),
@@ -33,7 +34,7 @@ export default async function Home() {
       <TrustedBrands initialBrands={brandsData?.data} />
       <FeaturedProducts initialProducts={featuredData?.data} />
       <ComboProducts initialProducts={comboData?.data} />
-      <SubscriptionPackages />
+      <SubscriptionPackages initialProducts={subscriptionProductsData?.data || []} />
 
       <DeliveryBanner />
       <DeliveryCharges initialData={shippingData?.data} />

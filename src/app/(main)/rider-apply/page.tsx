@@ -838,7 +838,7 @@ const RiderApplyForm = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto my-10 px-4">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
       {/* Top Back Option */}
       <div className="mb-6">
         <button

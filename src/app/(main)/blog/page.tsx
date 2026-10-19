@@ -89,9 +89,9 @@ export default function BlogPage() {
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Breadcrumb / Page Header */}
-            <div className="bg-white border-b border-gray-100 py-12">
-                <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 text-center">
-                    <h1 className="text-4xl font-black text-gray-900 mb-3 tracking-tight">OUR BLOG</h1>
+            <div className="bg-white border-b border-gray-100 py-6 sm:py-8">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2 tracking-tight">OUR BLOG</h1>
                     <div className="flex items-center justify-center gap-2 text-sm text-gray-500 font-medium">
                         <Link href="/" className="hover:text-[var(--color-primary)] transition-colors">Home</Link>
                         <FiChevronRight size={14} className="text-gray-300" />
@@ -100,8 +100,8 @@ export default function BlogPage() {
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 py-16">
-                <div className="flex flex-col lg:flex-row gap-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
                     {/* Main Content Area */}
                     <div className="flex-1 order-2 lg:order-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

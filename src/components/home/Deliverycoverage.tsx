@@ -342,7 +342,7 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
   const activeZones = zones.filter((z) => z.status === 'active');
 
   return (
-    <section className="bg-white px-3 py-10 sm:px-6 sm:py-14">
+    <section className="py-6 sm:py-8 bg-white">
       {/* Leaflet CSS and clean map styles */}
       <style>{`
         @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
@@ -375,7 +375,7 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
         }
       `}</style>
 
-      <div className="mx-auto container">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -442,7 +442,7 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
         </div>
 
         {/* ── Currently Delivering list ── */}
-        <div className="mt-5 z-0">
+        {/* <div className="mt-5 z-0">
           <h3 className="mb-3 text-sm font-bold text-gray-900 sm:text-base">
             Currently Delivering ({activeZones.length})
           </h3>
@@ -487,10 +487,10 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* ── Expanding CTA ── */}
-        <div className="mt-5 flex flex-col gap-4 overflow-hidden rounded-2xl bg-gray-50 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        {/* <div className="mt-5 flex flex-col gap-4 overflow-hidden rounded-2xl bg-gray-50 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex items-center gap-3 sm:gap-4">
             <div
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl sm:h-14 sm:w-14"
@@ -521,7 +521,7 @@ const DeliveryCoverage: React.FC<DeliveryCoverageProps> = ({ areas = [] }) => {
           >
             Request Delivery in Your Area →
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Request Area Delivery Modal */}

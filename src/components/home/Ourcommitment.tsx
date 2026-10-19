@@ -395,38 +395,18 @@ const stats: Stat[] = [
 const OurCommitment: React.FC = () => {
   const router = useRouter();
   return (
-    <section className="relative overflow-hidden bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
-      <div className="relative mx-auto container">
-        {/* ---------- heading ---------- */}
-        {/* <div className="text-center">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef5e3] px-4 py-1.5 text-xs font-bold tracking-wide text-[#4a7c1c]">
-            <LeafIcon size={14} />
-            OUR COMMITMENT
-            <LeafIcon size={14} className="scale-x-[-1]" />
-          </span>
-
-          <h2 className="relative inline-block text-3xl font-extrabold leading-tight text-gray-900 sm:text-4xl lg:text-[2.6rem]">
-            From Barisal,{' '}
-            <span className="text-[#619d23]">For Barisal</span>
-            <LeafIcon
-              size={26}
-              className="absolute -right-7 -top-2 rotate-12"
-            />
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-xl text-sm text-gray-500 sm:text-base">
-            We are committed to bringing you the freshest products, fastest
-            delivery and the best service every day.
-          </p>
-        </div> */}
-
-        <SectionHeader title="Barisal, For Barisal"
-         description="We are committed to bringing you the freshest products, fastest
-            delivery and the best service every day."
-        icon={<BiLeaf size={18} />}  onAction={() => router.push("/vegetables")} />
+    <section className="py-6 sm:py-8 bg-[#fbfcfa] overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title="From Barisal, For Barisal"
+          description="We are committed to bringing you the freshest products, fastest delivery and best service every day."
+          icon={<BiLeaf size={18} />}
+          actionLabel="Learn more"
+          onAction={() => router.push("/shop")}
+        />
 
         {/* ---------- 6-up commitment grid ---------- */}
-        <div className="mt-10 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-2">
+        <div className="mt-6 grid grid-cols-2 gap-y-6 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-4">
           {commitments.map((c, i) => (
             <div
               key={c.id}

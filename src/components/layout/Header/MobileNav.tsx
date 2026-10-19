@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useGetCategoriesQuery } from "@/redux/api/categoryApi";
+import { useAppSelector } from "@/redux";
 
 
 interface MobileNavProps {
@@ -11,6 +12,8 @@ interface MobileNavProps {
 }
 
 export default function MobileNav({ onClose }: MobileNavProps) {
+  const wishlistCount = useAppSelector((state) => state.wishlist?.totalItems || 0);
+
   // API থেকে ক্যাটাগরি ফেচ করা
   const { data: categoryData, isLoading } = useGetCategoriesQuery({});
   const categories = categoryData?.data || [];
@@ -32,6 +35,18 @@ export default function MobileNav({ onClose }: MobileNavProps) {
           className="flex items-center gap-2 p-2.5 rounded-sm text-gray-700 font-semibold text-sm hover:bg-gray-100 transition-all"
         >
           <span>📦 My Orders</span>
+        </Link>
+        <Link
+          href="/wishlist"
+          onClick={onClose}
+          className="flex items-center justify-between p-2.5 rounded-sm text-gray-700 font-semibold text-sm hover:bg-gray-100 transition-all"
+        >
+          <span>❤️ My Wishlist</span>
+          {wishlistCount > 0 && (
+            <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-bold">
+              {wishlistCount}
+            </span>
+          )}
         </Link>
       </div>
 

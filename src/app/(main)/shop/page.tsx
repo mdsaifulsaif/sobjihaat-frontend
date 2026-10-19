@@ -28,18 +28,18 @@ export default function ShopPage() {
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Breadcrumb / Page Header */}
-            <div className="bg-white border-b border-gray-100 py-10">
-                <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 text-center">
-                    <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">SHOP</h1>
-                    <div className="flex items-center justify-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+            <div className="bg-white border-b border-gray-100 py-6 sm:py-8">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1.5 tracking-tight">Shop</h1>
+                    <div className="flex items-center justify-center gap-2 text-xs font-semibold text-gray-400">
                         <Link href="/" className="hover:text-[var(--color-primary)] transition-colors">Home</Link>
                         <span>/</span>
-                        <span className="text-gray-900">Shop</span>
+                        <span className="text-gray-900 font-bold">Shop</span>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* Sidebar Filters */}
                     <div className="w-full lg:w-72 flex-shrink-0">

@@ -263,35 +263,29 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
 
   if (!isMounted) {
     return (
-      <section className="relative py-12 sm:py-16 bg-[#f8f9f6] overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8 sm:mb-12">
-            <span className="inline-block mb-3 px-4 py-1.5 sm:px-5 sm:py-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs sm:text-sm font-bold rounded-full">
-              TOP BRANDS
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
-              Trusted Brands, Quality You Can Trust
-            </h2>
+      <section className="py-6 sm:py-8 bg-white overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            title="Our Trusted Brands"
+            icon={<BiLeaf size={18} />}
+            actionLabel="See all"
+            onAction={() => router.push("/vegetables")}
+          />
+          <div className="mt-2">
+            <BrandsSkeletonLoader />
           </div>
-          <BrandsSkeletonLoader />
         </div>
       </section>
     );
   }
 
   if (initialBrands.length === 0) {
-    return (
-      <section className="py-12 sm:py-16 bg-[#f8f9f6]">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-500">No brands to show right now.</p>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
-    <section className="relative py-8 sm:py-10 bg-[#f8f9f6] overflow-hidden">
-      <div className="container mx-auto px-4">
+    <section className="py-6 sm:py-8 bg-white overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader 
           title="Our Trusted Brands" 
           icon={<BiLeaf size={18} />} 
@@ -299,7 +293,7 @@ const TrustedBrands: React.FC<TrustedBrandsProps> = ({ initialBrands = [] }) => 
           onAction={() => router.push("/vegetables")} 
         />
 
-        <div className="mt-6 mask-gradient">
+        <div className="mt-2 mask-gradient">
           <Swiper
             modules={[Autoplay]}
             slidesPerView="auto"

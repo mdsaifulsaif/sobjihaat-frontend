@@ -108,33 +108,16 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#fbfcfa] px-1 py-8 sm:px-6 lg:py-10">
-      <div className="mx-auto container overflow-hidden">
-        {/* <div className="text-center">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">
-            <StarBadgeIcon />
-            EXPLORE &amp; SHOP
-          </span>
+    <section className="py-6 sm:py-8 bg-[#fbfcfa] overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title="Product Categories"
+          icon={<BiLeaf size={18} />}
+          actionLabel="See all"
+          onAction={() => router.push("/vegetables")}
+        />
 
-          <h2 className="text-3xl font-extrabold leading-tight text-[#173321] sm:text-4xl lg:text-[2.6rem]">
-            Shop by Category
-          </h2>
-
-          <p className="mx-auto mt-4 text-sm text-gray-500 sm:text-base">
-            Find everything you need,{" "}
-            <span className="relative inline-block">
-              fresh and fast
-              <span className="absolute -bottom-0.5 left-0 h-[2px] w-full bg-[var(--color-primary)]" />
-            </span>
-          </p>
-        </div> */}
-
-        
-
-      <SectionHeader title="Prodcut Categories" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
-
- 
-        <div className="relative py-10">
+        <div className="relative mt-2">
           {!isMounted ? (
             <SkeletonLoader />
           ) : (

@@ -67,24 +67,24 @@ export default function ContactPage() {
     return (
         <div className="bg-white min-h-screen">
             {/* Minimal Header */}
-            <div className="bg-gray-50/50 border-b border-gray-100 py-16">
-                <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">
+            <div className="bg-gray-50/50 border-b border-gray-100 py-6 sm:py-8">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
                         <Link href="/" className="hover:text-[var(--color-primary)] transition-colors">Home</Link>
                         <FiChevronRight />
                         <span className="text-gray-900">Contact</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
+                    <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
                         Contact <span className="text-[var(--color-primary)]">Us</span>
                     </h1>
-                    <p className="mt-4 text-gray-500 font-medium max-w-lg leading-relaxed">
+                    <p className="mt-2 text-gray-500 font-medium max-w-lg leading-relaxed text-sm">
                         We're here to help you. Send us a message and we'll respond as soon as possible.
                     </p>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 md:px-8 max-w-7xl py-20">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-6 sm:py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
                     {/* Contact Details */}
                     <div className="lg:col-span-5 space-y-6">
@@ -193,8 +193,8 @@ export default function ContactPage() {
             </div>
 
             {/* Stylized Map View */}
-            <div className="container mx-auto px-4 md:px-8 max-w-7xl mb-24">
-                <div className="w-full h-[400px] bg-gray-100 rounded-md relative overflow-hidden group shadow-sm">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pb-8 sm:pb-12">
+                <div className="w-full h-[360px] sm:h-[400px] bg-gray-100 rounded-md relative overflow-hidden group shadow-sm">
                     <img
                         src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2000"
                         className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000"

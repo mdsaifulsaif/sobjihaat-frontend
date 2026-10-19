@@ -82,9 +82,10 @@ const AppDownloadPromo: React.FC = () => {
   const [subscribeNewsletter, { isLoading: isSubscribing }] = useSubscribeNewsletterMutation();
 
   return (
-    <section className="px-4 py-8 sm:px-6 bg-[#eef3e6]">
-      <div className="relative mx-auto container overflow-hidden rounded-3xl ">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
+    <section className="py-6 sm:py-8 bg-[#f5f8f1]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-2xl md:rounded-3xl">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
           {/* ==================== LEFT: copy ==================== */}
           <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-10 lg:py-12">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 px-3.5 py-1 text-xs font-bold tracking-wide text-[var(--color-primary)]">
@@ -172,6 +173,7 @@ const AppDownloadPromo: React.FC = () => {
               className="h-auto max-h-[260px] w-full max-w-[320px] select-none object-contain drop-shadow-xl sm:max-h-[320px] sm:max-w-[380px] lg:absolute lg:bottom-0 lg:right-0 lg:h-full lg:max-h-none lg:w-auto lg:max-w-none lg:translate-x-2"
               priority
             />
+          </div>
           </div>
         </div>
       </div>

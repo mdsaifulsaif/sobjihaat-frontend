@@ -17,6 +17,7 @@ import {
 } from "react-icons/fi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useGetProductsQuery } from "@/redux/api/productApi";
+import { useAppSelector } from "@/redux";
 
 interface MinHeaderProps {
   onToggleMobile?: () => void;
@@ -58,7 +59,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
   const suggestedProducts = suggestionData?.data || [];
   const totalFound = suggestionData?.meta?.total || 0;
 
-  const wishlistCount = 5;
+  const wishlistCount = useAppSelector((state) => state.wishlist?.totalItems || 0);
 
   // Sync search input with URL when pathname is /search
   useEffect(() => {

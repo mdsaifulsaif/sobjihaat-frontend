@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FiHeart, FiShoppingCart, FiMinus, FiPlus, FiCheckCircle, FiPlay, FiTwitter, FiInstagram, FiFacebook } from 'react-icons/fi';
-import { FaStar, FaFacebookF, FaTwitter as FaTwitterIcon, FaPinterestP, FaInstagram as FaInstagramIcon } from 'react-icons/fa';
+import { FaStar, FaFacebookF, FaTwitter as FaTwitterIcon, FaPinterestP, FaInstagram as FaInstagramIcon, FaWhatsapp } from 'react-icons/fa';
 import ProductCard from '@/components/shared/ProductCard';
 
 const relatedProducts = [
@@ -48,10 +48,30 @@ export default function ProductDetailsPage() {
 
     const mainGreen = "#00B207";
 
+    const handleWhatsAppOrder = () => {
+        const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801604321819';
+        const productUrl = typeof window !== 'undefined' ? window.location.href : `https://sobjihaat.com/product/${product.id}`;
+        const totalPrice = (product.price * quantity).toFixed(2);
+
+        let msg = `Hello! SobjiHaat, I'm interested in:\n`;
+        msg += `Product: ${product.name}\n`;
+        if (quantity > 1) {
+            msg += `Quantity: ${quantity}\n`;
+            msg += `Price: $${product.price} × ${quantity} = $${totalPrice}\n`;
+        } else {
+            msg += `Price: $${product.price}\n`;
+        }
+        msg += `SKU: ${product.sku}\n`;
+        msg += `Product URL: ${productUrl}`;
+
+        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+        window.open(waUrl, '_blank');
+    };
+
     return (
         <div className="bg-white min-h-screen font-['Poppins']">
             {/* Breadcrumb - Optional but common */}
-            <div className="container mx-auto px-4 py-4 text-sm text-gray-500 flex items-center gap-2">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-sm text-gray-500 flex items-center gap-2 border-b border-gray-50">
                 <Link href="/" className="hover:text-[#00B207]">🏠</Link>
                 <span>&gt;</span>
                 <Link href="/shop" className="hover:text-[#00B207]">Categories</Link>
@@ -61,7 +81,7 @@ export default function ProductDetailsPage() {
                 <span className="text-[#00B207]">{product.name}</span>
             </div>
 
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* LEFT: Image Gallery */}
                     <div className="w-full lg:w-1/2 flex gap-4">
@@ -155,6 +175,16 @@ export default function ProductDetailsPage() {
                                 <FiHeart size={20} />
                             </button>
                         </div>
+
+                        {/* WhatsApp Order Button */}
+                        <button
+                            type="button"
+                            onClick={handleWhatsAppOrder}
+                            className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full h-12 flex items-center justify-center gap-2.5 font-semibold transition-all shadow-sm hover:shadow mb-8 cursor-pointer"
+                        >
+                            <FaWhatsapp size={20} />
+                            <span>Order via WhatsApp (হোয়াটসঅ্যাপে অর্ডার)</span>
+                        </button>
 
                         <div className="space-y-2 text-sm">
                             <div className="flex gap-1.5">

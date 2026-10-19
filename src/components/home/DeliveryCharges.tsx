@@ -168,37 +168,15 @@ const DeliveryCharges: React.FC<DeliveryChargesProps> = ({
   const router = useRouter();
 
   return (
-    <section className="bg-[#fbfcfa] px-3 py-10 sm:px-6 sm:py-12">
-      <div className="container mx-auto">
-        {/* Header */}
-        {/* <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-3 py-1 text-xs font-semibold tracking-wide text-[var(--color-primary)]">
-              <TbShieldCheck size={14} />
-              {badgeText.toUpperCase()}
-            </span>
-            <h2 className="text-2xl font-bold leading-tight text-[#173321] sm:text-3xl lg:text-4xl">
-              {title}
-            </h2>
-            <p className="mt-2 text-sm text-gray-500 sm:text-base">
-              {subtitle}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-x-6 gap-y-4 lg:flex-nowrap lg:divide-x lg:divide-gray-200">
-            {features.map((f, i) => (
-              <div key={f.title} className={`flex items-center gap-3 ${i > 0 ? 'lg:pl-6' : ''}`}>
-                <SoftIconWrap>{f.icon}</SoftIconWrap>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{f.title}</p>
-                  <p className="text-xs leading-snug text-gray-500">{f.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
-
-        <SectionHeader title="Delevary Coverage" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
+    <section className="py-6 sm:py-8 bg-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title="Delivery Charges & Rates"
+          icon={<BiLeaf size={18} />}
+          description="Affordable delivery rates based on your order value"
+          actionLabel="View Details"
+          onAction={() => router.push("/shop")}
+        />
 
         {/* Content row */}
         <div className="flex flex-col gap-6 lg:flex-row">

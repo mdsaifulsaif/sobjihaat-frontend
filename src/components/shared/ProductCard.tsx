@@ -8,6 +8,8 @@ import {
   increaseQuantity,
   decreaseQuantity,
 } from "@/redux/slices/cartSlice";
+import { toggleWishlist } from "@/redux/slices/wishlistSlice";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product: any;
@@ -69,6 +71,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
     state.cart.items.find((item) => item.id === productId),
   );
   const quantity = cartItem?.quantity || 0;
+
+  // উইশলিস্ট আইটেম চেক
+  const wishlistItems = useAppSelector((state) => state.wishlist?.items || []);
+  const isWishlisted = wishlistItems.some(
+    (item) => String(item.id) === String(productId),
+  );
 
   // ===== Auto close after 5 seconds + exclusive open =====
   const clearCloseTimer = () => {
@@ -157,7 +165,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // wishlist functionality
+
+    dispatch(
+      toggleWishlist({
+        id: productId,
+        productID: String(productId),
+        name: productName,
+        price,
+        mrp: regularPrice,
+        regularPrice,
+        image: productImage,
+        thumbnail: productImage,
+        category: product.categoryID?.name || product.categoryDetails?.name || '',
+        rating,
+        unit: unitText,
+        stock: totalStock,
+        discountPercent: discountAmount,
+      })
+    );
+
+    if (isWishlisted) {
+      toast.success("Removed from wishlist");
+    } else {
+      toast.success("Added to wishlist ❤️");
+    }
   };
 
   const handleQuantityToggle = (e: React.MouseEvent) => {
@@ -199,9 +230,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
 
         <button
           onClick={handleWishlist}
-          className="absolute top-1.5 right-1.5 md:top-3 md:right-3 w-6 h-6 md:w-8 md:h-8 bg-white/90 rounded-lg md:rounded-xl shadow flex items-center justify-center text-gray-500 hover:text-red-500 transition-all z-20"
+          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className={`absolute top-1.5 right-1.5 md:top-3 md:right-3 w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl shadow flex items-center justify-center transition-all z-20 ${
+            isWishlisted
+              ? "bg-red-50 text-red-500 hover:bg-red-100"
+              : "bg-white/90 text-gray-500 hover:text-red-500 hover:bg-white"
+          }`}
         >
-          <FiHeart className="w-3 h-3 md:w-[17px] md:h-[17px]" />
+          <FiHeart
+            className={`w-3 h-3 md:w-[17px] md:h-[17px] transition-transform ${
+              isWishlisted ? "fill-red-500 text-red-500 scale-110" : ""
+            }`}
+          />
         </button>
 
         {/* Quantity Controller */}

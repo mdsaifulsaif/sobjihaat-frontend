@@ -190,10 +190,17 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
 
   if (!isMounted) {
     return (
-      <section className="py-8 md:py-12 bg-[var(--color-background)]">
-        <div className="container mx-auto px-4 ">
-       
-          <SkeletonLoader />
+      <section className="py-6 sm:py-8 bg-[#fbfcfa] overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            title="Featured Products"
+            icon={<BiLeaf size={18} />}
+            actionLabel="See all"
+            onAction={() => router.push("/vegetables")}
+          />
+          <div className="mt-2">
+            <SkeletonLoader />
+          </div>
         </div>
       </section>
     );
@@ -204,64 +211,41 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
   }
 
   return (
-    <section className="py-8 md:py-12 bg-[var(--color-background)]">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        {/* <div className="text-center mb-6 md:mb-8">
-          <span className="inline-block mb-2 px-3 py-1 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-full">
-            BEST SELLERS
-          </span>
-          <h2 className="text-xl md:text-3xl font-bold text-[var(--color-text-primary)]">
-            Featured Products
-          </h2>
-          <p className="text-sm text-[var(--color-text-muted)] mt-1">
-            Handpicked just for you
-          </p>
-        </div> */}
-
-        <SectionHeader title="Featuerd Products" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
+    <section className="py-6 sm:py-8 bg-[#fbfcfa] overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title="Featured Products"
+          icon={<BiLeaf size={18} />}
+          actionLabel="See all"
+          onAction={() => router.push("/vegetables")}
+        />
 
         {/* Products Slider - Mobile 3 items, clean display */}
-        <div className="-mx-2 py-10 md:-mx-4">
+        <div className="-mx-2 mt-2 md:-mx-4">
           <Swiper
             modules={[Autoplay, FreeMode]}
-            spaceBetween={12}
-            slidesPerView={2.2}
+            spaceBetween={8}
+            slidesPerView={3}
             centeredSlides={false}
             breakpoints={{
               320: { 
-                slidesPerView: 2.2, 
-                spaceBetween: 8,
+                slidesPerView: 3, 
+                spaceBetween: 6,
                 centeredSlides: false,
               },
               360: { 
-                slidesPerView: 2.4, 
-                spaceBetween: 10,
-                centeredSlides: false,
-              },
-              400: { 
-                slidesPerView: 2.6, 
-                spaceBetween: 10,
-                centeredSlides: false,
-              },
-              440: { 
-                slidesPerView: 2.8, 
-                spaceBetween: 12,
+                slidesPerView: 3, 
+                spaceBetween: 8,
                 centeredSlides: false,
               },
               480: { 
                 slidesPerView: 3, 
-                spaceBetween: 12,
-                centeredSlides: false,
-              },
-              540: { 
-                slidesPerView: 3, 
-                spaceBetween: 14,
+                spaceBetween: 10,
                 centeredSlides: false,
               },
               640: { 
-                slidesPerView: 3, 
-                spaceBetween: 16,
+                slidesPerView: 4, 
+                spaceBetween: 14,
                 centeredSlides: false,
               },
               768: { 

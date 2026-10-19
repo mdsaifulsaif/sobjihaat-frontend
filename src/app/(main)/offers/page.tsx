@@ -54,17 +54,17 @@ export default function SpecialOffersPage() {
     };
 
     return (
-        <div className="bg-gray-50/50 min-h-screen pb-16 font-sans">
+        <div className="bg-gray-50/50 min-h-screen pb-8 sm:pb-12 font-sans">
             {/* Minimal Header Section */}
-            <div className="bg-white border-b border-gray-100 mb-8">
-                <div className="container mx-auto px-4 py-8">
+            <div className="bg-white border-b border-gray-100 mb-6">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-full text-xs font-bold mb-3 uppercase tracking-wider">
                                 <FiZap size={14} className="fill-[var(--color-primary)]" />
                                 Instant Deals
                             </div>
-                            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Special Offers & Vouchers</h1>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Special Offers & Vouchers</h1>
                             <p className="text-gray-500 text-sm mt-1">Handpicked discounts and limited time deals just for you.</p>
                         </div>
 
@@ -95,7 +95,7 @@ export default function SpecialOffersPage() {
                 </div>
             </div>
 
-            <main className="container mx-auto px-4 space-y-12">
+            <main className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
                 {/* Vouchers: Professional Grid */}
                 <div>
                     <div className="flex items-center gap-2 mb-6">

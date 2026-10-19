@@ -260,31 +260,17 @@ export default function HappyCustomers({ initialReviews = [] }: HappyCustomersPr
       : [];
 
   return (
-    <section className="bg-[#fbfcfa] px-4 py-12 sm:px-6 lg:py-16">
-      <div className="mx-auto container">
-        {/* ---------- Heading ---------- */}
-        {/* <div className="text-center">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">
-            <HeartIcon size={13} />
-            OUR HAPPY CUSTOMERS
-          </span>
-
-          <h2 className="text-3xl font-extrabold leading-tight text-[#173321] sm:text-4xl lg:text-[2.6rem]">
-            Trusted by Thousands of
-            <br />
-            Happy Customers <HeartIcon size={28} filled={false} />
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-md text-sm text-gray-500 sm:text-base">
-            Real experiences from customers across Bangladesh
-          </p>
-        </div> */}
-
-        <SectionHeader title="Happy Customers" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
+    <section className="py-6 sm:py-8 bg-white overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title="What Our Customers Say"
+          description="Real experiences from verified customers across Barisal"
+          icon={<BiLeaf size={18} />}
+        />
 
         {/* ---------- Testimonial Marquee ---------- */}
         <div
-          className="marquee-viewport mt-10 overflow-hidden"
+          className="marquee-viewport mt-4 sm:mt-5 overflow-hidden"
           style={{
             maskImage:
               'linear-gradient(to right, transparent, black 6%, black 94%, transparent)',

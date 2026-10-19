@@ -191,8 +191,19 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
 
   if (!isMounted) {
     return (
-    
-          <SkeletonLoader />
+      <section className="py-6 sm:py-8 bg-white overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            title="Combo Products"
+            icon={<BiLeaf size={18} />}
+            actionLabel="See all"
+            onAction={() => router.push("/vegetables")}
+          />
+          <div className="mt-2">
+            <SkeletonLoader />
+          </div>
+        </div>
+      </section>
     );
   }
 
@@ -201,52 +212,41 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
   }
 
   return (
-    <section className="py-8 md:py-12 bg-[var(--color-background)]">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-       <SectionHeader title="Combo Prodcucts" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
+    <section className="py-6 sm:py-8 bg-white overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title="Combo Products"
+          icon={<BiLeaf size={18} />}
+          actionLabel="See all"
+          onAction={() => router.push("/vegetables")}
+        />
 
         {/* Combo Products Slider - Mobile 3 items */}
-        <div className="-mx-2 py-10 md:-mx-4">
+        <div className="-mx-2 mt-2 md:-mx-4">
           <Swiper
             modules={[Autoplay, FreeMode]}
-            spaceBetween={12}
-            slidesPerView={2.2}
+            spaceBetween={8}
+            slidesPerView={3}
             centeredSlides={false}
             breakpoints={{
               320: { 
-                slidesPerView: 2.2, 
-                spaceBetween: 8,
+                slidesPerView: 3, 
+                spaceBetween: 6,
                 centeredSlides: false,
               },
               360: { 
-                slidesPerView: 2.4, 
-                spaceBetween: 10,
-                centeredSlides: false,
-              },
-              400: { 
-                slidesPerView: 2.6, 
-                spaceBetween: 10,
-                centeredSlides: false,
-              },
-              440: { 
-                slidesPerView: 2.8, 
-                spaceBetween: 12,
+                slidesPerView: 3, 
+                spaceBetween: 8,
                 centeredSlides: false,
               },
               480: { 
                 slidesPerView: 3, 
-                spaceBetween: 12,
-                centeredSlides: false,
-              },
-              540: { 
-                slidesPerView: 3, 
-                spaceBetween: 14,
+                spaceBetween: 10,
                 centeredSlides: false,
               },
               640: { 
-                slidesPerView: 3, 
-                spaceBetween: 16,
+                slidesPerView: 4, 
+                spaceBetween: 14,
                 centeredSlides: false,
               },
               768: { 

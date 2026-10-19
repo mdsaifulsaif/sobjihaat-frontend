@@ -172,10 +172,10 @@ const CalendarIcon: React.FC<{ size?: number; className?: string }> = ({
 
 const DeliveryBanner = () => {
   return (
-    <section className="border-gray-100 bg-[#eef0f2] py-6">
-      <div className="container mx-auto px-4">
+    <section className="bg-[#eef0f2] py-6 sm:py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="overflow-hidden">
-          <div className="flex flex-col md:flex-row items-center h-full w-full gap-4 px-4 py-4 md:px-6 md:py-0 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center h-full w-full gap-4">
             {/* LEFT - Scooter with Rider */}
             <div className="flex items-center justify-center shrink-0">
               <Image

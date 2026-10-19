@@ -3,6 +3,7 @@
 import { Hero, HomeCategory } from '@/components/home';
 import AppDownloadPromo from '@/components/home/Appdownloadpromo';
 import ComboProducts from '@/components/home/ComboProducts';
+import SubscriptionPackages from '@/components/home/SubscriptionPackages';
 import DeliveryBanner from '@/components/home/DeliveryBanner';
 import DeliveryCharges from '@/components/home/DeliveryCharges';
 import DeliveryCoverage from '@/components/home/Deliverycoverage';
@@ -32,6 +33,7 @@ export default async function Home() {
       <TrustedBrands initialBrands={brandsData?.data} />
       <FeaturedProducts initialProducts={featuredData?.data} />
       <ComboProducts initialProducts={comboData?.data} />
+      <SubscriptionPackages />
 
       <DeliveryBanner />
       <DeliveryCharges initialData={shippingData?.data} />

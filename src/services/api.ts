@@ -1,16 +1,37 @@
 // src/services/api.ts
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api/v1';
 
-export async function serverFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
+export interface ServerFetchOptions extends RequestInit {
+  tags?: string[];
+  revalidate?: number | false;
+}
+
+export async function serverFetch<T>(
+  endpoint: string,
+  options: ServerFetchOptions = {}
+): Promise<T | null> {
   try {
-    const hasCacheConfig = options.cache !== undefined || (options as any)?.next !== undefined;
-    const fetchOptions: RequestInit = hasCacheConfig
-      ? { ...options }
-      : {
-          cache: 'force-cache',
-          next: { revalidate: 60 },
-          ...options,
-        };
+    const { tags, revalidate, ...restOptions } = options;
+
+    let fetchOptions: RequestInit;
+
+    if (restOptions.cache === 'no-store') {
+      // 'no-store' must never have next.revalidate or conflicting caching headers
+      fetchOptions = {
+        ...restOptions,
+      };
+    } else {
+      const nextConfig: any = {
+        ...(tags && tags.length > 0 ? { tags } : {}),
+        revalidate: revalidate !== undefined ? revalidate : 60,
+      };
+
+      fetchOptions = {
+        cache: 'force-cache',
+        next: nextConfig,
+        ...restOptions,
+      };
+    }
 
     const res = await fetch(`${BASE_URL}${endpoint}`, fetchOptions);
 

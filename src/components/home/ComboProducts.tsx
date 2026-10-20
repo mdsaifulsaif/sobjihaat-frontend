@@ -189,6 +189,14 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
     setSelectedProduct(null);
   };
 
+  const displayProducts = React.useMemo(() => {
+    if (!initialProducts || initialProducts.length === 0) return [];
+    if (initialProducts.length <= 6) {
+      return [...initialProducts, ...initialProducts];
+    }
+    return initialProducts;
+  }, [initialProducts]);
+
   if (!isMounted) {
     return (
       <section className="py-6 sm:py-8 bg-white overflow-hidden">
@@ -278,8 +286,8 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
             slideToClickedSlide={false}
             className="combo-products-swiper"
           >
-            {initialProducts.map((product: any) => (
-              <SwiperSlide key={product._id}>
+            {displayProducts.map((product: any, idx: number) => (
+              <SwiperSlide key={`${product._id}-${idx}`}>
                 <div className="px-0.5">
                   <ProductCard
                     product={product}

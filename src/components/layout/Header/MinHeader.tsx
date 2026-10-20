@@ -148,10 +148,14 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
     }
   };
 
-  const handleSelectProduct = (productId: string) => {
+  const handleSelectProduct = (productId: string, productName?: string) => {
     setIsSearchOpen(false);
     isUserTyping.current = false;
-    router.push(`/product/${productId}`);
+    if (productName) {
+      router.push(`/search?q=${encodeURIComponent(productName)}`);
+    } else {
+      router.push("/search");
+    }
   };
 
   const renderSuggestionsDropdown = () => {
@@ -201,7 +205,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                   <button
                     key={p._id}
                     type="button"
-                    onClick={() => handleSelectProduct(p._id)}
+                    onClick={() => handleSelectProduct(p._id, p.name)}
                     className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-all text-left group"
                   >
                     <div className="w-12 h-12 rounded-sm bg-gray-100 overflow-hidden relative shrink-0 border border-gray-100 flex items-center justify-center">

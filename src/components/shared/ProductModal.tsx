@@ -469,8 +469,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
 
     const skuCode = displaySku || (product as any)?.sku || product._id || 'N/A';
     const productUrl = typeof window !== 'undefined'
-      ? `${window.location.origin}/product/${product._id}`
-      : `https://sobjihaat.com/product/${product._id}`;
+      ? `${window.location.origin}/search?q=${encodeURIComponent(product.name)}`
+      : `https://sobjihaat.com/search?q=${encodeURIComponent(product.name)}`;
 
     let msg = `Hello! SobjiHaat, I'm interested in:\n`;
     msg += `Product: ${product.name}\n`;

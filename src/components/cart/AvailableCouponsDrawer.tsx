@@ -63,7 +63,7 @@ export default function AvailableCouponsDrawer({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-emerald-50/70 to-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#5CAF90]/15 text-[#5CAF90] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-primary-light text-[var(--color-primary)] flex items-center justify-center">
               <FiTag size={20} />
             </div>
             <div>
@@ -117,9 +117,9 @@ export default function AvailableCouponsDrawer({
                   key={coupon._id || coupon.code}
                   className={`rounded-2xl border p-4.5 transition-all relative overflow-hidden flex flex-col justify-between gap-3 ${
                     isApplied
-                      ? "border-[#5CAF90] bg-emerald-50/40 shadow-sm"
+                      ? "border-[var(--color-primary)] bg-emerald-50/40 shadow-sm"
                       : isEligible
-                      ? "border-emerald-200/80 bg-white hover:border-[#5CAF90] shadow-xs hover:shadow-md"
+                      ? "border-emerald-200/80 bg-white hover:border-[var(--color-primary)] shadow-xs hover:shadow-md"
                       : "border-gray-200 bg-gray-50/50 opacity-80"
                   }`}
                 >
@@ -144,7 +144,7 @@ export default function AvailableCouponsDrawer({
                       <button
                         type="button"
                         onClick={() => handleCopy(coupon.code)}
-                        className="px-2.5 py-1 bg-gray-100 hover:bg-emerald-100 text-gray-800 hover:text-[#5CAF90] rounded-lg font-mono font-bold text-xs border border-dashed border-gray-300 flex items-center gap-1.5 transition-colors cursor-pointer"
+                        className="px-2.5 py-1 bg-gray-100 hover:bg-emerald-100 text-gray-800 hover:text-[var(--color-primary)] rounded-lg font-mono font-bold text-xs border border-dashed border-gray-300 flex items-center gap-1.5 transition-colors cursor-pointer"
                         title="Click to copy code"
                       >
                         {coupon.code}
@@ -189,7 +189,7 @@ export default function AvailableCouponsDrawer({
                       </div>
                     ) : isApplied ? (
                       <div className="flex items-center justify-between w-full">
-                        <span className="text-xs font-bold text-[#5CAF90] flex items-center gap-1">
+                        <span className="text-xs font-bold text-[var(--color-primary)] flex items-center gap-1">
                           <FiCheck size={14} /> Coupon Applied
                         </span>
                         <span className="text-xs text-gray-400 font-semibold">Active</span>
@@ -200,7 +200,7 @@ export default function AvailableCouponsDrawer({
                         <button
                           type="button"
                           onClick={() => handleApply(coupon.code)}
-                          className="px-4 py-1.5 bg-[#5CAF90] hover:bg-[#4A9A7D] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
+                          className="px-4 py-1.5 bg-[var(--color-primary)] hover:opacity-90 text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
                         >
                           Apply Coupon
                         </button>

@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useGetCategoriesQuery } from "@/redux/api/categoryApi";
 import { useAppSelector } from "@/redux";
 
-
 interface MobileNavProps {
   onClose: () => void;
 }
@@ -66,7 +65,7 @@ export default function MobileNav({ onClose }: MobileNavProps) {
             ))}
           </div>
         ) : categories.length > 0 ? (
-          <div className="flex flex-col gap-1  overflow-y-auto pr-1">
+          <div className="flex flex-col gap-1 overflow-y-auto pr-1">
             {categories.map((cat: any) => (
               <Link
                 key={cat._id}

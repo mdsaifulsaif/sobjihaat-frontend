@@ -98,8 +98,20 @@ const ReadyToCookProducts: React.FC<ReadyToCookProductsProps> = ({
             actionLabel="See all"
             onAction={handleSeeAll}
           />
-          <div className="bg-[#f8faf6] border border-dashed border-[#619d23]/30 rounded-2xl p-6 sm:p-8 text-center my-2">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#619d23]/10 flex items-center justify-center text-[#619d23]">
+          <div 
+            className="rounded-2xl p-6 sm:p-8 text-center my-2 border border-dashed"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 4%, white)',
+              borderColor: 'color-mix(in srgb, var(--color-primary, #619d23) 30%, transparent)'
+            }}
+          >
+            <div 
+              className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                color: 'var(--color-primary, #619d23)'
+              }}
+            >
               <BiLeaf size={24} />
             </div>
             <h3 className="font-semibold text-gray-800 text-sm sm:text-base">

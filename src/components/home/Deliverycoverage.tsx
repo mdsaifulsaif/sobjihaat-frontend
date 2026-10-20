@@ -73,7 +73,7 @@ interface Zone {
   polygon: [number, number][];
 }
 
-const PRIMARY = '#5CAF90';
+const PRIMARY = 'var(--color-primary, #619d23)';
 const COMING = '#94a3b8';
 
 /* ─── Leaflet Map Subcomponent ─── */

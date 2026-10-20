@@ -7,7 +7,7 @@ import SectionHeader from '../shared/SectionHeader';
 import { BiLeaf } from 'react-icons/bi';
 
 /* =========================================================================
-   Brand color: --color-primary: #619d23
+   Brand color: --color-primary: var(--color-primary)
    ========================================================================= */
 
 /* ---------- small leaf used in the eyebrow badge & heading accent ---------- */
@@ -19,7 +19,7 @@ const LeafIcon: React.FC<{ size?: number; className?: string }> = ({
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
     <path
       d="M20 4C10 4 4 10 4 18c0 1 .1 1.6.3 2C8 12 14 6 20 4Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
     />
   </svg>
 );
@@ -28,13 +28,13 @@ const LeafIcon: React.FC<{ size?: number; className?: string }> = ({
 
 const FreshIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-    <path d="M20 4C10 4 4 10 4 18c0 1 .1 1.6.3 2C8 12 14 6 20 4Z" fill="#619d23" />
+    <path d="M20 4C10 4 4 10 4 18c0 1 .1 1.6.3 2C8 12 14 6 20 4Z" fill="var(--color-primary)" />
   </svg>
 );
 
 const QualityIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-    <path d="M12 2l8 3v6c0 5.5-3.8 9-8 11-4.2-2-8-5.5-8-11V5l8-3Z" fill="#619d23" />
+    <path d="M12 2l8 3v6c0 5.5-3.8 9-8 11-4.2-2-8-5.5-8-11V5l8-3Z" fill="var(--color-primary)" />
     <path
       d="M8.5 12.2l2.4 2.4 4.8-5"
       stroke="#fff"
@@ -47,19 +47,19 @@ const QualityIcon = () => (
 
 const DeliveryIcon = () => (
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-    <circle cx="7" cy="18" r="2" fill="#619d23" />
-    <circle cx="17" cy="18" r="2" fill="#619d23" />
+    <circle cx="7" cy="18" r="2" fill="var(--color-primary)" />
+    <circle cx="17" cy="18" r="2" fill="var(--color-primary)" />
     <path
       d="M3 18h2l1-7h6l4 3h2.5a1.5 1.5 0 0 1 1.5 1.5V18h-2"
       fill="none"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M6 11h6v3H6z" fill="#619d23" />
-    <circle cx="8" cy="7" r="1.4" fill="#619d23" />
-    <path d="M6.5 8.2h3" stroke="#619d23" strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M6 11h6v3H6z" fill="var(--color-primary)" />
+    <circle cx="8" cy="7" r="1.4" fill="var(--color-primary)" />
+    <path d="M6.5 8.2h3" stroke="var(--color-primary)" strokeWidth="1.6" strokeLinecap="round" />
   </svg>
 );
 
@@ -67,7 +67,7 @@ const PriceTagIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
     <path
       d="M3 11.5 11.5 3H19a2 2 0 0 1 2 2v7.5L12.5 21 3 11.5Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
     />
     <circle cx="16" cy="8" r="1.4" fill="#fff" />
   </svg>
@@ -77,16 +77,16 @@ const HeadsetIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
     <path
       d="M5 13v-1a7 7 0 0 1 14 0v1"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="2"
       strokeLinecap="round"
       fill="none"
     />
-    <rect x="3.5" y="13" width="3.4" height="5.5" rx="1.4" fill="#619d23" />
-    <rect x="17.1" y="13" width="3.4" height="5.5" rx="1.4" fill="#619d23" />
+    <rect x="3.5" y="13" width="3.4" height="5.5" rx="1.4" fill="var(--color-primary)" />
+    <rect x="17.1" y="13" width="3.4" height="5.5" rx="1.4" fill="var(--color-primary)" />
     <path
       d="M19 18.5v.5a2.5 2.5 0 0 1-2.5 2.5H14"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="1.8"
       strokeLinecap="round"
       fill="none"
@@ -98,7 +98,7 @@ const HeartLeafIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
     <path
       d="M12 20.5S3 15.2 3 9.2A4.7 4.7 0 0 1 12 7a4.7 4.7 0 0 1 9 2.2c0 6-9 11.3-9 11.3Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
     />
     <path
       d="M9.5 11c2.5 0 4 1.5 4 1.5S12 8 9.5 8"
@@ -114,19 +114,19 @@ const HeartLeafIcon = () => (
 
 const PeopleIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <circle cx="9" cy="8" r="2.6" fill="#619d23" />
-    <circle cx="16" cy="9.5" r="2" fill="#619d23" opacity="0.7" />
-    <path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" fill="#619d23" />
-    <path d="M14 19c.2-2 1.6-3.4 3.5-3.4 2 0 3.5 1.4 3.7 3.4" fill="#619d23" opacity="0.7" />
+    <circle cx="9" cy="8" r="2.6" fill="var(--color-primary)" />
+    <circle cx="16" cy="9.5" r="2" fill="var(--color-primary)" opacity="0.7" />
+    <path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" fill="var(--color-primary)" />
+    <path d="M14 19c.2-2 1.6-3.4 3.5-3.4 2 0 3.5 1.4 3.7 3.4" fill="var(--color-primary)" opacity="0.7" />
   </svg>
 );
 
 const BasketStatIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path d="M4 10h16l-1.5 9a2 2 0 0 1-2 1.7H7.5a2 2 0 0 1-2-1.7L4 10Z" fill="#619d23" />
+    <path d="M4 10h16l-1.5 9a2 2 0 0 1-2 1.7H7.5a2 2 0 0 1-2-1.7L4 10Z" fill="var(--color-primary)" />
     <path
       d="M8 10 9.5 5M16 10 14.5 5M11 10V6"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="1.6"
       strokeLinecap="round"
     />
@@ -135,17 +135,17 @@ const BasketStatIcon = () => (
 
 const ScooterStatIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <circle cx="6.5" cy="18" r="2" fill="#619d23" />
-    <circle cx="17" cy="18" r="2" fill="#619d23" />
+    <circle cx="6.5" cy="18" r="2" fill="var(--color-primary)" />
+    <circle cx="17" cy="18" r="2" fill="var(--color-primary)" />
     <path
       d="M3 18h1.5l1-6.5h5.5l3.5 2.6h2.7A1.8 1.8 0 0 1 19 16v2h-1.5"
       fill="none"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="1.7"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M5.5 11.5h5.5v2.6H5.5z" fill="#619d23" />
+    <path d="M5.5 11.5h5.5v2.6H5.5z" fill="var(--color-primary)" />
   </svg>
 );
 
@@ -153,7 +153,7 @@ const StarIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <path
       d="M12 2.5l2.9 6 6.6.6-5 4.5 1.5 6.4L12 16.8 5.9 20l1.5-6.4-5-4.5 6.6-.6L12 2.5Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
     />
   </svg>
 );
@@ -162,7 +162,7 @@ const HeartIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <path
       d="M12 20.5S3 15.2 3 9.2A4.7 4.7 0 0 1 12 7a4.7 4.7 0 0 1 9 2.2c0 6-9 11.3-9 11.3Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
     />
   </svg>
 );
@@ -176,7 +176,7 @@ const VillageSkylineBg: React.FC = () => (
     preserveAspectRatio="xMidYMax slice"
     className="pointer-events-none absolute inset-x-0 bottom-0 h-[180px] w-full sm:h-[230px] lg:h-[280px]"
   >
-    <g fill="#619d23">
+    <g fill="var(--color-primary)">
       {/* rolling ground waves */}
       <path d="M0 300 C 250 260, 500 320, 800 280 S 1200 250, 1400 290 V360 H0 Z" opacity="0.10" />
       <path d="M0 320 C 300 290, 650 340, 950 300 S 1250 270, 1400 310 V360 H0 Z" opacity="0.14" />
@@ -218,15 +218,15 @@ const VillageSkylineBg: React.FC = () => (
 
       {/* suspension bridge */}
       <g opacity="0.16">
-        <path d="M420 270 L1000 270" stroke="#619d23" strokeWidth="4" fill="none" />
-        <path d="M540 270 V190 M880 270 V190" stroke="#619d23" strokeWidth="6" fill="none" />
+        <path d="M420 270 L1000 270" stroke="var(--color-primary)" strokeWidth="4" fill="none" />
+        <path d="M540 270 V190 M880 270 V190" stroke="var(--color-primary)" strokeWidth="6" fill="none" />
         <path
           d="M420 250 Q 540 150 710 220 Q 880 150 1000 250"
-          stroke="#619d23"
+          stroke="var(--color-primary)"
           strokeWidth="3"
           fill="none"
         />
-        <g stroke="#619d23" strokeWidth="2">
+        <g stroke="var(--color-primary)" strokeWidth="2">
           <path d="M450 270 L450 245" />
           <path d="M490 270 L490 230" />
           <path d="M540 270 L540 200" />
@@ -322,7 +322,7 @@ const FloatingLeaf: React.FC<{
   >
     <path
       d="M20 4C10 4 4 10 4 18c0 1 .1 1.6.3 2C8 12 14 6 20 4Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
       opacity="0.55"
     />
   </svg>
@@ -423,7 +423,7 @@ const OurCommitment: React.FC = () => {
                 {c.icon}
               </div>
               <h3 className="mt-4 text-[15px] font-bold text-gray-900">{c.title}</h3>
-              <span className="mx-auto mt-1.5 block h-[3px] w-6 rounded-full bg-[#619d23]" />
+              <span className="mx-auto mt-1.5 block h-[3px] w-6 rounded-full bg-[var(--color-primary)]" />
               <p className="mt-3 text-[13px] leading-relaxed text-gray-500">{c.desc}</p>
             </div>
           ))}
@@ -450,7 +450,7 @@ const OurCommitment: React.FC = () => {
           <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-x-6">
             {stats.map((s) => (
               <div key={s.id} className="flex items-center gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#619d23]/25 bg-white">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--color-primary)]/25 bg-white">
                   {s.icon}
                 </span>
                 <div>
@@ -461,7 +461,7 @@ const OurCommitment: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex items-start gap-3 border-t border-[#619d23]/15 pt-6 lg:max-w-xs lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <div className="flex items-start gap-3 border-t border-[var(--color-primary)]/15 pt-6 lg:max-w-xs lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
             <HeartIcon />
             <div>
               <p className="text-base font-bold text-gray-900">We Grow Together</p>

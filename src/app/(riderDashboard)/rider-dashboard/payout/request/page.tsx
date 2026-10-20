@@ -130,7 +130,13 @@ const RequestPayout = () => {
 
       {/* Balance Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-r from-[#5CAF90] to-[#4A9A7D] rounded-2xl p-6 text-white">
+        <div 
+          className="rounded-2xl p-6 text-white shadow-lg"
+          style={{
+            background: 'linear-gradient(135deg, var(--color-primary, #619d23), color-mix(in srgb, var(--color-primary, #619d23) 75%, black))',
+            boxShadow: '0 8px 25px -4px color-mix(in srgb, var(--color-primary, #619d23) 30%, transparent)'
+          }}
+        >
           <p className="opacity-90 text-sm">Available Balance</p>
           <p className="text-3xl font-bold">৳{pendingPayout.toLocaleString()}</p>
           <p className="opacity-80 text-xs mt-1">Ready to withdraw</p>
@@ -157,14 +163,19 @@ const RequestPayout = () => {
               <button
                 key={amount}
                 onClick={() => setFormData(prev => ({ ...prev, amount: amount.toString() }))}
-                className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium hover:bg-[#5CAF90]/10 hover:border-[#5CAF90] transition-all"
+                className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium transition-all cursor-pointer hover:border-gray-400"
               >
                 ৳{amount}
               </button>
             ))}
             <button
               onClick={() => setFormData(prev => ({ ...prev, amount: maxWithdraw.toString() }))}
-              className="px-4 py-2 bg-[#5CAF90]/10 border border-[#5CAF90] rounded-lg text-sm font-medium text-[#5CAF90] hover:bg-[#5CAF90]/20 transition-all"
+              className="px-4 py-2 border rounded-lg text-sm font-medium transition-all cursor-pointer"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                borderColor: 'color-mix(in srgb, var(--color-primary, #619d23) 30%, transparent)',
+                color: 'var(--color-primary, #619d23)'
+              }}
             >
               Max (৳{maxWithdraw})
             </button>
@@ -188,7 +199,7 @@ const RequestPayout = () => {
                 value={formData.amount}
                 onChange={handleChange}
                 placeholder={`Enter amount (min ${minWithdraw})`}
-                className={`w-full pl-10 pr-4 py-3 border ${errors.amount ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-[#5CAF90] focus:outline-none`}
+                className={`w-full pl-10 pr-4 py-3 border ${errors.amount ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-primary focus:outline-none`}
                 min={minWithdraw}
                 max={maxWithdraw}
                 required
@@ -217,7 +228,7 @@ const RequestPayout = () => {
                 name="paymentMethod"
                 value={formData.paymentMethod}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5CAF90] focus:outline-none appearance-none bg-white"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:outline-none appearance-none bg-white"
               >
                 <option value="bkash">bKash</option>
                 <option value="nagad">Nagad</option>
@@ -240,7 +251,7 @@ const RequestPayout = () => {
                 value={formData.accountNumber}
                 onChange={handleChange}
                 placeholder="Enter account number"
-                className={`w-full pl-10 pr-4 py-3 border ${errors.accountNumber ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-[#5CAF90] focus:outline-none`}
+                className={`w-full pl-10 pr-4 py-3 border ${errors.accountNumber ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-primary focus:outline-none`}
                 required
               />
               {errors.accountNumber && (
@@ -265,7 +276,7 @@ const RequestPayout = () => {
                 value={formData.accountHolderName}
                 onChange={handleChange}
                 placeholder="Enter account holder name"
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5CAF90] focus:outline-none"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:outline-none"
                 required
               />
             </div>
@@ -282,7 +293,7 @@ const RequestPayout = () => {
               onChange={handleChange}
               placeholder="Any additional information for admin"
               rows={3}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5CAF90] focus:outline-none resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:outline-none resize-none"
             />
           </div>
 
@@ -307,7 +318,11 @@ const RequestPayout = () => {
             <button
               type="submit"
               disabled={isSubmitting || pendingPayout < minWithdraw}
-              className="flex-1 px-6 py-3 bg-[#5CAF90] text-white rounded-xl font-semibold hover:bg-[#4A9A7D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:opacity-90 shadow-md cursor-pointer"
+              style={{
+                backgroundColor: 'var(--color-primary, #619d23)',
+                boxShadow: '0 4px 14px color-mix(in srgb, var(--color-primary, #619d23) 35%, transparent)'
+              }}
             >
               {isSubmitting ? (
                 <>

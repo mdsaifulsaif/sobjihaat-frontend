@@ -9,6 +9,13 @@
   --radius-2xl: 0.25rem;
   --radius-3xl: 0.25rem;
   --radius: 0.25rem;
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-surface: var(--color-surface);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
 }
 
 /* @tailwind base;
@@ -27,9 +34,23 @@
   height: 100%;
 }
 
-/* ===== Google Fonts ===== */
-* {
-  font-family: "Poppins", sans-serif;
+/* ===== Typography ===== */
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-family, "Poppins", sans-serif);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading, var(--font-family, "Poppins", sans-serif));
 }
 
 /* ===== CSS Variables System for Theme Customization ===== */
@@ -173,8 +194,8 @@ h6 {
 }
 
 .input:focus-within {
-  border-color: #5CAF90;
-  box-shadow: 0 0 0 2px rgba(92, 175, 144, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
 /* ===== Scrollbar ===== */
@@ -198,8 +219,69 @@ h6 {
 
 /* ===== Selection ===== */
 ::selection {
-  background-color: #5CAF90;
+  background-color: var(--color-primary);
   color: white;
+}
+
+/* ===== Dynamic Theme Helper Utilities ===== */
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+.border-primary {
+  border-color: var(--color-primary) !important;
+}
+
+.fill-primary {
+  fill: var(--color-primary) !important;
+}
+
+.stroke-primary {
+  stroke: var(--color-primary) !important;
+}
+
+.hover-bg-primary:hover {
+  background-color: var(--color-primary) !important;
+}
+
+.hover-text-primary:hover {
+  color: var(--color-primary) !important;
+}
+
+.hover-border-primary:hover {
+  border-color: var(--color-primary) !important;
+}
+
+.bg-primary-light {
+  background-color: color-mix(in srgb, var(--color-primary) 12%, white) !important;
+}
+
+.border-primary-light {
+  border-color: color-mix(in srgb, var(--color-primary) 25%, white) !important;
+}
+
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.92);
+}
+
+.btn-accent {
+  background-color: var(--color-accent) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-accent:hover {
+  filter: brightness(0.92);
 }
 
 /* ===== Animations ===== */

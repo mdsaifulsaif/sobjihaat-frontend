@@ -114,7 +114,13 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
         {/* Modal Body */}
         {isSuccess ? (
           <div className="p-8 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-[#5CAF90] flex items-center justify-center mx-auto">
+            <div 
+              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
+              style={{
+                backgroundColor: "color-mix(in srgb, var(--color-primary, #619d23) 14%, transparent)",
+                color: "var(--color-primary, #619d23)"
+              }}
+            >
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -122,14 +128,14 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
             <h4 className="text-xl font-bold text-gray-900">Request Received!</h4>
             <p className="text-sm text-gray-600 max-w-sm mx-auto">
               Thank you, <span className="font-semibold text-gray-900">{formData.name}</span>! We have recorded your interest for{" "}
-              <span className="font-semibold text-[#5CAF90]">{formData.areaName}</span>. Our team will notify you as soon as our delivery service starts in your area!
+              <span className="font-semibold" style={{ color: "var(--color-primary, #619d23)" }}>{formData.areaName}</span>. Our team will notify you as soon as our delivery service starts in your area!
             </p>
             <div className="pt-4">
               <button
                 type="button"
                 onClick={handleResetAndClose}
                 className="w-full py-3 rounded-xl font-bold text-white text-sm shadow-md transition-all hover:opacity-95 cursor-pointer"
-                style={{ backgroundColor: "var(--color-primary, #5CAF90)" }}
+                style={{ backgroundColor: "var(--color-primary, #619d23)" }}
               >
                 Done
               </button>
@@ -148,7 +154,7 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
                 value={formData.areaName}
                 onChange={(e) => setFormData({ ...formData, areaName: e.target.value })}
                 placeholder="e.g. Rupatoli, Kashipur, Amanatganj, Natun Bazar"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5CAF90] focus:border-transparent outline-none transition-all placeholder-gray-400"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-gray-400"
               />
             </div>
 
@@ -164,7 +170,7 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Your Name"
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5CAF90] focus:border-transparent outline-none transition-all placeholder-gray-400"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-gray-400"
                 />
               </div>
 
@@ -178,7 +184,7 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="01XXXXXXXXX"
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5CAF90] focus:border-transparent outline-none transition-all placeholder-gray-400"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-gray-400"
                 />
               </div>
             </div>
@@ -194,7 +200,7 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="name@example.com"
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5CAF90] focus:border-transparent outline-none transition-all placeholder-gray-400"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-gray-400"
                 />
               </div>
 
@@ -207,7 +213,7 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value, district: e.target.value })}
                   placeholder="Barishal"
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5CAF90] focus:border-transparent outline-none transition-all placeholder-gray-400"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-gray-400"
                 />
               </div>
             </div>
@@ -222,7 +228,7 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="e.g. Near BM College main gate, or Road 3"
-                className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5CAF90] focus:border-transparent outline-none transition-all resize-none placeholder-gray-400"
+                className="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none placeholder-gray-400"
               />
             </div>
 
@@ -239,7 +245,7 @@ export default function RequestAreaModal({ isOpen, onClose }: RequestAreaModalPr
                 type="submit"
                 disabled={isLoading}
                 className="px-6 py-2.5 rounded-xl font-bold text-white text-sm shadow-md transition-all hover:opacity-95 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
-                style={{ backgroundColor: "var(--color-primary, #5CAF90)" }}
+                style={{ backgroundColor: "var(--color-primary, #619d23)" }}
               >
                 {isLoading ? "Submitting..." : "Submit Request →"}
               </button>

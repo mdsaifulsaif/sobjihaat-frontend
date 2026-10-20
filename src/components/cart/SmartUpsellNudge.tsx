@@ -101,11 +101,11 @@ export default function SmartUpsellNudge({
     <div className="w-full bg-gradient-to-r from-emerald-50 via-teal-50/60 to-emerald-50 border border-emerald-200/80 rounded-2xl p-4 shadow-xs transition-all animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#5CAF90]/15 text-[#5CAF90] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-primary-light text-[var(--color-primary)] flex items-center justify-center shrink-0">
             {nudgeDeal.type === "unlocked" ? (
-              <FiCheckCircle size={18} className="text-[#5CAF90]" />
+              <FiCheckCircle size={18} className="text-[var(--color-primary)]" />
             ) : (
-              <FiTrendingUp size={18} className="text-[#5CAF90]" />
+              <FiTrendingUp size={18} className="text-[var(--color-primary)]" />
             )}
           </div>
           <div>
@@ -116,7 +116,7 @@ export default function SmartUpsellNudge({
               <div className="flex items-center gap-2 mt-1.5 w-48 sm:w-64">
                 <div className="h-1.5 w-full bg-emerald-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#5CAF90] rounded-full transition-all duration-500"
+                    className="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500"
                     style={{ width: `${nudgeDeal.progressPercent}%` }}
                   />
                 </div>
@@ -133,7 +133,7 @@ export default function SmartUpsellNudge({
             <button
               type="button"
               onClick={() => onApplyCoupon(nudgeDeal.code)}
-              className="px-4 py-2 bg-[#5CAF90] hover:bg-[#4A9A7D] text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer"
+              className="px-4 py-2 bg-[var(--color-primary)] hover:opacity-90 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer"
             >
               <FiTag size={13} />
               Apply {nudgeDeal.code}
@@ -141,7 +141,7 @@ export default function SmartUpsellNudge({
           ) : (
             <Link
               href="/"
-              className="px-3.5 py-1.5 bg-white border border-emerald-200 hover:border-emerald-300 text-gray-800 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1 hover:text-[#5CAF90] shrink-0"
+              className="px-3.5 py-1.5 bg-white border border-emerald-200 hover:border-emerald-300 text-gray-800 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1 hover:text-[var(--color-primary)] shrink-0"
             >
               Add Items <FiArrowRight size={13} />
             </Link>

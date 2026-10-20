@@ -86,7 +86,7 @@ export default function RiderOrderDetailsModal({
             <div className="py-16 flex flex-col items-center justify-center gap-3">
               <div
                 className="w-9 h-9 border-4 border-gray-200 rounded-full animate-spin"
-                style={{ borderTopColor: "#5CAF90" }}
+                style={{ borderTopColor: BRAND }}
               />
               <p className="text-xs text-gray-400 font-medium">অর্ডার লোড হচ্ছে...</p>
             </div>

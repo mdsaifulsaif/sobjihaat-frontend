@@ -41,7 +41,10 @@ export default function CustomersPage() {
                     <h1 className="text-2xl font-bold text-gray-800">Customers</h1>
                     <p className="text-gray-500">Manage your customer database</p>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-[#5CAF90] text-white rounded-lg font-medium hover:opacity-90">
+                <button 
+                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg font-medium hover:opacity-90 shadow-sm cursor-pointer"
+                    style={{ backgroundColor: 'var(--color-primary, #619d23)' }}
+                >
                     <FiUserPlus size={20} />
                     Add Customer
                 </button>
@@ -63,7 +66,7 @@ export default function CustomersPage() {
                 </div>
                 <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                     <p className="text-sm text-gray-500">Total Revenue</p>
-                    <p className="text-2xl font-bold text-[#5CAF90]">৳2,63,330</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--color-primary, #619d23)' }}>৳2,63,330</p>
                 </div>
             </div>
 
@@ -77,7 +80,7 @@ export default function CustomersPage() {
                             placeholder="Search customers..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-[#5CAF90]"
+                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                     </div>
                     <select
@@ -99,7 +102,10 @@ export default function CustomersPage() {
                     <div key={customer.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-full bg-[#5CAF90] flex items-center justify-center text-white font-bold text-lg">
+                                <div 
+                                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                                    style={{ backgroundColor: 'var(--color-primary, #619d23)' }}
+                                >
                                     {customer.avatar}
                                 </div>
                                 <div>
@@ -137,7 +143,7 @@ export default function CustomersPage() {
                             </div>
                             <div>
                                 <p className="text-xs text-gray-500">Total Spent</p>
-                                <p className="font-semibold text-[#5CAF90]">{customer.spent}</p>
+                                <p className="font-semibold" style={{ color: 'var(--color-primary, #619d23)' }}>{customer.spent}</p>
                             </div>
                         </div>
 

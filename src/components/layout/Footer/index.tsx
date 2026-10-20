@@ -17,7 +17,6 @@ import { FiSend, FiArrowRight } from "react-icons/fi";
 import { RiEBike2Line } from "react-icons/ri";
 import { useSubscribeNewsletterMutation } from "@/redux/api/subscriberApi";
 import toast from "react-hot-toast";
-
 const Footer: React.FC = () => {
     const [newsletterEmail, setNewsletterEmail] = useState("");
     const [subscribeNewsletter, { isLoading: isSubscribing }] = useSubscribeNewsletterMutation();
@@ -43,7 +42,7 @@ const Footer: React.FC = () => {
         { label: "About Us", href: "/about" },
         { label: "Track Order", href: "/track-order" },
         { label: "Contact Us", href: "/contact" },
-        { label: "FAQs", href: "/#faq" },
+        { label: "FAQ", href: "/#faq" },
         { label: "Privacy Policy", href: "/privacy" },
         { label: "Terms & Conditions", href: "/terms" },
     ];
@@ -80,7 +79,7 @@ const Footer: React.FC = () => {
                             disabled={isSubscribing}
                             className="bg-[var(--color-primary)] hover:bg-[#52861c] text-white px-7 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shrink-0 text-sm shadow-md"
                         >
-                            {isSubscribing ? "Subscribing..." : "Subscribe"} <FiSend size={15} />
+                            {isSubscribing ? 'Subscribing...' : 'Subscribe'} <FiSend size={15} />
                         </button>
                     </form>
                 </div>

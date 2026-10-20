@@ -100,25 +100,25 @@ export default function TermsPage() {
               We currently serve designated zones within <strong>Barisal City</strong> and surrounding areas:
             </p>
             <ul className="list-disc list-inside space-y-1.5 text-sm sm:text-base text-gray-600 pl-2">
-              <li><strong>Delivery Slots:</strong> Orders are scheduled according to our designated delivery slots (Morning & Afternoon/Evening). Same-day delivery is available for orders placed before cutoff times.</li>
-              <li><strong>Customer Availability:</strong> Customers must be available at the designated delivery address and answer their phone when our rider arrives.</li>
-              <li><strong>Unreachable Delivery:</strong> If a customer cannot be reached after multiple phone attempts, the order may be rescheduled or canceled, and delivery re-attempt fees may apply.</li>
+              <li>Orders are delivered to the address provided during checkout. Please ensure access to your building or gated area.</li>
+              <li>Delivery time slots (Morning, Afternoon, Evening) are estimated targets. Severe weather, road congestion, or hartals may occasionally cause unavoidable delays.</li>
+              <li>Delivery fees are clearly shown at checkout before order finalization.</li>
             </ul>
           </section>
 
-          {/* Section 5 - 100% Quality & Returns */}
-          <section className="p-6 sm:p-8 rounded-2xl bg-emerald-50/50 border border-emerald-100 space-y-3">
-            <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg">
-              <FiCheckCircle size={20} />
-              <span>05. 100% Freshness Guarantee & Doorstep Returns</span>
+          {/* Section 5 */}
+          <section className="p-6 sm:p-8 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
+            <div className="flex items-center gap-2 text-amber-900 font-bold text-lg">
+              <FiCheckCircle size={20} className="text-amber-600" />
+              <span>05. Freshness Guarantee & Doorstep Inspection</span>
             </div>
             <p className="text-gray-700 text-sm sm:text-base">
-              We take immense pride in our farm-fresh quality. To ensure total satisfaction:
+              We take pride in our 100% fresh produce standard:
             </p>
-            <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-gray-700">
-              <li><strong>Doorstep Inspection:</strong> We strongly encourage you to inspect fresh vegetables, fruits, and meat upon delivery in front of the rider.</li>
-              <li><strong>Immediate Replacement:</strong> If any item is damaged, wilted, or incorrect, hand it back to the rider on the spot. We will deduct it from your Cash on Delivery total or dispatch an immediate replacement.</li>
-              <li><strong>Post-Delivery Reporting:</strong> Any quality concern must be reported within <strong>4 hours</strong> of delivery with a photo sent to our WhatsApp helpline (+880 1522-114096) due to the perishable nature of produce.</li>
+            <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-gray-700">
+              <li><strong>Check at delivery:</strong> We encourage customers to inspect fresh vegetables and fish upon receiving from the delivery rider.</li>
+              <li><strong>Immediate Return:</strong> If any item is unsatisfactory, you may immediately hand it back to the rider without charge.</li>
+              <li><strong>24-Hour Perishable Window:</strong> For any spoiled produce discovered after handover, notify our support team with a photo within 24 hours for a full replacement or refund.</li>
             </ul>
           </section>
 
@@ -127,56 +127,42 @@ export default function TermsPage() {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
               <span className="text-[var(--color-primary)] font-mono text-lg">06.</span> Payment Terms & Refunds
             </h2>
+            <p>
+              We accept multiple payment methods for customer convenience:
+            </p>
             <ul className="list-disc list-inside space-y-1.5 text-sm sm:text-base text-gray-600 pl-2">
-              <li><strong>Payment Options:</strong> We accept Cash on Delivery (COD), bKash, Nagad, Rocket, and major debit/credit cards.</li>
-              <li><strong>Cash on Delivery (COD):</strong> Exact change is appreciated. The rider is authorized to collect the full invoice amount upon handover.</li>
-              <li><strong>Refunds:</strong> In cases of prepaid online orders where an item is unavailable or returned, refunds will be initiated via the original payment method within 3 to 7 working days.</li>
+              <li><strong>Cash on Delivery (COD):</strong> Pay in cash to the rider upon satisfactory handover.</li>
+              <li><strong>Digital Payments:</strong> bKash, Nagad, or debit/credit card via secure gateway SSLCommerz.</li>
+              <li><strong>Refund Processing:</strong> Approved digital refunds are credited back to the original funding source within 3-7 business days, in compliance with Bangladesh Bank regulations.</li>
             </ul>
           </section>
 
           {/* Section 7 */}
           <section className="space-y-3">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-[var(--color-primary)] font-mono text-lg">07.</span> Order Cancellations
+              <span className="text-[var(--color-primary)] font-mono text-lg">07.</span> Prohibited Activities
             </h2>
-            <p>
-              You may cancel an order before it has been packed and handed over to our delivery fleet. Once an order is out for delivery with a rider, cancellation is not permitted unless under special circumstances authorized by customer support.
-            </p>
+            <p>When using SobjiHaat, you agree not to:</p>
+            <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-gray-600 pl-2">
+              <li>Place fictitious, abusive, or bulk speculative orders to disrupt operations.</li>
+              <li>Harass, threaten, or mistreat our doorstep delivery riders or customer care personnel.</li>
+              <li>Attempt to scrape, reverse engineer, or exploit vulnerabilities on our website or servers.</li>
+            </ul>
           </section>
 
           {/* Section 8 */}
           <section className="space-y-3">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-[var(--color-primary)] font-mono text-lg">08.</span> Rider Respect & Safety
-            </h2>
-            <p>
-              Our delivery riders work tirelessly in all weather conditions to bring you fresh food. We enforce a zero-tolerance policy against abusive language, mistreatment, or harassment of our riders. We reserve the right to ban accounts violating this code of conduct.
-            </p>
-          </section>
-
-          {/* Section 9 */}
-          <section className="space-y-3">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-[var(--color-primary)] font-mono text-lg">09.</span> Limitation of Liability & Force Majeure
-            </h2>
-            <p>
-              SobjiHaat is not liable for delayed deliveries caused by unforeseen circumstances beyond reasonable control, including extreme natural weather events, road blockades, traffic jams, strikes, or government restrictions.
-            </p>
-          </section>
-
-          {/* Section 10 */}
-          <section className="space-y-3">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-[var(--color-primary)] font-mono text-lg">10.</span> Governing Law
+              <span className="text-[var(--color-primary)] font-mono text-lg">08.</span> Governing Law
             </h2>
             <p>
               These Terms & Conditions are governed by and construed in accordance with the laws of the People&apos;s Republic of Bangladesh. Any disputes arising hereunder shall be subject to the exclusive jurisdiction of the courts of Barisal, Bangladesh.
             </p>
           </section>
 
-          {/* Section 11 */}
+          {/* Section 9 */}
           <section className="bg-gray-50/70 p-6 sm:p-8 rounded-2xl border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">11. Contact & Grievance Redressal</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">09. Contact Information</h2>
             <p className="text-sm text-gray-600 mb-4">
               For any questions regarding these Terms & Conditions or to report a grievance, please contact us:
             </p>

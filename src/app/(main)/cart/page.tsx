@@ -179,12 +179,12 @@ const CartPage = () => {
                             <button
                                 type="button"
                                 onClick={() => setIsCouponDrawerOpen(true)}
-                                className="w-full mb-4 py-3 px-4 bg-emerald-50 hover:bg-emerald-100/70 text-[#5CAF90] border border-emerald-200 rounded-md font-bold text-xs flex items-center justify-between transition-all group cursor-pointer"
+                                className="w-full mb-4 py-3 px-4 bg-primary-light hover:opacity-90 text-[var(--color-primary)] border border-primary-light rounded-md font-bold text-xs flex items-center justify-between transition-all group cursor-pointer"
                             >
                                 <span className="flex items-center gap-2">
                                     <FiTag size={14} /> View Available Coupons
                                 </span>
-                                <span className="text-[10px] bg-[#5CAF90] text-white px-2 py-0.5 rounded-full font-extrabold group-hover:scale-105 transition-transform">
+                                <span className="text-[10px] bg-[var(--color-primary)] text-white px-2 py-0.5 rounded-full font-extrabold group-hover:scale-105 transition-transform">
                                     Offers
                                 </span>
                             </button>

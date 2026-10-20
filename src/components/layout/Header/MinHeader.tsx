@@ -168,7 +168,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
         {isSearching && suggestedProducts.length === 0 && (
           <div className="p-6 text-center text-sm font-medium text-gray-500 flex items-center justify-center gap-2">
             <div className="w-4 h-4 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin" />
-            <span>খোঁজা হচ্ছে...</span>
+            <span>Searching...</span>
           </div>
         )}
 
@@ -190,7 +190,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
           <div>
             <div className="px-4 py-2.5 bg-gray-50/80 border-b border-gray-100 flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
               <span>Suggestions</span>
-              {totalFound > 0 && <span>{totalFound} Found</span>}
+              {totalFound > 0 && <span>{totalFound} found</span>}
             </div>
 
             <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
@@ -254,7 +254,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
               onClick={handleSearchSubmit}
               className="w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 text-xs font-bold text-[var(--color-primary)] transition-colors border-t border-gray-100 flex items-center justify-center gap-1.5"
             >
-              <span>&ldquo;{trimmed}&rdquo; এর সকল ফলাফল দেখুন</span>
+              <span>View all results for &ldquo;{trimmed}&rdquo;</span>
               <FiArrowRight size={14} />
             </button>
           </div>
@@ -282,7 +282,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                 S
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold tracking-tight">
+                <h1 className="text-2xl font-bold tracking-tight notranslate">
                   Sobji<span className="text-[var(--color-primary)]">Haat</span>
                 </h1>
               </div>

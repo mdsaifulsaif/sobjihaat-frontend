@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -48,7 +47,7 @@ const MiniCart = () => {
                         <FiShoppingBag size={18} className="text-[var(--color-primary)]" />
                         <div>
                             <p className="font-bold text-sm text-gray-800">
-                                {items.length} item{items.length !== 1 ? 's' : ''}
+                                {items.length} Items
                             </p>
                             <p className="text-xs flex items-center gap-1 text-[var(--color-primary)]">
                                 Shipping Fee: ৳0
@@ -145,8 +144,8 @@ const MiniCart = () => {
                         onClick={() => dispatch(closeMiniCart())}
                         className="w-full py-4 font-semibold text-base flex items-center justify-between px-5 bg-[var(--color-primary)] text-white hover:opacity-95 transition-opacity"
                     >
-                        <span>Checkout</span>
-                        <span>৳{totalPrice.toLocaleString()}</span>
+                        <span>Proceed to Checkout</span>
+                        <span>৳{totalPrice}</span>
                     </Link>
                 </div>
             </div>

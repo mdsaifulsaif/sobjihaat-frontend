@@ -98,7 +98,10 @@ const ProfilePage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-[#619d23] rounded-full animate-spin mx-auto" />
+          <div 
+            className="w-12 h-12 border-4 border-gray-200 rounded-full animate-spin mx-auto"
+            style={{ borderTopColor: 'var(--color-primary, #619d23)' }}
+          />
           <p className="mt-4 text-sm font-medium text-gray-500">Loading your profile...</p>
         </div>
       </div>
@@ -133,7 +136,11 @@ const ProfilePage = () => {
           {isRider && (
             <button
               onClick={() => router.push('/rider-dashboard')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#619d23]/10 text-[#619d23] hover:bg-[#619d23]/20 font-semibold text-xs rounded-xl transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 font-semibold text-xs rounded-xl transition-all cursor-pointer"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                color: 'var(--color-primary, #619d23)'
+              }}
             >
               <FiTruck size={14} />
               <span>Rider Dashboard</span>
@@ -142,7 +149,11 @@ const ProfilePage = () => {
           {isAdmin && (
             <button
               onClick={() => router.push('http://localhost:3000/dashboard')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#619d23]/10 text-[#619d23] hover:bg-[#619d23]/20 font-semibold text-xs rounded-xl transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 font-semibold text-xs rounded-xl transition-all cursor-pointer"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                color: 'var(--color-primary, #619d23)'
+              }}
             >
               <FiShield size={14} />
               <span>Admin Panel</span>
@@ -154,7 +165,12 @@ const ProfilePage = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
           
           {/* Top Banner with Brand Gradient & Organic Patterns */}
-          <div className="relative h-36 sm:h-44 bg-gradient-to-r from-[#619d23] via-[#548a1e] to-[#467519] overflow-hidden">
+          <div 
+            className="relative h-36 sm:h-44 overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-primary, #619d23), color-mix(in srgb, var(--color-primary, #619d23) 70%, black))'
+            }}
+          >
             {/* Soft decorative background circles */}
             <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none" />
             <div className="absolute -bottom-10 left-10 w-40 h-40 rounded-full bg-white/10 blur-lg pointer-events-none" />
@@ -176,7 +192,13 @@ const ProfilePage = () => {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-[#619d23]">
+                    <div 
+                      className="w-full h-full flex items-center justify-center"
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                        color: 'var(--color-primary, #619d23)'
+                      }}
+                    >
                       <FiUser size={44} />
                     </div>
                   )}
@@ -184,7 +206,8 @@ const ProfilePage = () => {
                 
                 <label 
                   htmlFor="avatar-upload"
-                  className="absolute bottom-1 right-1 w-9 h-9 rounded-xl bg-white border border-gray-200 shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 text-gray-700 hover:text-[#619d23] hover:scale-105 active:scale-95 transition-all"
+                  className="absolute bottom-1 right-1 w-9 h-9 rounded-xl bg-white border border-gray-200 shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 text-gray-700 hover:scale-105 active:scale-95 transition-all"
+                  style={{ color: 'var(--color-primary, #619d23)' }}
                   title="Change Avatar"
                 >
                   <FiCamera size={16} />
@@ -203,7 +226,7 @@ const ProfilePage = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center justify-center sm:justify-start gap-1.5">
                     <span>{user?.firstName || 'User'} {user?.lastName || ''}</span>
-                    <FiCheckCircle size={18} className="text-[#619d23] shrink-0" title="Verified Account" />
+                    <FiCheckCircle size={18} style={{ color: 'var(--color-primary, #619d23)' }} className="shrink-0" title="Verified Account" />
                   </h2>
 
                   {/* Role Badge */}
@@ -255,7 +278,13 @@ const ProfilePage = () => {
             {/* Section 1: Personal Details */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                <div className="w-7 h-7 rounded-lg bg-[#619d23]/10 text-[#619d23] flex items-center justify-center">
+                <div 
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{
+                    backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                    color: 'var(--color-primary, #619d23)'
+                  }}
+                >
                   <FiUser size={15} />
                 </div>
                 <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">
@@ -275,7 +304,7 @@ const ProfilePage = () => {
                       value={formData.firstName}
                       onChange={handleChange}
                       placeholder="e.g. Saiful"
-                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[#619d23] focus:ring-4 focus:ring-[#619d23]/10 transition-all"
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                     />
                   </div>
                 </div>
@@ -288,7 +317,7 @@ const ProfilePage = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="e.g. Islam"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[#619d23] focus:ring-4 focus:ring-[#619d23]/10 transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
               </div>
@@ -305,7 +334,7 @@ const ProfilePage = () => {
                       value={formData.phoneNumber}
                       onChange={handleChange}
                       placeholder="e.g. 01711223344"
-                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[#619d23] focus:ring-4 focus:ring-[#619d23]/10 transition-all"
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                     />
                   </div>
                 </div>
@@ -329,7 +358,13 @@ const ProfilePage = () => {
             {/* Section 2: Shipping & Delivery Address */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                <div className="w-7 h-7 rounded-lg bg-[#619d23]/10 text-[#619d23] flex items-center justify-center">
+                <div 
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{
+                    backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                    color: 'var(--color-primary, #619d23)'
+                  }}
+                >
                   <FiMapPin size={15} />
                 </div>
                 <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">
@@ -347,7 +382,7 @@ const ProfilePage = () => {
                     value={formData.addressLine}
                     onChange={handleChange}
                     placeholder="e.g. House #12, Road #4, Bangla Bazar"
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[#619d23] focus:ring-4 focus:ring-[#619d23]/10 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
               </div>
@@ -361,7 +396,7 @@ const ProfilePage = () => {
                     value={formData.city}
                     onChange={handleChange}
                     placeholder="e.g. Barisal"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[#619d23] focus:ring-4 focus:ring-[#619d23]/10 transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
 
@@ -373,7 +408,7 @@ const ProfilePage = () => {
                     value={formData.state}
                     onChange={handleChange}
                     placeholder="e.g. Barisal"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[#619d23] focus:ring-4 focus:ring-[#619d23]/10 transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
 
@@ -385,7 +420,7 @@ const ProfilePage = () => {
                     value={formData.postalCode}
                     onChange={handleChange}
                     placeholder="e.g. 8200"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[#619d23] focus:ring-4 focus:ring-[#619d23]/10 transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
               </div>
@@ -400,7 +435,11 @@ const ProfilePage = () => {
               <button
                 type="submit"
                 disabled={isUpdating}
-                className="w-full sm:w-auto px-8 py-3 bg-[#619d23] hover:bg-[#548a1e] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#619d23]/25 active:scale-98 transition-all disabled:opacity-60 cursor-pointer"
+                className="w-full sm:w-auto px-8 py-3 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 active:scale-98 transition-all disabled:opacity-60 cursor-pointer hover:opacity-90"
+                style={{
+                  backgroundColor: 'var(--color-primary, #619d23)',
+                  boxShadow: '0 10px 25px -5px color-mix(in srgb, var(--color-primary, #619d23) 35%, transparent)'
+                }}
               >
                 {isUpdating ? (
                   <>

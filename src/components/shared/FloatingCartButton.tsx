@@ -159,9 +159,9 @@ const FloatingCartButton = () => {
                 >
                     <FiShoppingBag size={26} />
                     <p className="text-xs font-medium leading-tight">
-                        {items.length} Item{items.length !== 1 ? 's' : ''}
+                        {items.length} Items
                     </p>
-                    <p className="font-bold text-sm leading-tight">৳{totalPrice.toLocaleString()}</p>
+                    <p className="font-bold text-sm leading-tight">৳{totalPrice}</p>
                 </button>
             )}
 

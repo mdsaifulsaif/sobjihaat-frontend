@@ -188,6 +188,13 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
     setSelectedProduct(null);
   };
 
+  const handleSeeAll = () => {
+    router.push("/search?filter=featured");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  };
+
   if (!isMounted) {
     return (
       <section className="py-6 sm:py-8 bg-[#fbfcfa] overflow-hidden">
@@ -196,7 +203,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
             title="Featured Products"
             icon={<BiLeaf size={18} />}
             actionLabel="See all"
-            onAction={() => router.push("/vegetables")}
+            onAction={handleSeeAll}
           />
           <div className="mt-2">
             <SkeletonLoader />
@@ -217,7 +224,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ initialProducts = [
           title="Featured Products"
           icon={<BiLeaf size={18} />}
           actionLabel="See all"
-          onAction={() => router.push("/vegetables")}
+          onAction={handleSeeAll}
         />
 
         {/* Products Slider - Mobile 3 items, clean display */}

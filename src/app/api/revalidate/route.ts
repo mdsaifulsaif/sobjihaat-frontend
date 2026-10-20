@@ -30,9 +30,8 @@ async function handleRevalidate(req: NextRequest) {
     if (path) {
       revalidatePath(path);
     } else {
-      // Default: revalidate home page and shop page
+      // Default: revalidate home page
       revalidatePath('/', 'page');
-      revalidatePath('/shop', 'page');
     }
 
     if (!tag) {

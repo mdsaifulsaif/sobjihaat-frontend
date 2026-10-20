@@ -17,9 +17,10 @@ import { serverFetch } from '@/services/api';
 
 export default async function Home() {
 
-  const [categoriesData, brandsData, featuredData, readyToCookData, comboData, subscriptionPackagesData, shippingData, reviewsData, areasData] = await Promise.all([
+  const [bannersData, categoriesData, brandsData, featuredData, readyToCookData, comboData, subscriptionPackagesData, shippingData, reviewsData, areasData] = await Promise.all([
+    serverFetch<any>('/banners', { tags: ['banners'] }),
     serverFetch<any>('/categories?status=active&isDeleted=false&limit=20', { tags: ['categories'] }),
-    serverFetch<any>('/brands?page=1&limit=20', { tags: ['brands'] }),
+    serverFetch<any>('/brands?status=active&isDeleted=false&limit=30', { tags: ['brands'] }),
     serverFetch<any>('/products/featured?limit=10', { tags: ['products'] }),
     serverFetch<any>('/products/category/ready-to-cook?limit=10', { tags: ['products'] }),
     serverFetch<any>('/products?productType=combo&status=active&limit=10', { tags: ['products'] }),
@@ -38,15 +39,15 @@ export default async function Home() {
 
   return (
     <>
-      <Hero />
+      <Hero initialBanners={bannersData?.data || []} />
       <HomeCategory initialCategories={categoriesData?.data} />
-      <TrustedBrands initialBrands={brandsData?.data} />
       <FeaturedProducts initialProducts={featuredData?.data} />
       <ReadyToCookProducts
         initialProducts={readyToCookData?.data}
         categorySlug={readyCategorySlug}
       />
       <ComboProducts initialProducts={comboData?.data} />
+      <TrustedBrands initialBrands={brandsData?.data} />
       <SubscriptionPackages initialPackages={subscriptionPackagesData?.data || []} />
 
       <DeliveryBanner />

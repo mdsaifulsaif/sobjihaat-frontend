@@ -172,21 +172,21 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
         {!isSearching && suggestedProducts.length === 0 ? (
           <div className="p-6 text-center">
             <p className="text-sm font-semibold text-gray-700">
-              &ldquo;{trimmed}&rdquo; এর সাথে কোনো প্রোডাক্ট মেলেনি
+              No products found matching &ldquo;{trimmed}&rdquo;
             </p>
             <button
               type="button"
               onClick={handleSearchSubmit}
               className="mt-3 text-xs font-bold text-[var(--color-primary)] hover:underline inline-flex items-center gap-1"
             >
-              সার্চ পেজে গিয়ে সব প্রোডাক্ট দেখুন <FiArrowRight size={13} />
+              Browse all products <FiArrowRight size={13} />
             </button>
           </div>
         ) : (
           <div>
             <div className="px-4 py-2.5 bg-gray-50/80 border-b border-gray-100 flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
-              <span>পণ্য পরামর্শ</span>
-              {totalFound > 0 && <span>{totalFound} টি পাওয়া গেছে</span>}
+              <span>Suggestions</span>
+              {totalFound > 0 && <span>{totalFound} Found</span>}
             </div>
 
             <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
@@ -290,7 +290,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
             <form onSubmit={handleSearchSubmit} className="relative w-full">
               <input
                 type="text"
-                placeholder="প্রোডাক্ট, ক্যাটাগরি সার্চ করুন..."
+                placeholder="Search products, categories..."
                 value={searchQuery}
                 onFocus={() => setIsSearchOpen(true)}
                 onChange={handleSearchChange}
@@ -451,7 +451,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
               type="text"
-              placeholder="প্রোডাক্ট, ক্যাটাগরি সার্চ করুন..."
+              placeholder="Search products, categories..."
               value={searchQuery}
               onFocus={() => setIsSearchOpen(true)}
               onChange={handleSearchChange}

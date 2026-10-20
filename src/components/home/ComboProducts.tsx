@@ -197,6 +197,13 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
     return initialProducts;
   }, [initialProducts]);
 
+  const handleSeeAll = () => {
+    router.push("/search?type=combo");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  };
+
   if (!isMounted) {
     return (
       <section className="py-6 sm:py-8 bg-white overflow-hidden">
@@ -205,7 +212,7 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
             title="Combo Products"
             icon={<BiLeaf size={18} />}
             actionLabel="See all"
-            onAction={() => router.push("/vegetables")}
+            onAction={handleSeeAll}
           />
           <div className="mt-2">
             <SkeletonLoader />
@@ -226,7 +233,7 @@ const ComboProducts: React.FC<ComboProductsProps> = ({ initialProducts = [] }) =
           title="Combo Products"
           icon={<BiLeaf size={18} />}
           actionLabel="See all"
-          onAction={() => router.push("/vegetables")}
+          onAction={handleSeeAll}
         />
 
         {/* Combo Products Slider - Mobile 3 items */}

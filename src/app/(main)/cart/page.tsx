@@ -37,7 +37,7 @@ const CartPage = () => {
                     title="Your cart is empty"
                     description="Looks like you haven't added anything to your cart yet."
                     buttonText="Start Shopping"
-                    buttonLink="/shop"
+                    buttonLink="/"
                 />
             </div>
         );
@@ -54,7 +54,7 @@ const CartPage = () => {
         <div className="bg-gray-50/50 min-h-screen">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 {/* Breadcrumb / Back button */}
-                <Link href="/shop" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-500 hover:text-[var(--color-primary)] mb-5 transition-colors group">
+                <Link href="/" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-500 hover:text-[var(--color-primary)] mb-5 transition-colors group">
                     <FiChevronLeft className="group-hover:-translate-x-1 transition-transform" />
                     Back to Shopping
                 </Link>

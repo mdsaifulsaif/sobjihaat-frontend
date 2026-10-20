@@ -40,26 +40,26 @@ export default function ContactPage() {
     const contactInfo = [
         {
             icon: <FiMapPin size={22} />,
-            title: "Store Location",
-            details: "123 Fashion Street, New York, NY 10001",
+            title: "Operating Hub",
+            details: "Barishal City, Bangladesh",
             color: "text-blue-600 bg-blue-50"
         },
         {
             icon: <FiPhone size={22} />,
-            title: "Phone Number",
-            details: "+1 (234) 567-890",
+            title: "Helpline",
+            details: "+880 1783-176838",
             color: "text-emerald-600 bg-emerald-50"
         },
         {
             icon: <FiMail size={22} />,
             title: "Support Email",
-            details: "support@megashop.com",
+            details: "support@sobjihaat.com",
             color: "text-rose-600 bg-rose-50"
         },
         {
             icon: <FiClock size={22} />,
-            title: "Opening Hours",
-            details: "Mon - Sat: 9 AM - 10 PM",
+            title: "Service Hours",
+            details: "7 Days: 7:00 AM - 10:00 PM",
             color: "text-amber-600 bg-amber-50"
         }
     ];

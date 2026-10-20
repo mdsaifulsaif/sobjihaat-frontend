@@ -93,7 +93,7 @@ export default function WishlistPage() {
               পণ্য দেখার সময় হার্ট (❤️) আইকনে ক্লিক করে যেকোনো পণ্য ফেভারিটে যোগ করতে পারেন।
             </p>
             <Link
-              href="/shop"
+              href="/"
               className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--color-primary)] hover:opacity-90 text-white rounded-sm text-xs font-bold transition-all shadow-xs"
             >
               <FiShoppingBag size={15} />

@@ -175,7 +175,7 @@ const DeliveryCharges: React.FC<DeliveryChargesProps> = ({
           icon={<BiLeaf size={18} />}
           description="Affordable delivery rates based on your order value"
           actionLabel="View Details"
-          onAction={() => router.push("/shop")}
+          onAction={() => router.push("/")}
         />
 
         {/* Content row */}

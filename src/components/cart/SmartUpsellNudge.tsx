@@ -140,7 +140,7 @@ export default function SmartUpsellNudge({
             </button>
           ) : (
             <Link
-              href="/shop"
+              href="/"
               className="px-3.5 py-1.5 bg-white border border-emerald-200 hover:border-emerald-300 text-gray-800 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1 hover:text-[#5CAF90] shrink-0"
             >
               Add Items <FiArrowRight size={13} />

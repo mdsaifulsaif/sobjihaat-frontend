@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ProductCard from "@/components/shared/ProductCard";
 import ProductModal from "@/components/shared/ProductModal";
 import { useGetProductsQuery } from "@/redux/api/productApi";
-import { FiSearch, FiX, FiRefreshCw, FiShoppingBag } from "react-icons/fi";
+import { FiSearch, FiX, FiRefreshCw, FiShoppingBag, FiAward, FiLayers } from "react-icons/fi";
 
 interface SearchPageClientProps {
   query?: string;
@@ -16,9 +16,13 @@ const SearchPageClient: React.FC<SearchPageClientProps> = ({ query = "" }) => {
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
 
-  // Read query directly from URL parameters (dynamic client update)
+  // Read query directly from URL parameters
   const urlQuery = searchParams.get("q");
   const activeQuery = (urlQuery !== null ? urlQuery : query).trim();
+  const filter = searchParams.get("filter");
+  const productType = searchParams.get("type");
+  const brand = searchParams.get("brand");
+  const brandName = searchParams.get("brandName");
 
   const [page, setPage] = useState(1);
   const [allProducts, setAllProducts] = useState<any[]>([]);
@@ -26,17 +30,37 @@ const SearchPageClient: React.FC<SearchPageClientProps> = ({ query = "" }) => {
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  // When active query changes, reset page and list
+  // When active query, filter, productType or brand changes: reset page, clear products, and scroll to TOP
   useEffect(() => {
     setPage(1);
     setAllProducts([]);
-  }, [activeQuery]);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [activeQuery, filter, productType, brand]);
 
-  // Fetch products — never skip! Empty query returns all products.
-  const { data, isLoading, isFetching, isError, refetch } = useGetProductsQuery({
-    searchTerm: activeQuery,
+  // Build query arguments dynamically
+  const queryArgs: any = {
     page,
     limit: 16,
+    status: "active",
+  };
+  if (activeQuery) {
+    queryArgs.searchTerm = activeQuery;
+  }
+  if (filter === "featured") {
+    queryArgs.isFeatured = "true";
+  }
+  if (productType) {
+    queryArgs.productType = productType;
+  }
+  if (brand) {
+    queryArgs.brand = brand;
+  }
+
+  // Fetch products
+  const { data, isLoading, isFetching, isError, refetch } = useGetProductsQuery(queryArgs, {
+    refetchOnMountOrArgChange: true,
   });
 
   const meta = data?.meta;
@@ -79,6 +103,15 @@ const SearchPageClient: React.FC<SearchPageClientProps> = ({ query = "" }) => {
     return () => observer.disconnect();
   }, [loadMore]);
 
+  // Resolve brand title name from brandDetails, brandName param, or formatted brand slug
+  const resolvedBrandName = React.useMemo(() => {
+    if (brandName) return brandName;
+    if (!brand) return "";
+    const fromProduct = allProducts.find((p) => p.brandDetails?.name)?.brandDetails?.name;
+    if (fromProduct) return fromProduct;
+    return brand.replace(/-/g, " ");
+  }, [brandName, brand, allProducts]);
+
   const handleQuickView = (product: any) => {
     setSelectedProduct(product);
   };
@@ -87,54 +120,78 @@ const SearchPageClient: React.FC<SearchPageClientProps> = ({ query = "" }) => {
     setSelectedProduct(null);
   };
 
-  const handleClearSearch = () => {
+  const handleClearFilters = () => {
     startTransition(() => {
-      router.replace("/search", { scroll: false });
+      router.replace("/search", { scroll: true });
     });
   };
+
+  const hasActiveFilters = Boolean(activeQuery || filter || productType || brand);
 
   return (
     <div className="w-full pb-16">
       {/* Header Result Bar */}
-      <div className=" mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
+      <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
         <div>
           {activeQuery ? (
             <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2 flex-wrap">
-              <span>ফলাফল:</span>
+              <span>Results for:</span>
               <span className="text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-3 py-0.5 rounded-lg">
                 &ldquo;{activeQuery}&rdquo;
               </span>
             </h1>
+          ) : filter === "featured" ? (
+            <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
+                <FiAward size={18} />
+              </div>
+              <span>Featured Products</span>
+            </h1>
+          ) : productType === "combo" ? (
+            <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
+                <FiLayers size={18} />
+              </div>
+              <span>Combo Packs & Deals</span>
+            </h1>
+          ) : resolvedBrandName ? (
+            <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
+                <FiShoppingBag size={18} />
+              </div>
+              <span className="capitalize">{resolvedBrandName} Products</span>
+            </h1>
           ) : (
-            <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <FiShoppingBag className="text-[var(--color-primary)]" />
-              <span>সকল প্রোডাক্ট (All Products)</span>
+            <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
+                <FiShoppingBag size={18} />
+              </div>
+              <span>All Products</span>
             </h1>
           )}
 
-          <p className="text-sm text-gray-500 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-gray-500 font-medium mt-1">
             {isFetching && page === 1
-              ? "প্রোডাক্ট লোড হচ্ছে..."
+              ? "Loading products..."
               : meta
-              ? `${meta.total} টি প্রোডাক্ট পাওয়া গেছে`
-              : `${allProducts.length} টি প্রোডাক্ট`}
+              ? `${meta.total} Products Found`
+              : `${allProducts.length} Products`}
           </p>
         </div>
 
-        {activeQuery && (
+        {hasActiveFilters && (
           <button
-            type="button"
-            onClick={handleClearSearch}
-            className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-all border border-gray-200"
+            onClick={handleClearFilters}
+            className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
           >
             <FiX size={14} />
-            <span>ফিল্টার ক্লিয়ার করুন (সকল প্রোডাক্ট দেখুন)</span>
+            Clear Filters
           </button>
         )}
       </div>
 
       {/* Initial Loading Skeleton */}
-      {isLoading && page === 1 && (
+      {(isLoading || (isFetching && allProducts.length === 0)) && page === 1 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4">
           {[...Array(12)].map((_, i) => (
             <div
@@ -155,20 +212,20 @@ const SearchPageClient: React.FC<SearchPageClientProps> = ({ query = "" }) => {
       {/* Error State */}
       {isError && (
         <div className="text-center py-16 px-4 bg-white rounded-2xl border border-gray-100 shadow-sm max-w-md mx-auto my-8">
-          <p className="text-gray-700 font-semibold mb-4">
-            প্রোডাক্ট লোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।
+          <p className="text-gray-700 font-semibold mb-4 text-sm">
+            Failed to load products. Please try again.
           </p>
           <button
             onClick={() => refetch()}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] text-white text-sm font-bold rounded-xl hover:opacity-90 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] text-white text-xs font-bold rounded-xl hover:opacity-90 transition-all cursor-pointer"
           >
-            <FiRefreshCw size={16} /> পুনরায় চেষ্টা করুন
+            <FiRefreshCw size={14} /> Try Again
           </button>
         </div>
       )}
 
       {/* Empty State */}
-      {!isLoading && !isError && allProducts.length === 0 && (
+      {!isLoading && !isFetching && !isError && allProducts.length === 0 && (
         <div className="text-center py-16 px-6 bg-white rounded-2xl border border-gray-100 shadow-sm max-w-lg mx-auto my-8">
           <div className="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
             <FiSearch size={28} />
@@ -176,23 +233,23 @@ const SearchPageClient: React.FC<SearchPageClientProps> = ({ query = "" }) => {
 
           <h3 className="text-lg font-bold text-gray-900 mb-1">
             {activeQuery
-              ? `"${activeQuery}" এর সাথে মিলে এমন কোনো প্রোডাক্ট পাওয়া যায়নি`
-              : "বর্তমানে কোনো প্রোডাক্ট নেই"}
+              ? `No products found matching "${activeQuery}"`
+              : "No products available"}
           </h3>
 
-          <p className="text-sm text-gray-500 font-medium mb-6">
+          <p className="text-xs sm:text-sm text-gray-500 font-medium mb-6">
             {activeQuery
-              ? "বানান ঠিক আছে কিনা চেক করুন অথবা অন্য কোনো কীওয়ার্ড দিয়ে খুঁজুন।"
-              : "নতুন প্রোডাক্ট শীঘ্রই যুক্ত করা হবে।"}
+              ? "Check your spelling or try searching with different keywords."
+              : "New products will be added soon."}
           </p>
 
-          {activeQuery && (
+          {hasActiveFilters && (
             <button
               type="button"
-              onClick={handleClearSearch}
-              className="px-6 py-2.5 bg-[var(--color-primary)] text-white text-sm font-bold rounded-xl hover:opacity-90 transition-all shadow-md"
+              onClick={handleClearFilters}
+              className="px-6 py-2.5 bg-[var(--color-primary)] text-white text-xs font-bold rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer"
             >
-              সকল প্রোডাক্ট দেখুন
+              View All Products
             </button>
           )}
         </div>
@@ -215,16 +272,16 @@ const SearchPageClient: React.FC<SearchPageClientProps> = ({ query = "" }) => {
       {/* Infinite Scroll Indicator */}
       {hasMore && (
         <div ref={observerRef} className="w-full flex justify-center py-12">
-          <div className="flex items-center gap-3 text-sm font-bold text-gray-500 bg-white px-5 py-2.5 rounded-full shadow-sm border border-gray-150">
-            <div className="w-5 h-5 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin" />
-            <span>আরও প্রোডাক্ট লোড হচ্ছে...</span>
+          <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-gray-500 bg-white px-5 py-2.5 rounded-full shadow-sm border border-gray-150">
+            <div className="w-4 h-4 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin" />
+            <span>Loading more products...</span>
           </div>
         </div>
       )}
 
       {!hasMore && allProducts.length > 0 && (
-        <p className="text-center text-gray-400 text-sm font-medium py-12">
-          সব প্রোডাক্ট দেখানো হয়েছে ✓
+        <p className="text-center text-gray-400 text-xs font-medium py-12">
+          All products loaded
         </p>
       )}
 

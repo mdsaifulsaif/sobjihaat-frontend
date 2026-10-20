@@ -115,7 +115,12 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
           title="Product Categories"
           icon={<BiLeaf size={18} />}
           actionLabel="See all"
-          onAction={() => router.push("/vegetables")}
+          onAction={() => {
+            router.push("/categories");
+            if (typeof window !== "undefined") {
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }
+          }}
         />
 
         <div className="relative mt-2">

@@ -402,7 +402,7 @@ const OurCommitment: React.FC = () => {
           description="We are committed to bringing you the freshest products, fastest delivery and best service every day."
           icon={<BiLeaf size={18} />}
           actionLabel="Learn more"
-          onAction={() => router.push("/shop")}
+          onAction={() => router.push("/about")}
         />
 
         {/* ---------- 6-up commitment grid ---------- */}

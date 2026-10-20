@@ -11,14 +11,18 @@ const defaultBanners: IBannerItem[] = [
     _id: "default-1",
     title: "Fresh Groceries at Your Doorstep",
     image: "/img/sbb1.png",
-    link: "/shop",
+    link: "/",
     isActive: true,
   },
 ];
 
-const Hero: React.FC = () => {
-  const { data: bannerResponse, isLoading } = useGetActiveBannersQuery();
-  const apiBanners: IBannerItem[] = bannerResponse?.data || [];
+interface HeroProps {
+  initialBanners?: IBannerItem[];
+}
+
+const Hero: React.FC<HeroProps> = ({ initialBanners }) => {
+  const { data: bannerResponse } = useGetActiveBannersQuery();
+  const apiBanners: IBannerItem[] = bannerResponse?.data || initialBanners || [];
   const banners = apiBanners.length > 0 ? apiBanners : defaultBanners;
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -123,7 +127,7 @@ const Hero: React.FC = () => {
             >
               {banner.link ? (
                 <Link
-                  href={banner.link}
+                  href={banner.link === "/shop" || banner.link === "/offers" ? "/" : banner.link}
                   className="block w-full h-full cursor-pointer"
                   tabIndex={isActive ? 0 : -1}
                 >

@@ -42,6 +42,7 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from 'react-hot-toast';
+import MarketingScripts from "@/components/analytics/MarketingScripts";
 
 export default function RootLayout({
   children,
@@ -56,6 +57,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased overflow-x-hidden" suppressHydrationWarning>
+        <MarketingScripts />
         <AuthSessionProvider >
         <ReduxProvider>
           <Toaster position="top-center" reverseOrder={false} />

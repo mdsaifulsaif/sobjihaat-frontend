@@ -9,13 +9,13 @@
   --radius-2xl: 0.25rem;
   --radius-3xl: 0.25rem;
   --radius: 0.25rem;
-  --color-primary: var(--color-primary);
-  --color-secondary: var(--color-secondary);
-  --color-accent: var(--color-accent);
-  --color-surface: var(--color-surface);
-  --color-text-primary: var(--color-text-primary);
-  --color-text-secondary: var(--color-text-secondary);
-  --color-text-muted: var(--color-text-muted);
+  --color-primary: var(--theme-primary, var(--color-primary, #619d23));
+  --color-secondary: var(--theme-secondary, var(--color-secondary, #4B5966));
+  --color-accent: var(--theme-accent, var(--color-accent, #FF6B6B));
+  --color-surface: var(--theme-surface, var(--color-surface, #F8FAFC));
+  --color-text-primary: var(--theme-text-primary, var(--color-text-primary, #1E293B));
+  --color-text-secondary: var(--theme-text-secondary, var(--color-text-secondary, #4B5966));
+  --color-text-muted: var(--theme-text-muted, var(--color-text-muted, #94A3B8));
 }
 
 /* @tailwind base;
@@ -56,14 +56,21 @@ h6 {
 /* ===== CSS Variables System for Theme Customization ===== */
 :root {
   /* Colors - Can be customized from admin */
+  --theme-primary: #619d23;
   --color-primary: #619d23;
+  --theme-secondary: #4B5966;
   --color-secondary: #4B5966;
+  --theme-accent: #FF6B6B;
   --color-accent: #FF6B6B;
-  --color-background: #FFFFFF;
+  --theme-surface: #F8FAFC;
   --color-surface: #F8FAFC;
+  --theme-text-primary: #1E293B;
   --color-text-primary: #1E293B;
+  --theme-text-secondary: #4B5966;
   --color-text-secondary: #4B5966;
+  --theme-text-muted: #94A3B8;
   --color-text-muted: #94A3B8;
+  --color-background: #FFFFFF;
   --color-success: #22C55E;
   --color-warning: #F59E0B;
   --color-error: #EF4444;

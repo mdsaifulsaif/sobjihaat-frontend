@@ -45,57 +45,42 @@ export const loadGoogleFont = (fontFamilyStr?: string) => {
 export default function DynamicTheme() {
   const [theme, setTheme] = useState<IThemeConfig | null>(null);
 
-  useEffect(() => {
-    // 1. Try to load cached theme from localStorage for instant initial paint
-    try {
-      const cached = localStorage.getItem("sobjihaat-theme-cache");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        applyThemeStyles(parsed);
-      }
-    } catch (e) {
-      // Ignore storage errors
-    }
-
-    // 2. Fetch latest theme from backend API
-    const fetchTheme = async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api/v1";
-        const res = await fetch(`${apiUrl}/settings/theme`, {
-          cache: "no-store",
-        });
-        const json = await res.json();
-        if (json.success && json.data) {
-          setTheme(json.data);
-          applyThemeStyles(json.data);
-          try {
-            localStorage.setItem("sobjihaat-theme-cache", JSON.stringify(json.data));
-          } catch (e) {}
-        }
-      } catch (err) {
-        console.warn("[Theme] Could not fetch dynamic theme:", err);
-      }
-    };
-
-    fetchTheme();
-  }, []);
-
   const applyThemeStyles = (t: IThemeConfig) => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !t) return;
 
     const root = document.documentElement;
-    if (t.primaryColor) root.style.setProperty("--color-primary", t.primaryColor);
-    if (t.secondaryColor) root.style.setProperty("--color-secondary", t.secondaryColor);
-    if (t.accentColor) root.style.setProperty("--color-accent", t.accentColor);
-    if (t.backgroundColor) root.style.setProperty("--color-background", t.backgroundColor);
-    if (t.surfaceColor) root.style.setProperty("--color-surface", t.surfaceColor);
-    if (t.textPrimary) root.style.setProperty("--color-text-primary", t.textPrimary);
-    if (t.textSecondary) root.style.setProperty("--color-text-secondary", t.textSecondary);
-    if (t.textMuted) root.style.setProperty("--color-text-muted", t.textMuted);
-    if (t.successColor) root.style.setProperty("--color-success", t.successColor);
-    if (t.warningColor) root.style.setProperty("--color-warning", t.warningColor);
-    if (t.errorColor) root.style.setProperty("--color-error", t.errorColor);
-    
+    const prim = t.primaryColor || "#619d23";
+    const sec = t.secondaryColor || "#4B5966";
+    const acc = t.accentColor || "#FF6B6B";
+    const bg = t.backgroundColor || "#FFFFFF";
+    const surf = t.surfaceColor || "#F8FAFC";
+    const tp = t.textPrimary || "#1E293B";
+    const ts = t.textSecondary || "#4B5966";
+    const tm = t.textMuted || "#94A3B8";
+    const sc = t.successColor || "#22C55E";
+    const wc = t.warningColor || "#F59E0B";
+    const ec = t.errorColor || "#EF4444";
+
+    // Set directly on root style
+    root.style.setProperty("--color-primary", prim);
+    root.style.setProperty("--theme-primary", prim);
+    root.style.setProperty("--color-secondary", sec);
+    root.style.setProperty("--theme-secondary", sec);
+    root.style.setProperty("--color-accent", acc);
+    root.style.setProperty("--theme-accent", acc);
+    root.style.setProperty("--color-background", bg);
+    root.style.setProperty("--color-surface", surf);
+    root.style.setProperty("--theme-surface", surf);
+    root.style.setProperty("--color-text-primary", tp);
+    root.style.setProperty("--theme-text-primary", tp);
+    root.style.setProperty("--color-text-secondary", ts);
+    root.style.setProperty("--theme-text-secondary", ts);
+    root.style.setProperty("--color-text-muted", tm);
+    root.style.setProperty("--theme-text-muted", tm);
+    root.style.setProperty("--color-success", sc);
+    root.style.setProperty("--color-warning", wc);
+    root.style.setProperty("--color-error", ec);
+
     // Typography
     if (t.fontFamily) {
       loadGoogleFont(t.fontFamily);
@@ -120,17 +105,24 @@ export default function DynamicTheme() {
 
     styleTag.innerHTML = `
       :root {
-        --color-primary: ${t.primaryColor || "#619d23"};
-        --color-secondary: ${t.secondaryColor || "#4B5966"};
-        --color-accent: ${t.accentColor || "#FF6B6B"};
-        --color-background: ${t.backgroundColor || "#FFFFFF"};
-        --color-surface: ${t.surfaceColor || "#F8FAFC"};
-        --color-text-primary: ${t.textPrimary || "#1E293B"};
-        --color-text-secondary: ${t.textSecondary || "#4B5966"};
-        --color-text-muted: ${t.textMuted || "#94A3B8"};
-        --color-success: ${t.successColor || "#22C55E"};
-        --color-warning: ${t.warningColor || "#F59E0B"};
-        --color-error: ${t.errorColor || "#EF4444"};
+        --color-primary: ${prim};
+        --theme-primary: ${prim};
+        --color-secondary: ${sec};
+        --theme-secondary: ${sec};
+        --color-accent: ${acc};
+        --theme-accent: ${acc};
+        --color-background: ${bg};
+        --color-surface: ${surf};
+        --theme-surface: ${surf};
+        --color-text-primary: ${tp};
+        --theme-text-primary: ${tp};
+        --color-text-secondary: ${ts};
+        --theme-text-secondary: ${ts};
+        --color-text-muted: ${tm};
+        --theme-text-muted: ${tm};
+        --color-success: ${sc};
+        --color-warning: ${wc};
+        --color-error: ${ec};
         --font-family: ${appliedFont};
         --font-heading: ${appliedHeading};
       }
@@ -173,6 +165,62 @@ export default function DynamicTheme() {
       }
     `;
   };
+
+  const fetchTheme = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api/v1";
+      const res = await fetch(`${apiUrl}/settings/theme`, {
+        cache: "no-store",
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        setTheme(json.data);
+        applyThemeStyles(json.data);
+        try {
+          localStorage.setItem("sobjihaat-theme-cache", JSON.stringify(json.data));
+        } catch (e) {}
+      }
+    } catch (err) {
+      console.warn("[Theme] Could not fetch dynamic theme:", err);
+    }
+  };
+
+  useEffect(() => {
+    // 1. Instant paint from cache
+    try {
+      const cached = localStorage.getItem("sobjihaat-theme-cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        applyThemeStyles(parsed);
+      }
+    } catch (e) {}
+
+    // 2. Fetch fresh theme from server
+    fetchTheme();
+
+    // 3. Listen to window focus or visibility change to immediately sync changes made in admin
+    const handleRecheck = () => {
+      fetchTheme();
+    };
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "sobjihaat-theme-cache" && e.newValue) {
+        try {
+          applyThemeStyles(JSON.parse(e.newValue));
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener("focus", handleRecheck);
+    document.addEventListener("visibilitychange", handleRecheck);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener("focus", handleRecheck);
+      document.removeEventListener("visibilitychange", handleRecheck);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
   return null;
 }

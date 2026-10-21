@@ -8,7 +8,6 @@ import {
   FiHome,
   FiUsers,
   FiShoppingCart,
-  FiSettings,
   FiLogOut,
   FiMenu,
   FiX,
@@ -17,13 +16,15 @@ import {
   FiChevronDown,
   FiCreditCard,
   FiTruck,
-  FiActivity,
   FiDollarSign,
   FiClock,
   FiMapPin,
   FiPackage,
+  FiPower,
 } from "react-icons/fi";
 import { useSocket } from "@/lib/socket";
+import { useGetMyRiderProfileQuery, useUpdateRiderStatusMutation } from "@/redux/api/riderApi";
+import { toast } from "react-hot-toast";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -79,12 +80,6 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-const settingsItems = [
-  { name: "General", href: "/rider-dashboard/settings", icon: FiSettings },
-  { name: "Location", href: "/rider-dashboard/location", icon: FiTruck },
-  { name: "Status", href: "/rider-dashboard/status", icon: FiActivity },
-];
-
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -103,6 +98,28 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     markAsRead,
     markAllAsRead,
   } = useSocket();
+
+  // ✅ Rider Online Status State & Mutation
+  const { data: riderProfileData, refetch: refetchRiderProfile } = useGetMyRiderProfileQuery(undefined);
+  const [updateRiderStatus, { isLoading: isUpdatingStatus }] = useUpdateRiderStatusMutation();
+
+  const riderProfile = riderProfileData?.data;
+  const isOnline = riderProfile?.status === "online";
+
+  const handleToggleOnline = async () => {
+    const nextStatus = isOnline ? "offline" : "online";
+    try {
+      await updateRiderStatus({ status: nextStatus }).unwrap();
+      toast.success(
+        nextStatus === "online"
+          ? "আপনি এখন অনলাইন আছেন! 🛵"
+          : "আপনি এখন অফলাইনে আছেন। 💤"
+      );
+      refetchRiderProfile();
+    } catch (err: any) {
+      toast.error(err?.data?.message || "স্ট্যাটাস পরিবর্তন ব্যর্থ হয়েছে");
+    }
+  };
 
   // ✅ Request notification permission
   useEffect(() => {
@@ -184,7 +201,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#5CAF90] border-r-transparent"></div>
+          <div 
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent"
+            style={{ borderColor: 'var(--color-primary, #619d23)', borderRightColor: 'transparent' }}
+          ></div>
           <p className="mt-2 text-sm text-gray-500">Loading rider data...</p>
         </div>
       </div>
@@ -213,7 +233,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-700/50">
           {sidebarOpen && (
             <Link href="/rider-dashboard" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center font-bold text-lg shadow-md">
+              <div 
+                className="w-10 h-10 rounded-md flex items-center justify-center font-bold text-lg shadow-md"
+                style={{ backgroundColor: 'var(--color-primary, #619d23)' }}
+              >
                 <FiTruck className="text-white" size={22} />
               </div>
               <div>
@@ -259,8 +282,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   }}
                   className={`
                     flex items-center justify-between px-4 py-3 rounded-md transition-all duration-200
-                    ${active ? "bg-[#5CAF90] text-white shadow-md" : "text-gray-300 hover:bg-white/10 hover:text-white"}
+                    ${active ? "text-white shadow-md" : "text-gray-300 hover:bg-white/10 hover:text-white"}
                   `}
+                  style={active ? {
+                    backgroundColor: 'var(--color-primary, #619d23)',
+                    boxShadow: '0 4px 14px color-mix(in srgb, var(--color-primary, #619d23) 40%, transparent)'
+                  } : {}}
                 >
                   <div className="flex items-center gap-3">
                     <item.icon size={20} />
@@ -287,44 +314,31 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
                 {hasSubmenu && isExpanded && sidebarOpen && item.submenu && (
                   <div className="mt-1 ml-4 pl-4 border-l border-gray-700 space-y-1">
-                    {item.submenu.map((sub) => (
-                      <Link
-                        key={sub.name}
-                        href={sub.href}
-                        className={`
-                          block px-4 py-2 rounded-md text-sm transition-colors
-                          ${pathname === sub.href ? "text-[#5CAF90] bg-[#5CAF90]/10" : "text-gray-400 hover:text-white hover:bg-white/5"}
-                        `}
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
+                    {item.submenu.map((sub) => {
+                      const isSubActive = pathname === sub.href;
+                      return (
+                        <Link
+                          key={sub.name}
+                          href={sub.href}
+                          className={`
+                            block px-4 py-2 rounded-md text-sm transition-colors
+                            ${!isSubActive ? "text-gray-400 hover:text-white hover:bg-white/5" : ""}
+                          `}
+                          style={isSubActive ? {
+                            color: 'var(--color-primary, #619d23)',
+                            backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 15%, transparent)'
+                          } : {}}
+                        >
+                          {sub.name}
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>
             );
           })}
 
-          {sidebarOpen && (
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mt-8 mb-3">Settings</p>
-          )}
-
-          {settingsItems.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-200
-                  ${active ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white"}
-                `}
-              >
-                <item.icon size={20} />
-                {sidebarOpen && <span className="font-medium">{item.name}</span>}
-              </Link>
-            );
-          })}
         </nav>
 
         {/* Bottom Section */}
@@ -378,19 +392,33 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               </div>
             )}
 
-            {/* Connection Status */}
-            <div
-              className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full ${
-                isConnected ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
+            {/* Rider Online / Offline Toggle Button */}
+            <button
+              onClick={handleToggleOnline}
+              disabled={isUpdatingStatus}
+              title={isOnline ? "অনলাইন আছেন (ক্লিক করে অফলাইন হন)" : "অফলাইন আছেন (ক্লিক করে অনলাইন হন)"}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-bold transition-all cursor-pointer shadow-xs disabled:opacity-60 border ${
+                isOnline
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100"
+                  : "bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200"
               }`}
             >
               <span
-                className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
-              ></span>
-              <span className={`text-xs font-medium ${isConnected ? "text-green-700" : "text-red-700"}`}>
-                {isConnected ? "Online" : "Offline"}
+                className={`w-2.5 h-2.5 rounded-full ${
+                  isOnline ? "bg-emerald-500 animate-pulse ring-2 ring-emerald-300" : "bg-gray-400"
+                }`}
+              />
+              <span className="font-bold">
+                {isUpdatingStatus ? "Updating..." : isOnline ? "Online" : "Offline"}
               </span>
-            </div>
+              <span
+                className={`text-[10px] font-mono px-1 py-0.2 rounded-xs font-black uppercase ${
+                  isOnline ? "bg-emerald-200 text-emerald-800" : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                {isOnline ? "Active" : "Off"}
+              </span>
+            </button>
 
             {/* Notifications */}
             <div className="relative" ref={notificationRef}>
@@ -413,7 +441,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-96 max-h-[500px] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
                   {/* Header */}
-                  <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#5CAF90]/5 to-[#4A9A7D]/5">
+                  <div 
+                    className="p-4 border-b border-gray-100 flex items-center justify-between"
+                    style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 6%, white)' }}
+                  >
                     <div>
                       <h3 className="font-semibold text-gray-800">Notifications</h3>
                       <p className="text-xs text-gray-500">
@@ -423,7 +454,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     {notifications.length > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs text-[#5CAF90] hover:text-[#4A9A7D] font-medium hover:underline"
+                        className="text-xs font-medium hover:underline cursor-pointer"
+                        style={{ color: 'var(--color-primary, #619d23)' }}
                       >
                         Mark all read
                       </button>
@@ -445,9 +477,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         <button
                           key={notification.id}
                           onClick={() => handleNotificationClick(notification)}
-                          className={`w-full text-left p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                            !notification.read ? "bg-[#5CAF90]/5 border-l-4 border-l-[#5CAF90]" : ""
-                          }`}
+                          className="w-full text-left p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                          style={!notification.read ? {
+                            backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 6%, transparent)',
+                            borderLeftWidth: '4px',
+                            borderLeftColor: 'var(--color-primary, #619d23)'
+                          } : {}}
                         >
                           <div className="flex items-start gap-3">
                             <div
@@ -470,13 +505,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                   </span>
                                 </p>
                                 {!notification.read && (
-                                  <span className="w-2 h-2 bg-[#5CAF90] rounded-full flex-shrink-0 mt-1.5"></span>
+                                  <span 
+                                    className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
+                                    style={{ backgroundColor: 'var(--color-primary, #619d23)' }}
+                                  ></span>
                                 )}
                               </div>
 
                               <div className="mt-1 space-y-1">
                                 <p className="text-xs text-gray-600">
-                                  <span className="font-medium text-[#5CAF90]">{notification.totalAmount} TK</span>
+                                  <span className="font-medium" style={{ color: 'var(--color-primary, #619d23)' }}>{notification.totalAmount} TK</span>
                                   {" • "}
                                   {notification.itemCount} item{notification.itemCount > 1 ? "s" : ""}
                                   {" • "}
@@ -516,7 +554,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <div className="p-3 border-t border-gray-100 bg-gray-50">
                       <Link
                         href="/rider-dashboard/orders"
-                        className="block text-center text-sm text-[#5CAF90] hover:text-[#4A9A7D] font-medium"
+                        className="block text-center text-sm font-medium hover:underline"
+                        style={{ color: 'var(--color-primary, #619d23)' }}
                         onClick={() => setShowNotifications(false)}
                       >
                         View all orders →
@@ -528,16 +567,24 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </div>
 
             {/* Profile */}
-            <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 rounded-md px-3 py-2 transition-colors">
-              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center text-white font-bold shadow-md">
+            <Link
+              href="/rider-dashboard/profile"
+              className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 rounded-md px-3 py-2 transition-colors"
+            >
+              <div 
+                className="w-10 h-10 rounded-md flex items-center justify-center text-white font-bold shadow-md"
+                style={{ backgroundColor: 'var(--color-primary, #619d23)' }}
+              >
                 <FiTruck className="text-white" size={18} />
               </div>
               <div className="hidden sm:block">
-                <p className="text-sm font-semibold text-gray-800">Rider User</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {riderProfile?.fullName || "Rider User"}
+                </p>
                 <p className="text-xs text-gray-500">Delivery Rider</p>
               </div>
               <FiChevronDown className="hidden sm:block text-gray-400" />
-            </div>
+            </Link>
           </div>
         </header>
 

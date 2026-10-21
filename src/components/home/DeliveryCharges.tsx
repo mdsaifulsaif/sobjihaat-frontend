@@ -1,284 +1,201 @@
-
-
 'use client';
 
 import React from 'react';
 import Image from 'next/image';
 import {
   TbTruckDelivery,
-  TbWallet,
-  TbTag,
   TbShieldCheck,
   TbMapPin,
-  TbTruck,
+  TbSparkles,
+  TbClock,
   TbInfoCircle,
 } from 'react-icons/tb';
-import { MdOutlineElectricScooter } from 'react-icons/md';
-import { useRouter } from "next/navigation";
-import SectionHeader from '../shared/SectionHeader';
 import { BiLeaf } from 'react-icons/bi';
-/* Brand color: --color-primary: #619d23 */
-
-interface DeliveryTier {
-  id: number;
-  orderRange: string;
-  charge: string;
-  freeCondition: string;
-}
+import { useRouter } from 'next/navigation';
+import SectionHeader from '../shared/SectionHeader';
 
 interface DeliveryChargesProps {
-  initialData?: any; // page.tsx থেকে আসা initialData props
+  initialData?: any;
   title?: string;
   subtitle?: string;
   badgeText?: string;
 }
 
-/* ---------- dashed-circle wrapper for the per-row area icon ---------- */
-const DashedIconWrap: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-[var(--color-primary)]/50">
-    {children}
-  </div>
-);
+interface FormattedTier {
+  id: number;
+  orderRange: string;
+  isFree: boolean;
+  chargeFormatted: string;
+  isLast: boolean;
+}
 
-/* ---------- filled light-bg wrapper for wallet / tag icons ---------- */
-const SoftIconWrap: React.FC<{ children: React.ReactNode; size?: 'sm' | 'md' }> = ({
-  children,
-  size = 'md',
-}) => (
-  <div
-    className={`flex shrink-0 items-center justify-center rounded-full bg-[#eef3e6] ${
-      size === 'sm' ? 'h-10 w-10' : 'h-11 w-11'
-    }`}
-  >
-    {children}
-  </div>
-);
-
-const features = [
-  { icon: <MdOutlineElectricScooter size={22} color="var(--color-primary)" />, title: 'Fast delivery', desc: 'On-time delivery you can trust' },
-  { icon: <TbShieldCheck size={22} color="var(--color-primary)" />, title: 'Safe checkout', desc: 'Your order is safe with us' },
-  { icon: <TbMapPin size={22} color="var(--color-primary)" />, title: 'Live tracking', desc: 'Track your order in real-time' },
+const DEFAULT_TIERS = [
+  { min: 0, max: 499, charge: 30 },
+  { min: 500, max: 999, charge: 50 },
+  { min: 1000, max: 1999, charge: 40 },
+  { min: 2000, max: 4999, charge: 30 },
+  { min: 5000, max: 99999, charge: 0 },
 ];
 
-/* ---------- right panel ---------- */
-const RiderCityPanel: React.FC = () => (
-  <div className="relative h-full w-full overflow-hidden rounded-2xl">
-    <svg
-      aria-hidden
-      viewBox="0 0 360 360"
-      preserveAspectRatio="xMidYMax slice"
-      className="absolute inset-0 h-full w-full"
-    >
-      <g fill="var(--color-primary)" opacity="0.08">
-        <ellipse cx="100" cy="60" rx="30" ry="16" />
-        <ellipse cx="124" cy="52" rx="20" ry="13" />
-        <rect x="40" y="160" width="26" height="120" />
-        <rect x="70" y="130" width="34" height="150" />
-        <rect x="108" y="175" width="22" height="105" />
-        <rect x="230" y="150" width="30" height="130" />
-        <rect x="264" y="185" width="24" height="95" />
-        <rect x="292" y="140" width="32" height="140" />
-      </g>
-      <path d="M0 285 H360" stroke="var(--color-primary)" strokeOpacity="0.1" strokeWidth="1.5" />
-    </svg>
-
-    <div className="relative z-10 flex h-full items-end justify-center">
-      <Image
-        src="/bike1.png"
-        alt="Delivery rider on a green scooter"
-        width={320}
-        height={320}
-        className="h-auto w-[78%] max-w-[300px] select-none drop-shadow-2xl sm:w-[85%]"
-        priority
-      />
-    </div>
-  </div>
-);
-
-/* ---------- mobile compact tier card ---------- */
-const MobileTierCard: React.FC<{ tier: DeliveryTier }> = ({ tier }) => (
-  <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-dashed border-[var(--color-primary)]/50">
-      <TbTruckDelivery size={17} color="var(--color-primary)" />
-    </div>
-    <div className="min-w-0 flex-1">
-      <p className="text-sm font-semibold text-gray-900">{tier.orderRange}</p>
-      <p className="text-xs text-gray-400">Order amount</p>
-    </div>
-    <div className="text-right">
-      <p className={`text-sm font-semibold ${tier.charge === 'Free' ? 'text-green-600' : 'text-gray-900'}`}>
-        {tier.charge}
-      </p>
-      <p className="text-xs text-gray-400">per order</p>
-    </div>
-    <div className="border-l border-gray-100 pl-2 text-right">
-      <p className="text-xs font-semibold text-[var(--color-primary)]">{tier.freeCondition}</p>
-      <p className="text-[10px] text-gray-400">Status</p>
-    </div>
-  </div>
-);
-
-/* ---------- main component ---------- */
 const DeliveryCharges: React.FC<DeliveryChargesProps> = ({
   initialData,
-  title = 'Delivery charges',
+  title = 'Delivery Charges & Rates',
   subtitle = 'Affordable delivery rates based on your order value',
-  badgeText = 'Fast. Safe. Reliable',
 }) => {
-  const shippingConfig = Array.isArray(initialData) ? initialData[0] : initialData;
-  const apiTiers = shippingConfig?.tiers || [];
+  const router = useRouter();
 
+  const shippingConfig = Array.isArray(initialData)
+    ? initialData.find((c: any) => c?.type === 'local') || initialData[0]
+    : initialData;
 
+  const rawTiers: Array<{ min: number; max: number; charge: number }> =
+    shippingConfig?.tiers && shippingConfig.tiers.length > 0
+      ? shippingConfig.tiers
+      : DEFAULT_TIERS;
 
   const formatCurrency = (amount: number) => `৳${amount.toLocaleString('en-IN')}`;
 
-  const buildDeliveryData = (): DeliveryTier[] => {
-    const list: DeliveryTier[] = [
-      {
-        id: 0,
-        orderRange: 'First order offer',
-        charge: 'Free',
-        freeCondition: '✓ 1st order special',
-      },
-    ];
+  const formattedTiers: FormattedTier[] = rawTiers.map((tier, index: number) => {
+    const isMaxUnlimited = tier.max >= 99999 || tier.max >= 999999;
+    const orderRange = isMaxUnlimited
+      ? `${formatCurrency(tier.min)}+`
+      : `${formatCurrency(tier.min)} – ${formatCurrency(tier.max)}`;
+    const isFree = tier.charge === 0;
 
-    apiTiers.forEach((tier: { min: number; max: number; charge: number }, idx: number) => {
-      const isMaxUnlimited = tier.max >= 99999;
-      const orderRange = isMaxUnlimited
-        ? `${formatCurrency(tier.min)}+`
-        : `${formatCurrency(tier.min)} – ${formatCurrency(tier.max)}`;
-
-      const isFree = tier.charge === 0;
-
-      list.push({
-        id: idx + 1,
-        orderRange,
-        charge: isFree ? 'Free' : formatCurrency(tier.charge),
-        freeCondition: isFree
-          ? '✓ Free delivery'
-          : `Orders above ${formatCurrency(tier.min)}`,
-      });
-    });
-
-    return list;
-  };
-
-  const deliveryData = buildDeliveryData();
-
-  const router = useRouter();
+    return {
+      id: index,
+      orderRange,
+      isFree,
+      chargeFormatted: isFree ? 'Free' : formatCurrency(tier.charge),
+      isLast: index === rawTiers.length - 1,
+    };
+  });
 
   return (
-    <section className="bg-[#fbfcfa] px-3 py-10 sm:px-6 sm:py-12">
-      <div className="container mx-auto">
-        {/* Header */}
-        {/* <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-3 py-1 text-xs font-semibold tracking-wide text-[var(--color-primary)]">
-              <TbShieldCheck size={14} />
-              {badgeText.toUpperCase()}
-            </span>
-            <h2 className="text-2xl font-bold leading-tight text-[#173321] sm:text-3xl lg:text-4xl">
-              {title}
-            </h2>
-            <p className="mt-2 text-sm text-gray-500 sm:text-base">
-              {subtitle}
-            </p>
-          </div>
+    <section className="py-4 sm:py-6 bg-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title={title}
+          icon={<BiLeaf size={18} />}
+          description={subtitle}
+          actionLabel="View Details"
+          onAction={() => router.push('/terms')}
+        />
 
-          <div className="flex flex-wrap gap-x-6 gap-y-4 lg:flex-nowrap lg:divide-x lg:divide-gray-200">
-            {features.map((f, i) => (
-              <div key={f.title} className={`flex items-center gap-3 ${i > 0 ? 'lg:pl-6' : ''}`}>
-                <SoftIconWrap>{f.icon}</SoftIconWrap>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{f.title}</p>
-                  <p className="text-xs leading-snug text-gray-500">{f.desc}</p>
-                </div>
+        {/* Compact & Professional Main Card */}
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-[#fbfdfa] shadow-xs">
+          
+          {/* Header Banner: 1st Order Free Promo + Trust Badges */}
+          <div className="flex flex-col gap-3.5 border-b border-gray-100/90 bg-gradient-to-r from-[#f0f6e9]/90 via-[#f7faf3]/60 to-white px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            
+            {/* Promo Info with compact illustration */}
+            <div className="flex items-center gap-3">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white p-1 border border-[var(--color-primary)]/20 shadow-xs flex items-center justify-center">
+                <Image
+                  src="/bike1.png"
+                  alt="Delivery Rider"
+                  width={44}
+                  height={44}
+                  className="object-contain"
+                />
               </div>
-            ))}
+
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-primary)] px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider shadow-xs">
+                    <TbSparkles size={11} /> 1st Order Free
+                  </span>
+                  <span className="text-sm font-bold text-gray-900">
+                    100% Free Delivery
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs text-gray-500">
+                  Enjoy zero delivery fee on your very first order at SobjiHaat!
+                </p>
+              </div>
+            </div>
+
+            {/* Micro Trust Chips */}
+            <div className="flex items-center gap-2 sm:gap-3 text-xs font-medium text-gray-600 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/60 bg-white/80 px-2.5 py-1 text-gray-700 shadow-2xs">
+                <TbClock size={14} className="text-[var(--color-primary)]" />
+                <span>60-Min Delivery</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/60 bg-white/80 px-2.5 py-1 text-gray-700 shadow-2xs">
+                <TbShieldCheck size={14} className="text-[var(--color-primary)]" />
+                <span>100% Fresh</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200/60 bg-white/80 px-2.5 py-1 text-gray-700 shadow-2xs">
+                <TbMapPin size={14} className="text-[var(--color-primary)]" />
+                <span>Live Tracking</span>
+              </span>
+            </div>
           </div>
-        </div> */}
 
-        <SectionHeader title="Delevary Coverage" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
+          {/* Slabs Grid */}
+          <div className="p-4 sm:p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <TbTruckDelivery size={15} className="text-[var(--color-primary)]" />
+                <span>Standard Delivery Slabs</span>
+              </div>
+              <span className="text-[11px] font-medium text-gray-400">
+                Applied automatically at checkout
+              </span>
+            </div>
 
-        {/* Content row */}
-        <div className="flex flex-col gap-6 lg:flex-row">
-          {/* Desktop table */}
-          <div className="hidden flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm lg:block">
-            <div className="divide-y divide-gray-100">
-              {deliveryData.map((tier) => (
-                <div key={tier.id} className="grid grid-cols-3 items-center px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <DashedIconWrap>
-                      <TbTruckDelivery size={18} color="var(--color-primary)" />
-                    </DashedIconWrap>
-                    <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Order value</p>
-                      <p className="text-sm font-semibold text-gray-900">{tier.orderRange}</p>
-                    </div>
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+              {formattedTiers.map((tier) => (
+                <div
+                  key={tier.id}
+                  className={`group relative flex flex-col justify-between rounded-xl p-3 sm:p-3.5 transition-all duration-200 ${
+                    tier.isFree
+                      ? 'col-span-2 sm:col-span-1 border-2 border-[var(--color-primary)]/70 bg-gradient-to-b from-[#f3f8ec] to-[#eaf4df] shadow-xs'
+                      : 'border border-gray-200/80 bg-white hover:border-[var(--color-primary)]/50 hover:shadow-xs'
+                  }`}
+                >
+                  {tier.isFree && (
+                    <span className="absolute -top-2.5 right-2 rounded-full bg-[var(--color-primary)] px-2 py-0.5 text-[9px] font-bold text-white uppercase tracking-wider shadow-xs">
+                      Free Delivery
+                    </span>
+                  )}
+
+                  <div>
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+                      Order Value
+                    </span>
+                    <p className="mt-0.5 text-sm font-bold text-gray-900">
+                      {tier.orderRange}
+                    </p>
                   </div>
 
-                  <div className="flex items-center gap-3 border-l border-gray-100 pl-6">
-                    <SoftIconWrap size="sm">
-                      <TbWallet size={18} color="var(--color-primary)" />
-                    </SoftIconWrap>
-                    <div>
-                      <p className={`text-base font-semibold ${tier.charge === 'Free' ? 'text-green-600' : 'text-gray-900'}`}>
-                        {tier.charge}
-                      </p>
-                      <p className="text-xs text-gray-400">Delivery charge</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 border-l border-gray-100 pl-6">
-                    <SoftIconWrap size="sm">
-                      <TbTag size={18} color="var(--color-primary)" />
-                    </SoftIconWrap>
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-primary)]">
-                        {tier.freeCondition}
-                      </p>
-                      <p className="text-xs text-gray-400">Policy / eligibility</p>
-                    </div>
+                  <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-2">
+                    <span className="text-[11px] font-medium text-gray-400">
+                      Charge:
+                    </span>
+                    <span
+                      className={`text-sm font-extrabold ${
+                        tier.isFree
+                          ? 'text-[var(--color-primary)]'
+                          : 'text-gray-900 group-hover:text-[var(--color-primary)]'
+                      }`}
+                    >
+                      {tier.chargeFormatted}
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
 
-          {/* Mobile tier list */}
-          <div className="flex flex-col gap-3 lg:hidden">
-            {deliveryData.map((tier) => (
-              <MobileTierCard key={tier.id} tier={tier} />
-            ))}
-          </div>
-
-          {/* Right panel */}
-          <div className="flex w-full flex-col gap-4 lg:w-[320px]">
-            <div className="h-[260px] overflow-hidden rounded-2xl bg-[#fbfcfa] sm:h-[320px] lg:h-full lg:min-h-[360px]">
-              <RiderCityPanel />
-            </div>
-
-            <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-5 py-4 shadow-sm">
-              <TbTruck size={22} color="var(--color-primary)" />
-              <div>
-                <p className="text-sm font-semibold text-gray-900">First order free!</p>
-                <p className="text-sm text-gray-500">
-                  Enjoy <span className="font-semibold text-[var(--color-primary)]">100% free delivery</span> on your 1st order.
-                </p>
-              </div>
+            {/* Micro Footer Note */}
+            <div className="mt-3.5 flex items-center gap-2 pt-2 text-[11px] text-gray-500">
+              <TbInfoCircle size={14} className="shrink-0 text-[var(--color-primary)]" />
+              <span>
+                First order is <strong className="font-semibold text-[var(--color-primary)]">100% Free</strong>. Regular orders above ৳5,000 also qualify for free delivery.
+              </span>
             </div>
           </div>
-        </div>
 
-        {/* Footer note */}
-        <div className="relative mt-6 flex items-start gap-3 overflow-hidden rounded-2xl px-1 py-4 sm:px-2">
-          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]">
-            <TbInfoCircle size={14} color="#fff" />
-          </span>
-          <p className="text-xs text-gray-700 sm:text-sm">
-            <span className="font-semibold">Please note:</span> First order delivery charge is completely free.
-            Subsequent charges apply based on order ranges shown above.
-          </p>
         </div>
       </div>
     </section>

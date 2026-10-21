@@ -17,6 +17,7 @@ import {
 } from "react-icons/fi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useGetProductsQuery } from "@/redux/api/productApi";
+import { useAppSelector } from "@/redux";
 
 interface MinHeaderProps {
   onToggleMobile?: () => void;
@@ -58,7 +59,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
   const suggestedProducts = suggestionData?.data || [];
   const totalFound = suggestionData?.meta?.total || 0;
 
-  const wishlistCount = 5;
+  const wishlistCount = useAppSelector((state) => state.wishlist?.totalItems || 0);
 
   // Sync search input with URL when pathname is /search
   useEffect(() => {
@@ -147,10 +148,14 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
     }
   };
 
-  const handleSelectProduct = (productId: string) => {
+  const handleSelectProduct = (productId: string, productName?: string) => {
     setIsSearchOpen(false);
     isUserTyping.current = false;
-    router.push(`/product/${productId}`);
+    if (productName) {
+      router.push(`/search?q=${encodeURIComponent(productName)}`);
+    } else {
+      router.push("/search");
+    }
   };
 
   const renderSuggestionsDropdown = () => {
@@ -163,7 +168,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
         {isSearching && suggestedProducts.length === 0 && (
           <div className="p-6 text-center text-sm font-medium text-gray-500 flex items-center justify-center gap-2">
             <div className="w-4 h-4 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin" />
-            <span>খোঁজা হচ্ছে...</span>
+            <span>Searching...</span>
           </div>
         )}
 
@@ -171,21 +176,21 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
         {!isSearching && suggestedProducts.length === 0 ? (
           <div className="p-6 text-center">
             <p className="text-sm font-semibold text-gray-700">
-              &ldquo;{trimmed}&rdquo; এর সাথে কোনো প্রোডাক্ট মেলেনি
+              No products found matching &ldquo;{trimmed}&rdquo;
             </p>
             <button
               type="button"
               onClick={handleSearchSubmit}
               className="mt-3 text-xs font-bold text-[var(--color-primary)] hover:underline inline-flex items-center gap-1"
             >
-              সার্চ পেজে গিয়ে সব প্রোডাক্ট দেখুন <FiArrowRight size={13} />
+              Browse all products <FiArrowRight size={13} />
             </button>
           </div>
         ) : (
           <div>
             <div className="px-4 py-2.5 bg-gray-50/80 border-b border-gray-100 flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
-              <span>পণ্য পরামর্শ</span>
-              {totalFound > 0 && <span>{totalFound} টি পাওয়া গেছে</span>}
+              <span>Suggestions</span>
+              {totalFound > 0 && <span>{totalFound} found</span>}
             </div>
 
             <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
@@ -200,7 +205,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                   <button
                     key={p._id}
                     type="button"
-                    onClick={() => handleSelectProduct(p._id)}
+                    onClick={() => handleSelectProduct(p._id, p.name)}
                     className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-all text-left group"
                   >
                     <div className="w-12 h-12 rounded-sm bg-gray-100 overflow-hidden relative shrink-0 border border-gray-100 flex items-center justify-center">
@@ -249,7 +254,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
               onClick={handleSearchSubmit}
               className="w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 text-xs font-bold text-[var(--color-primary)] transition-colors border-t border-gray-100 flex items-center justify-center gap-1.5"
             >
-              <span>&ldquo;{trimmed}&rdquo; এর সকল ফলাফল দেখুন</span>
+              <span>View all results for &ldquo;{trimmed}&rdquo;</span>
               <FiArrowRight size={14} />
             </button>
           </div>
@@ -277,7 +282,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                 S
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold tracking-tight">
+                <h1 className="text-2xl font-bold tracking-tight notranslate">
                   Sobji<span className="text-[var(--color-primary)]">Haat</span>
                 </h1>
               </div>
@@ -289,7 +294,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
             <form onSubmit={handleSearchSubmit} className="relative w-full">
               <input
                 type="text"
-                placeholder="প্রোডাক্ট, ক্যাটাগরি সার্চ করুন..."
+                placeholder="Search products, categories..."
                 value={searchQuery}
                 onFocus={() => setIsSearchOpen(true)}
                 onChange={handleSearchChange}
@@ -450,7 +455,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
               type="text"
-              placeholder="প্রোডাক্ট, ক্যাটাগরি সার্চ করুন..."
+              placeholder="Search products, categories..."
               value={searchQuery}
               onFocus={() => setIsSearchOpen(true)}
               onChange={handleSearchChange}

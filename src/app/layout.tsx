@@ -42,6 +42,8 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from 'react-hot-toast';
+import MarketingScripts from "@/components/analytics/MarketingScripts";
+import DynamicTheme from "@/components/theme/DynamicTheme";
 
 export default function RootLayout({
   children,
@@ -49,19 +51,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased overflow-x-hidden">
+      <body className="antialiased overflow-x-hidden" suppressHydrationWarning>
+        <DynamicTheme />
+        <MarketingScripts />
         <AuthSessionProvider >
-        <ReduxProvider>
-          <Toaster position="top-center" reverseOrder={false} />
-          {children}
-        </ReduxProvider>
-          </AuthSessionProvider>
+          <ReduxProvider>
+            <Toaster position="top-center" reverseOrder={false} />
+            {children}
+          </ReduxProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

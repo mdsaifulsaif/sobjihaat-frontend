@@ -120,7 +120,7 @@ import { useAppDispatch, useAppSelector } from '@/redux';
 import { openMiniCart } from '@/redux/slices/cartSlice';
 import { openMobileMenu } from '@/redux/slices/uiSlice';
 
-const WHATSAPP_NUMBER = '8801XXXXXXXXX';
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801604321819';
 const WHATSAPP_MESSAGE = 'হ্যালো, আমি একটি অর্ডার নিয়ে জানতে চাচ্ছি।';
 
 const FloatingCartButton = () => {
@@ -159,9 +159,9 @@ const FloatingCartButton = () => {
                 >
                     <FiShoppingBag size={26} />
                     <p className="text-xs font-medium leading-tight">
-                        {items.length} Item{items.length !== 1 ? 's' : ''}
+                        {items.length} Items
                     </p>
-                    <p className="font-bold text-sm leading-tight">৳{totalPrice.toLocaleString()}</p>
+                    <p className="font-bold text-sm leading-tight">৳{totalPrice}</p>
                 </button>
             )}
 

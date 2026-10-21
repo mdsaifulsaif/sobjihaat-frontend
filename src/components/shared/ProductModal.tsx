@@ -3,7 +3,7 @@
 
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import {
@@ -21,10 +21,14 @@ import {
   FiChevronRight,
   FiChevronDown,
   FiChevronUp,
+  FiHeart,
+  FiRepeat,
 } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 import { addToCart, increaseQuantity, decreaseQuantity } from '@/redux/slices/cartSlice';
+import { toggleWishlist } from '@/redux/slices/wishlistSlice';
 import { useCreateReviewMutation, useGetProductReviewsQuery } from '@/redux/api/reviewApi';
-import { useGetRelatedProductsQuery } from '@/redux/api/productApi';
+import { useGetRelatedProductsQuery, useGetProductByIdQuery } from '@/redux/api/productApi';
 import { useSession } from 'next-auth/react';
 import Button from '@/components/ui/Button';
 import ProductCard from '@/components/shared/ProductCard';
@@ -45,6 +49,7 @@ interface Variant {
   regularPrice: number;
   salePrice: number;
   stock: number;
+  sku?: string;
 }
 
 interface ComboItem {
@@ -66,6 +71,9 @@ interface Product {
   description?: string;
   categoryID?: { name: string; _id: string };
   categoryDetails?: { name: string; _id: string };
+  category?: any;
+  categoryName?: string;
+  sku?: string;
   brandID?: { name: string; _id: string; logo?: string };
   brandDetails?: { name: string; _id: string; logo?: string };
   regularPrice: number;
@@ -142,9 +150,10 @@ const normalizeRatingCounts = (raw: any): Record<number, number> => {
   return counts;
 };
 
-const StarRating = ({ rating, size = 14 }: { rating: number; size?: number }) => {
-  const fullStars = Math.floor(rating);
-  const emptyStars = 5 - fullStars;
+const StarRating = ({ rating = 0, size = 14 }: { rating?: number; size?: number }) => {
+  const num = Number(rating) || 0;
+  const fullStars = Math.max(0, Math.min(5, Math.round(num)));
+  const emptyStars = Math.max(0, 5 - fullStars);
 
   return (
     <div className="flex items-center gap-0.5">
@@ -159,10 +168,20 @@ const StarRating = ({ rating, size = 14 }: { rating: number; size?: number }) =>
 };
 
 /* ---------- Main Component ---------- */
-const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
+const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, onClose }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { data: session } = useSession();
+
+  const [currentProduct, setCurrentProduct] = useState<Product>(initialProduct);
+  const modalScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCurrentProduct(initialProduct);
+  }, [initialProduct]);
+
+  const product = currentProduct;
+
   const [activeTab, setActiveTab] = useState('details');
   const [activeImage, setActiveImage] = useState(0);
 
@@ -205,12 +224,44 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   );
 
   const reviews = (reviewsData as any)?.data || [];
-  const totalReviews = (reviewsData as any)?.meta?.total || product?.numReviews || 0;
-  const averageRating = (reviewsData as any)?.meta?.averageRating || product?.rating || 0;
-  const ratingCounts = normalizeRatingCounts((reviewsData as any)?.meta?.ratingCounts);
+  const totalReviews = (reviewsData as any)?.meta?.total ?? product?.numReviews ?? 0;
+
+  const averageRating = useMemo(() => {
+    const metaAvg = (reviewsData as any)?.meta?.averageRating;
+    if (metaAvg !== undefined && metaAvg !== null && !isNaN(Number(metaAvg)) && Number(metaAvg) > 0) {
+      return Number(Number(metaAvg).toFixed(1));
+    }
+    if (reviews && reviews.length > 0) {
+      const sum = reviews.reduce((acc: number, r: any) => acc + (Number(r.rating) || 0), 0);
+      return Number((sum / reviews.length).toFixed(1));
+    }
+    return Number(product?.rating) || 0;
+  }, [reviewsData, reviews, product?.rating]);
+
+  const ratingCounts = useMemo(() => {
+    const metaCounts = (reviewsData as any)?.meta?.ratingCounts;
+    if (metaCounts) {
+      return normalizeRatingCounts(metaCounts);
+    }
+    const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    if (reviews && reviews.length > 0) {
+      reviews.forEach((r: any) => {
+        const star = Math.round(Number(r.rating));
+        if (star >= 1 && star <= 5) counts[star] = (counts[star] || 0) + 1;
+      });
+    }
+    return counts;
+  }, [reviewsData, reviews]);
+
   const totalReviewPages = Math.max(1, Math.ceil(totalReviews / REVIEWS_PER_PAGE));
 
   const [createReview] = useCreateReviewMutation();
+
+  // Full product details query (ensure category & SKU if missing from card)
+  const { data: fullProductData } = useGetProductByIdQuery(productId, {
+    skip: !productId,
+  });
+  const fullProduct = (fullProductData as any)?.data;
 
   // ✅ সঠিকভাবে categoryId বের করা - উভয় জায়গা থেকে
   const categoryId = useMemo(() => {
@@ -224,12 +275,47 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
     if (product.categoryID?._id) {
       return product.categoryID._id;
     }
+    if (fullProduct?.categoryID?._id) {
+      return fullProduct.categoryID._id;
+    }
     // যদি string হয়
     if (typeof product.categoryID === 'string') {
       return product.categoryID;
     }
     return '';
-  }, [product]);
+  }, [product, fullProduct]);
+
+  // Display Category Name Resolution
+  const displayCategoryName = useMemo(() => {
+    return (
+      product?.categoryDetails?.name ||
+      product?.categoryID?.name ||
+      fullProduct?.categoryID?.name ||
+      fullProduct?.categoryDetails?.name ||
+      (typeof product?.category === 'string' ? product.category : product?.category?.name) ||
+      (product as any)?.categoryName ||
+      (typeof fullProduct?.category === 'string' ? fullProduct.category : fullProduct?.category?.name) ||
+      ''
+    );
+  }, [product, fullProduct]);
+
+  // Display SKU Resolution
+  const displaySku = useMemo(() => {
+    const rawSku =
+      selectedVariant?.sku ||
+      product?.sku ||
+      (product as any)?.sku ||
+      fullProduct?.variants?.find((v: any) => v._id === selectedVariant?._id)?.sku ||
+      fullProduct?.sku;
+
+    if (rawSku && String(rawSku).trim().length > 0) {
+      return String(rawSku).trim();
+    }
+    if (productId && typeof productId === 'string') {
+      return `SH-${productId.slice(-6).toUpperCase()}`;
+    }
+    return '';
+  }, [selectedVariant, product, fullProduct, productId]);
 
   // Related products
   const { data: relatedData, isLoading: relatedLoading } = useGetRelatedProductsQuery(
@@ -337,6 +423,73 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
     router.push('/checkout');
   };
 
+  /* ---------- Wishlist Toggle ---------- */
+  const wishlistItems = useSelector((state: any) => state.wishlist?.items || []);
+  const isWishlisted = wishlistItems.some(
+    (item: any) => String(item.id) === String(productId)
+  );
+
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    dispatch(
+      toggleWishlist({
+        id: productId,
+        productID: String(productId),
+        name: product.name,
+        price,
+        mrp,
+        regularPrice: mrp,
+        image: galleryImages[0] || product.thumbnail || "/placeholder.png",
+        thumbnail: galleryImages[0] || product.thumbnail || "/placeholder.png",
+        category: product.categoryID?.name || product.categoryDetails?.name || '',
+        rating: averageRating,
+        stock: product.stock,
+        discountPercent: discount,
+      })
+    );
+    if (isWishlisted) {
+      toast.success("Removed from wishlist");
+    } else {
+      toast.success("Added to wishlist ❤️");
+    }
+  };
+
+  /* ---------- WhatsApp Order ---------- */
+  const handleWhatsAppOrder = () => {
+    if (!product) return;
+    const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801604321819';
+
+    const variantText = selectedVariant
+      ? `${selectedVariant.weightOrVolume} ${selectedVariant.unitShortName || selectedVariant.unitName || ''}`.trim()
+      : (product.unit || '');
+
+    const orderQty = qtyInCart > 0 ? qtyInCart : 1;
+    const unitPrice = price;
+    const totalPrice = unitPrice * orderQty;
+
+    const skuCode = displaySku || (product as any)?.sku || product._id || 'N/A';
+    const productUrl = typeof window !== 'undefined'
+      ? `${window.location.origin}/search?q=${encodeURIComponent(product.name)}`
+      : `https://sobjihaat.com/search?q=${encodeURIComponent(product.name)}`;
+
+    let msg = `Hello! SobjiHaat, I'm interested in:\n`;
+    msg += `Product: ${product.name}\n`;
+    if (variantText) {
+      msg += `Variant: ${variantText}\n`;
+    }
+    if (orderQty > 1) {
+      msg += `Quantity: ${orderQty}\n`;
+      msg += `Price: ৳${unitPrice} × ${orderQty} = ৳${totalPrice}\n`;
+    } else {
+      msg += `Price: ৳${unitPrice}\n`;
+    }
+    msg += `SKU: ${skuCode}\n`;
+    msg += `Product URL: ${productUrl}`;
+
+    const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, '_blank');
+  };
+
   /* ---------- Review Submit ---------- */
   const handleSubmitReview = async () => {
     if (!session) {
@@ -378,16 +531,32 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   return (
     <div className="fixed inset-0 z-[70] flex items-start md:items-center justify-center bg-black/60 p-4 md:p-6">
       <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center shadow hover:bg-white transition"
-        >
-          <FiX size={22} />
-        </button>
+        {/* Top Actions: Wishlist + Close */}
+        <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+          <button
+            onClick={handleToggleWishlist}
+            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            className={`w-9 h-9 rounded-full shadow flex items-center justify-center transition cursor-pointer ${
+              isWishlisted
+                ? "bg-red-50 text-red-500 hover:bg-red-100"
+                : "bg-white/90 text-gray-500 hover:text-red-500 hover:bg-white"
+            }`}
+          >
+            <FiHeart
+              size={18}
+              className={`transition-transform ${isWishlisted ? "fill-red-500 text-red-500 scale-110" : ""}`}
+            />
+          </button>
+          <button
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-white/90 flex items-center justify-center shadow hover:bg-white transition cursor-pointer text-gray-700"
+          >
+            <FiX size={22} />
+          </button>
+        </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div ref={modalScrollRef} className="flex-1 overflow-y-auto">
           <div className="flex flex-col md:flex-row md:items-start">
             {/* Left: Image Gallery */}
             <div className="md:w-[45%] bg-gray-50 p-4 md:p-6 flex-shrink-0 md:sticky md:top-0 md:self-start">
@@ -426,11 +595,19 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
             {/* Right: Details */}
             <div className="md:w-[55%] p-6 md:p-8">
               <div>
-                {(product.categoryID?.name || product.categoryDetails?.name) && (
-                  <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">
-                    {product.categoryID?.name || product.categoryDetails?.name}
-                  </p>
-                )}
+                {/* Category & SKU Badges */}
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  {displayCategoryName && (
+                    <span className="text-[11px] uppercase tracking-wider font-semibold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2.5 py-0.5 rounded-md">
+                      {displayCategoryName}
+                    </span>
+                  )}
+                  {displaySku && (
+                    <span className="text-[11px] text-gray-500 font-medium bg-gray-100 px-2.5 py-0.5 rounded-md">
+                      SKU: <span className="font-semibold text-gray-700">{displaySku}</span>
+                    </span>
+                  )}
+                </div>
 
                 <h2 className="text-2xl font-bold mt-1 leading-tight">{product.name}</h2>
 
@@ -579,6 +756,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                   </Button>
                 </div>
 
+                {/* WhatsApp Order Button */}
+                <button
+                  type="button"
+                  onClick={handleWhatsAppOrder}
+                  className="mt-3 w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-sm hover:shadow transition-all duration-200 cursor-pointer active:scale-[0.99]"
+                >
+                  <FaWhatsapp size={22} className="text-white flex-shrink-0" />
+                  <span className="text-sm sm:text-base font-semibold">Order via WhatsApp (হোয়াটসঅ্যাপে অর্ডার)</span>
+                </button>
+
+                {/* End of purchase options */}
+
                 {!inStock && (
                   <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2">
                     <FiAlertCircle className="text-red-500" size={16} />
@@ -601,6 +790,28 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                   <span className="text-sm text-gray-600">
                     Delivery within 40 - 60 minutes in Barisal city
                   </span>
+                </div>
+
+                {/* Product Metadata Strip */}
+                <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
+                  {displayCategoryName && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-400">Category:</span>
+                      <span className="font-semibold text-gray-700">{displayCategoryName}</span>
+                    </div>
+                  )}
+                  {displaySku && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-400">SKU:</span>
+                      <span className="font-semibold text-gray-700">{displaySku}</span>
+                    </div>
+                  )}
+                  {product.productType && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-400">Type:</span>
+                      <span className="font-semibold text-gray-700 capitalize">{product.productType}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -898,12 +1109,14 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
               <div className="-mx-2">
                 <Swiper
                   modules={[FreeMode]}
-                  spaceBetween={12}
-                  slidesPerView={2}
+                  spaceBetween={8}
+                  slidesPerView={3}
                   breakpoints={{
-                    480: { slidesPerView: 2, spaceBetween: 12 },
-                    640: { slidesPerView: 3, spaceBetween: 16 },
-                    768: { slidesPerView: 3, spaceBetween: 16 },
+                    320: { slidesPerView: 3, spaceBetween: 6 },
+                    360: { slidesPerView: 3, spaceBetween: 8 },
+                    480: { slidesPerView: 3, spaceBetween: 10 },
+                    640: { slidesPerView: 3, spaceBetween: 12 },
+                    768: { slidesPerView: 4, spaceBetween: 16 },
                     1024: { slidesPerView: 4, spaceBetween: 20 },
                   }}
                   freeMode={true}
@@ -915,10 +1128,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                       <ProductCard 
                         product={p} 
                         onQuickView={() => {
-                          // Related Product ক্লিক করলে নতুন Modal খোলা
-                          onClose();
-                          // প্যারেন্ট কম্পোনেন্টে নতুন product পাঠানোর জন্য
-                          // এখানে একটি callback function পাঠাতে হবে
+                          setCurrentProduct(p);
+                          if (modalScrollRef.current) {
+                            modalScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                          }
                         }}
                       />
                     </SwiperSlide>
@@ -929,6 +1142,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
           ) : null}
         </div>
       </div>
+
+
     </div>
   );
 };

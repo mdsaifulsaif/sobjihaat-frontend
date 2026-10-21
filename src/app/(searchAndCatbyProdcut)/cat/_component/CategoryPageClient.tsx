@@ -19,6 +19,9 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
 
   useEffect(() => {
     setPage(1);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
   }, [slug]);
 
   const { data, isLoading, isFetching, error } =
@@ -64,18 +67,6 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
 
   return (
     <>
-      {/* Banner */}
-      {/* <div className="w-full h-25 md:h-30 rounded-3xl overflow-hidden relative bg-gradient-to-r from-[var(--color-primary)] to-purple-500 flex items-center px-5 md:px-8">
-        <div className="text-white">
-          <h1 className="text-2xl md:text-4xl font-black capitalize">
-            {categoryName}
-          </h1>
-          <p className="text-sm md:text-base opacity-90 mt-1">
-            সেরা মানের প্রোডাক্ট, সেরা দামে
-          </p>
-        </div>
-      </div> */}
-
       <div className="mt-4">
         {isLoading && page === 1 && (
           <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
@@ -89,14 +80,14 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
         )}
 
         {error && (
-          <div className="text-center py-12 text-gray-500">
-            কোনো প্রোডাক্ট পাওয়া যায়নি।
+          <div className="text-center py-12 text-gray-500 text-sm">
+            No products found.
           </div>
         )}
 
         {!isLoading && !error && products.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            এই ক্যাটাগরিতে এখনো কোনো প্রোডাক্ট নেই।
+          <div className="text-center py-12 text-gray-500 text-sm">
+            No products available in this category yet.
           </div>
         )}
 
@@ -122,8 +113,8 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
         )}
 
         {!hasMore && products.length > 0 && (
-          <p className="text-center text-gray-400 text-sm py-10">
-            আর কোনো প্রোডাক্ট নেই
+          <p className="text-center text-gray-400 text-xs sm:text-sm py-10">
+            All products loaded
           </p>
         )}
       </div>

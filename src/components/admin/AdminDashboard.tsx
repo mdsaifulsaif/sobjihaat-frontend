@@ -143,9 +143,12 @@ const RiderDashboardPage = () => {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="relative">
-          <div className="h-16 w-16 animate-spin rounded-full border-4 border-[#5CAF90]/20 border-t-[#5CAF90]" />
+          <div 
+            className="h-16 w-16 animate-spin rounded-full border-4" 
+            style={{ borderColor: 'color-mix(in srgb, var(--color-primary, #619d23) 20%, transparent)', borderTopColor: 'var(--color-primary, #619d23)' }}
+          />
           <div className="absolute inset-0 flex items-center justify-center">
-            <FiTruck className="text-[#5CAF90] text-2xl" />
+            <FiTruck style={{ color: 'var(--color-primary, #619d23)' }} className="text-2xl" />
           </div>
         </div>
       </div>
@@ -158,8 +161,14 @@ const RiderDashboardPage = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <span className="bg-[#5CAF90]/10 p-2 rounded-xl">
-              <FiTruck className="text-[#5CAF90]" size={20} />
+            <span 
+              className="p-2 rounded-xl"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                color: 'var(--color-primary, #619d23)'
+              }}
+            >
+              <FiTruck size={20} />
             </span>
             Rider Dashboard
           </h1>
@@ -206,7 +215,13 @@ const RiderDashboardPage = () => {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#5CAF90] to-[#4A9A7D] flex items-center justify-center text-xl font-bold text-white shadow-lg shadow-[#5CAF90]/20">
+            <div 
+              className="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-bold text-white shadow-lg"
+              style={{
+                backgroundColor: 'var(--color-primary, #619d23)',
+                boxShadow: '0 8px 20px -4px color-mix(in srgb, var(--color-primary, #619d23) 35%, transparent)'
+              }}
+            >
               {rider?.fullName?.charAt(0)?.toUpperCase() || 'R'}
             </div>
             <div>
@@ -246,19 +261,26 @@ const RiderDashboardPage = () => {
       {/* ===== Range Filter ===== */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-3">
         <div className="flex flex-wrap gap-2">
-          {rangeOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setRange(option.value as RangeType)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                range === option.value
-                  ? 'bg-[#5CAF90] text-white shadow-md shadow-[#5CAF90]/20'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
+          {rangeOptions.map((option) => {
+            const isSelected = range === option.value;
+            return (
+              <button
+                key={option.value}
+                onClick={() => setRange(option.value as RangeType)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                  isSelected
+                    ? 'text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+                style={isSelected ? {
+                  backgroundColor: 'var(--color-primary, #619d23)',
+                  boxShadow: '0 4px 12px color-mix(in srgb, var(--color-primary, #619d23) 30%, transparent)'
+                } : {}}
+              >
+                {option.label}
+              </button>
+            );
+          })}
           <span className="ml-auto text-xs text-gray-400 flex items-center gap-1">
             <FiCalendar size={12} />
             {dashboard?.filter?.startDate 
@@ -302,7 +324,7 @@ const RiderDashboardPage = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                <FiTrendingUp className="text-[#5CAF90]" />
+                <FiTrendingUp style={{ color: 'var(--color-primary, #619d23)' }} />
                 Earnings Overview
               </h3>
               <p className="text-xs text-gray-400">
@@ -311,7 +333,10 @@ const RiderDashboardPage = () => {
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-[#5CAF90]" />
+                <span 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: 'var(--color-primary, #619d23)' }} 
+                />
                 <span className="text-xs text-gray-500">Earnings (৳)</span>
               </div>
               <div className="flex items-center gap-2">
@@ -348,7 +373,7 @@ const RiderDashboardPage = () => {
                         className="w-6 rounded-t-md transition-all duration-500 group-hover:opacity-80"
                         style={{
                           height: `${Math.max(earnPercent, 2)}%`,
-                          backgroundColor: '#5CAF90',
+                          backgroundColor: 'var(--color-primary, #619d23)',
                           minHeight: earn > 0 ? '4px' : '0px',
                         }}
                       >
@@ -383,7 +408,7 @@ const RiderDashboardPage = () => {
         {/* Quick Actions */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <FiPackage className="text-[#5CAF90]" />
+            <FiPackage style={{ color: 'var(--color-primary, #619d23)' }} />
             Quick Actions
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -393,7 +418,8 @@ const RiderDashboardPage = () => {
                 <Link
                   key={action.label}
                   href={action.href}
-                  className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-200 hover:border-[#5CAF90] hover:shadow-md transition-all group bg-gray-50/50"
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all group bg-gray-50/50"
+                  style={{}}
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
@@ -401,7 +427,7 @@ const RiderDashboardPage = () => {
                   >
                     <Icon size={22} style={{ color: action.color }} />
                   </div>
-                  <span className="text-xs font-medium text-gray-700 text-center group-hover:text-[#5CAF90]">
+                  <span className="text-xs font-medium text-gray-700 text-center transition-colors">
                     {action.label}
                   </span>
                 </Link>
@@ -421,7 +447,7 @@ const RiderDashboardPage = () => {
             </div>
             <div className="flex justify-between items-center text-sm mt-1">
               <span className="text-gray-500">This {getRangeLabel()}</span>
-              <span className="font-bold text-green-600">৳{earnings?.range || 0}</span>
+              <span className="font-bold" style={{ color: 'var(--color-primary, #619d23)' }}>৳{earnings?.range || 0}</span>
             </div>
           </div>
         </div>
@@ -432,7 +458,7 @@ const RiderDashboardPage = () => {
         <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <div>
             <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-              <FiClock className="text-[#5CAF90]" />
+              <FiClock style={{ color: 'var(--color-primary, #619d23)' }} />
               Recent Orders
             </h3>
             <p className="text-xs text-gray-400">
@@ -443,7 +469,8 @@ const RiderDashboardPage = () => {
           </div>
           <Link
             href="/rider-dashboard/orders"
-            className="text-sm font-medium text-[#5CAF90] hover:underline flex items-center gap-1"
+            className="text-sm font-medium hover:underline flex items-center gap-1"
+            style={{ color: 'var(--color-primary, #619d23)' }}
           >
             View All <FiArrowRight size={14} />
           </Link>
@@ -481,7 +508,7 @@ const RiderDashboardPage = () => {
                 {recentOrders.map((order: any) => (
                   <tr key={order._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-[#5CAF90]">{order.orderNumber}</span>
+                      <span className="font-semibold" style={{ color: 'var(--color-primary, #619d23)' }}>{order.orderNumber}</span>
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium text-gray-800">{order.deliveryAddress?.name || 'Guest'}</p>

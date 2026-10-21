@@ -29,11 +29,24 @@ export const orderApi = baseApi.injectEndpoints({
             providesTags: ['Orders'],
         }),
         cancelOrder: builder.mutation({
-            query: (id) => ({
-                url: `/order/cancel/${id}`,
-                method: 'PATCH',
-            }),
+            query: (arg: string | { id: string; reason?: string }) => {
+                const id = typeof arg === "string" ? arg : arg.id;
+                const body = typeof arg === "object" && arg.reason ? { reason: arg.reason } : {};
+                return {
+                    url: `/order/cancel/${id}`,
+                    method: 'PATCH',
+                    body,
+                };
+            },
             invalidatesTags: ['Orders'],
+        }),
+        trackOrder: builder.query({
+            query: ({ orderNumber, phone }: { orderNumber: string; phone?: string }) => ({
+                url: `/order/track/${orderNumber}`,
+                method: 'GET',
+                params: phone ? { phone } : undefined,
+            }),
+            providesTags: ['Orders'],
         }),
 
         // ===== Admin endpoints =====
@@ -98,7 +111,23 @@ export const orderApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Orders'],
         }),
+        markReturned: builder.mutation({
+            query: ({ id, ...body }: { id: string; returnReason?: string; returnCondition?: string; returnNote?: string }) => ({
+                url: `/order/rider/${id}/return`,
+                method: 'PATCH',
+                body,
+            }),
+            invalidatesTags: ['Orders'],
+        }),
+        getOrderDetails: builder.query({
+            query: (id) => ({
+                url: `/order/details/${id}`,
+                method: 'GET',
+            }),
+            providesTags: ['Orders'],
+        }),
     }),
+    overrideExisting: true,
 });
 
 export const {
@@ -106,6 +135,7 @@ export const {
     useGetMyOrdersQuery,
     useGetMyOrderByIdQuery,
     useCancelOrderMutation,
+    useTrackOrderQuery,
     useGetAdminOrdersQuery,
     useUpdateOrderStatusMutation,
     useGetAvailableOrdersQuery,
@@ -114,4 +144,6 @@ export const {
     useRejectOrderMutation,
     useMarkOutForDeliveryMutation,
     useMarkDeliveredMutation,
+    useMarkReturnedMutation,
+    useGetOrderDetailsQuery,
 } = orderApi;

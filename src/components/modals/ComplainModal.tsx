@@ -221,7 +221,7 @@ export default function ComplainModal() {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               required
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
+              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] bg-white transition"
             >
               <option value="">Select a subject</option>
 
@@ -248,7 +248,7 @@ export default function ComplainModal() {
               required
               rows={4}
               placeholder="Please describe your issue in detail..."
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] resize-none transition"
             />
           </div>
 
@@ -275,7 +275,7 @@ export default function ComplainModal() {
               required
               placeholder="01XXXXXXXXX"
               maxLength={11}
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition"
             />
             <p className="mt-1 text-xs text-gray-400">
               Format: 01XXXXXXXXX (11 digits)
@@ -294,7 +294,7 @@ export default function ComplainModal() {
             {!preview ? (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-3 px-4 py-3 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50/50 transition"
+                className="flex items-center gap-3 px-4 py-3 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[var(--color-primary)] hover:bg-[color-mix(in_srgb,var(--color-primary)_6%,white)] transition"
               >
                 <Upload className="w-5 h-5 text-gray-400" />
 
@@ -342,7 +342,7 @@ export default function ComplainModal() {
             <button
               type="button"
               onClick={() => dispatch(closeComplainModal())}
-              className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition cursor-pointer"
             >
               Cancel
             </button>
@@ -350,7 +350,8 @@ export default function ComplainModal() {
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 transition"
+              style={{ backgroundColor: "var(--color-primary)" }}
+              className="px-5 py-2.5 text-sm font-medium text-white rounded-lg hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 transition cursor-pointer shadow-sm"
             >
               {isLoading && (
                 <Loader2 className="w-4 h-4 animate-spin" />

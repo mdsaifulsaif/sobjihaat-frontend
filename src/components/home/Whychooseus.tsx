@@ -37,11 +37,11 @@ const features = [
         <path d="M14 22C14 14 18 10 24 10C30 10 34 14 34 22" stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round" fill="none" />
         {/* carrot */}
         <path d="M22 8C22 8 21 4 24 3C27 4 26 8 26 8" fill="#e07b39" />
-        <path d="M24 3C24 3 22.5 1.5 21 2" stroke="#619d23" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M24 3C24 3 22.5 1.5 21 2" stroke="var(--color-primary)" strokeWidth="1.5" strokeLinecap="round" />
         {/* leaf sprout left */}
-        <path d="M18 10C18 10 16 7 18 5C20 7 18 10 18 10Z" fill="#619d23" />
+        <path d="M18 10C18 10 16 7 18 5C20 7 18 10 18 10Z" fill="var(--color-primary)" />
         {/* leaf sprout right */}
-        <path d="M30 10C30 10 32 7 30 5C28 7 30 10 30 10Z" fill="#619d23" />
+        <path d="M30 10C30 10 32 7 30 5C28 7 30 10 30 10Z" fill="var(--color-primary)" />
         {/* basket weave lines */}
         <path d="M10 28h28M11 32h26M13 36h22" stroke="white" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
       </svg>
@@ -170,26 +170,26 @@ const LeafDecor = ({ className }: { className: string }) => (
   >
     <path
       d="M60 130C60 130 10 100 10 50C10 20 35 5 60 5C85 5 110 20 110 50C110 100 60 130 60 130Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
       opacity="0.13"
     />
     <path
       d="M60 130V5"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="1.5"
       strokeDasharray="4 4"
       opacity="0.2"
     />
     <path
       d="M35 40C35 40 60 30 85 45"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="1.2"
       opacity="0.18"
       strokeLinecap="round"
     />
     <path
       d="M25 65C25 65 60 52 95 68"
-      stroke="#619d23"
+      stroke="var(--color-primary)"
       strokeWidth="1.2"
       opacity="0.15"
       strokeLinecap="round"
@@ -197,7 +197,7 @@ const LeafDecor = ({ className }: { className: string }) => (
     {/* second smaller leaf */}
     <path
       d="M60 130C60 130 30 115 28 85C26 60 42 48 60 48C78 48 94 60 92 85C90 115 60 130 60 130Z"
-      fill="#619d23"
+      fill="var(--color-primary)"
       opacity="0.09"
     />
   </svg>
@@ -213,7 +213,7 @@ const DotGrid = ({ className }: { className: string }) => (
           cx={col * 14 + 6}
           cy={row * 14 + 6}
           r="2.5"
-          fill="#619d23"
+          fill="var(--color-primary)"
           opacity="0.18"
         />
       ))
@@ -241,7 +241,7 @@ const WhyChooseUs: React.FC = () => {
           <div className="mb-3 flex items-center justify-center gap-2">
             {/* tiny leaf icons flanking the eyebrow */}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 22C12 22 4 16 4 9C4 5 7.5 2 12 2C16.5 2 20 5 20 9C20 16 12 22 12 22Z" fill="#619d23" opacity="0.7" />
+              <path d="M12 22C12 22 4 16 4 9C4 5 7.5 2 12 2C16.5 2 20 5 20 9C20 16 12 22 12 22Z" fill="var(--color-primary)" opacity="0.7" />
               <path d="M12 22V9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <span
@@ -251,7 +251,7 @@ const WhyChooseUs: React.FC = () => {
               WHY CHOOSE US
             </span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 22C12 22 4 16 4 9C4 5 7.5 2 12 2C16.5 2 20 5 20 9C20 16 12 22 12 22Z" fill="#619d23" opacity="0.7" />
+              <path d="M12 22C12 22 4 16 4 9C4 5 7.5 2 12 2C16.5 2 20 5 20 9C20 16 12 22 12 22Z" fill="var(--color-primary)" opacity="0.7" />
               <path d="M12 22V9" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </div>

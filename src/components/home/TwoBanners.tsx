@@ -18,7 +18,7 @@ const TwoBanners: React.FC = () => {
                             Cosmetic Makeup<br />Professional
                         </h3>
                         <Link
-                            href="/shop?category=cosmetic"
+                            href="/"
                             className='text-white text-sm font-semibold flex items-center gap-2 hover:gap-3 transition-all'
                         >
                             SHOP NOW <span>→</span>
@@ -37,7 +37,7 @@ const TwoBanners: React.FC = () => {
                             Women's Lifestyle<br />Collection
                         </h3>
                         <Link
-                            href="/shop?category=women"
+                            href="/"
                             className='text-gray-800 text-sm font-semibold flex items-center gap-2 hover:gap-3 transition-all'
                         >
                             SHOP NOW <span>→</span>

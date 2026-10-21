@@ -1,229 +1,24 @@
-// 'use client';
-
-// import React, { useState, useEffect } from 'react';
-// import { useGetMeQuery, useUpdateProfileMutation } from '@/redux/api/authApi';
-// import { FiUser, FiPhone, FiMapPin, FiCamera, FiSave, FiArrowLeft } from 'react-icons/fi';
-// import { useRouter } from 'next/navigation';
-
-// const ProfilePage = () => {
-//   const router = useRouter();
-//   const { data, isLoading, refetch } = useGetMeQuery({});
-//   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
-
-//   const user = data?.data;
-
-//   const [formData, setFormData] = useState({
-//     firstName: '',
-//     lastName: '',
-//     phoneNumber: '',
-//     addressLine: '',
-//     city: '',
-//     state: '',
-//     postalCode: '',
-//   });
-
-//   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-//   const [previewUrl, setPreviewUrl] = useState('');
-
-//   // Load data when user is fetched
-//   useEffect(() => {
-//     if (user) {
-//       setFormData({
-//         firstName: user.firstName || '',
-//         lastName: user.lastName || '',
-//         phoneNumber: user.phoneNumber || '',
-//         addressLine: user.shippingAddress?.addressLine || '',
-//         city: user.shippingAddress?.city || '',
-//         state: user.shippingAddress?.state || '',
-//         postalCode: user.shippingAddress?.postalCode || '',
-//       });
-//       setPreviewUrl(user.avatar?.url || '');
-//     }
-//   }, [user]);
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = e.target.files?.[0];
-//     if (file) {
-//       setAvatarFile(file);
-//       setPreviewUrl(URL.createObjectURL(file));
-//     }
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-
-//     const form = new FormData();
-//     Object.entries(formData).forEach(([key, value]) => {
-//       if (value) form.append(key, value);
-//     });
-//     if (avatarFile) form.append('avatar', avatarFile);
-
-//     try {
-//       await updateProfile(form).unwrap();
-//       alert('Profile updated successfully!');
-//       refetch(); // Refresh user data
-//     } catch (error) {
-//       alert('Failed to update profile');
-//     }
-//   };
-
-//   if (isLoading) {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center">
-//         <div className="text-center">
-//           <div className="w-10 h-10 border-4 border-gray-200 border-t-[var(--color-primary)] rounded-full animate-spin mx-auto" />
-//           <p className="mt-3 text-gray-500">Loading profile...</p>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 py-8">
-//       <div className="max-w-2xl mx-auto px-4">
-//         {/* Header */}
-//         <div className="flex items-center gap-4 mb-6">
-//           <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-2xl">
-//             <FiArrowLeft size={22} />
-//           </button>
-//           <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-//         </div>
-
-//         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-//           {/* Avatar Section */}
-//           <div className="h-40 bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 relative">
-//             <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
-//               <div className="relative">
-//                 <div className="w-28 h-28 rounded-3xl border-4 border-white overflow-hidden shadow-xl bg-white">
-//                   <img
-//                     src={previewUrl || '/default-avatar.png'}
-//                     alt="Profile"
-//                     className="w-full h-full object-cover"
-//                   />
-//                 </div>
-//                 <label className="absolute bottom-1 right-1 bg-white w-8 h-8 rounded-2xl shadow flex items-center justify-center cursor-pointer hover:bg-gray-100">
-//                   <FiCamera size={18} className="text-gray-600" />
-//                   <input type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
-//                 </label>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="pt-16 pb-8 px-6">
-//             <form onSubmit={handleSubmit} className="space-y-6">
-//               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-//                 <div>
-//                   <label className="text-sm font-medium text-gray-600 block mb-1.5">First Name</label>
-//                   <input
-//                     type="text"
-//                     name="firstName"
-//                     value={formData.firstName}
-//                     onChange={handleChange}
-//                     className="w-full border border-gray-200 rounded-2xl py-3 px-4 focus:border-[var(--color-primary)] outline-none"
-//                   />
-//                 </div>
-//                 <div>
-//                   <label className="text-sm font-medium text-gray-600 block mb-1.5">Last Name</label>
-//                   <input
-//                     type="text"
-//                     name="lastName"
-//                     value={formData.lastName}
-//                     onChange={handleChange}
-//                     className="w-full border border-gray-200 rounded-2xl py-3 px-4 focus:border-[var(--color-primary)] outline-none"
-//                   />
-//                 </div>
-//               </div>
-
-//               <div>
-//                 <label className="text-sm font-medium text-gray-600 block mb-1.5">Phone Number</label>
-//                 <div className="relative">
-//                   <FiPhone className="absolute left-4 top-4 text-gray-400" />
-//                   <input
-//                     type="tel"
-//                     name="phoneNumber"
-//                     value={formData.phoneNumber}
-//                     onChange={handleChange}
-//                     className="w-full border border-gray-200 rounded-2xl py-3 pl-11 focus:border-[var(--color-primary)] outline-none"
-//                   />
-//                 </div>
-//               </div>
-
-//               <div>
-//                 <label className="text-sm font-medium text-gray-600 block mb-1.5">Address</label>
-//                 <input
-//                   type="text"
-//                   name="addressLine"
-//                   value={formData.addressLine}
-//                   onChange={handleChange}
-//                   placeholder="House No, Road, Block"
-//                   className="w-full border border-gray-200 rounded-2xl py-3 px-4 focus:border-[var(--color-primary)] outline-none"
-//                 />
-//               </div>
-
-//               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-//                 <div>
-//                   <label className="text-sm font-medium text-gray-600 block mb-1.5">City</label>
-//                   <input
-//                     type="text"
-//                     name="city"
-//                     value={formData.city}
-//                     onChange={handleChange}
-//                     className="w-full border border-gray-200 rounded-2xl py-3 px-4 focus:border-[var(--color-primary)] outline-none"
-//                   />
-//                 </div>
-//                 <div>
-//                   <label className="text-sm font-medium text-gray-600 block mb-1.5">State</label>
-//                   <input
-//                     type="text"
-//                     name="state"
-//                     value={formData.state}
-//                     onChange={handleChange}
-//                     className="w-full border border-gray-200 rounded-2xl py-3 px-4 focus:border-[var(--color-primary)] outline-none"
-//                   />
-//                 </div>
-//                 <div>
-//                   <label className="text-sm font-medium text-gray-600 block mb-1.5">Postal Code</label>
-//                   <input
-//                     type="text"
-//                     name="postalCode"
-//                     value={formData.postalCode}
-//                     onChange={handleChange}
-//                     className="w-full border border-gray-200 rounded-2xl py-3 px-4 focus:border-[var(--color-primary)] outline-none"
-//                   />
-//                 </div>
-//               </div>
-
-//               <button
-//                 type="submit"
-//                 disabled={isUpdating}
-//                 className="w-full mt-8 bg-[var(--color-primary)] hover:bg-opacity-90 text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all disabled:opacity-70"
-//               >
-//                 <FiSave size={18} />
-//                 {isUpdating ? 'Saving...' : 'Save Changes'}
-//               </button>
-//             </form>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProfilePage;
-
-
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useGetMeQuery, useUpdateProfileMutation } from '@/redux/api/authApi';
-import { FiUser, FiPhone, FiMapPin, FiCamera, FiSave, FiArrowLeft, FiMail, FiEdit2 } from 'react-icons/fi';
+import { 
+  FiUser, 
+  FiPhone, 
+  FiMapPin, 
+  FiCamera, 
+  FiSave, 
+  FiArrowLeft, 
+  FiMail, 
+  FiCheckCircle, 
+  FiShield, 
+  FiCalendar, 
+  FiTruck,
+  FiActivity
+} from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { toast } from 'react-hot-toast';
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -261,14 +56,19 @@ const ProfilePage = () => {
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        return;
+      }
       setAvatarFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+      toast.success('Avatar selected! Click Save to apply.');
     }
   };
 
@@ -277,224 +77,385 @@ const ProfilePage = () => {
 
     const form = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      if (value) form.append(key, value);
+      if (value !== undefined && value !== null) {
+        form.append(key, value.trim());
+      }
     });
-    if (avatarFile) form.append('avatar', avatarFile);
+    if (avatarFile) {
+      form.append('avatar', avatarFile);
+    }
 
     try {
       await updateProfile(form).unwrap();
-      alert('Profile updated successfully!');
+      toast.success('Profile updated successfully! 🎉');
       refetch();
-    } catch (error) {
-      alert('Failed to update profile');
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to update profile');
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-[var(--color-primary)] rounded-full animate-spin mx-auto" />
-          <p className="mt-3 text-[var(--color-text-muted)]">Loading profile...</p>
+          <div 
+            className="w-12 h-12 border-4 border-gray-200 rounded-full animate-spin mx-auto"
+            style={{ borderTopColor: 'var(--color-primary, #619d23)' }}
+          />
+          <p className="mt-4 text-sm font-medium text-gray-500">Loading your profile...</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen container bg-[var(--color-background)] py-8 md:py-12">
-      <div className="mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors"
-          >
-            <FiArrowLeft size={22} className="text-[var(--color-text-secondary)]" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">My Profile</h1>
-            <p className="text-sm text-[var(--color-text-muted)]">Manage your personal information</p>
-          </div>
-        </div>
+  const role = user?.role || 'user';
+  const isRider = role === 'rider';
+  const isAdmin = role === 'admin';
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Cover Section */}
-          <div className="relative h-32 bg-gradient-to-r from-[var(--color-primary)] to-[#4A9A7D]">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full" />
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white rounded-full" />
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] py-6 sm:py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        
+        {/* Navigation / Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.back()}
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200/80 shadow-2xs hover:bg-gray-50 hover:border-gray-300 text-gray-700 transition-all cursor-pointer"
+              title="Back"
+            >
+              <FiArrowLeft size={18} />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Account Profile</h1>
+              <p className="text-xs text-gray-500">Manage and update your personal details</p>
             </div>
           </div>
 
-          {/* Avatar Section */}
-          <div className="relative px-6">
-            <div className="flex flex-col sm:flex-row items-center gap-6 -mt-12">
-              <div className="relative">
-                <div className="w-24 h-24 rounded-2xl border-4 border-white overflow-hidden shadow-lg bg-[var(--color-surface)]">
+          {/* Quick Dashboard link if rider or admin */}
+          {isRider && (
+            <button
+              onClick={() => router.push('/rider-dashboard')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 font-semibold text-xs rounded-xl transition-all cursor-pointer"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                color: 'var(--color-primary, #619d23)'
+              }}
+            >
+              <FiTruck size={14} />
+              <span>Rider Dashboard</span>
+            </button>
+          )}
+          {isAdmin && (
+            <button
+              onClick={() => router.push('http://localhost:3000/dashboard')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 font-semibold text-xs rounded-xl transition-all cursor-pointer"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                color: 'var(--color-primary, #619d23)'
+              }}
+            >
+              <FiShield size={14} />
+              <span>Admin Panel</span>
+            </button>
+          )}
+        </div>
+
+        {/* Profile Container Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
+          
+          {/* Top Banner with Brand Gradient & Organic Patterns */}
+          <div 
+            className="relative h-36 sm:h-44 overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-primary, #619d23), color-mix(in srgb, var(--color-primary, #619d23) 70%, black))'
+            }}
+          >
+            {/* Soft decorative background circles */}
+            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none" />
+            <div className="absolute -bottom-10 left-10 w-40 h-40 rounded-full bg-white/10 blur-lg pointer-events-none" />
+            <div className="absolute inset-0 bg-radial from-transparent via-black/5 to-black/20 pointer-events-none" />
+          </div>
+
+          {/* Profile Identity Bar */}
+          <div className="relative px-6 sm:px-8 pb-6 border-b border-gray-100">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 -mt-16 sm:-mt-20">
+              
+              {/* Avatar with Camera upload trigger */}
+              <div className="relative group shrink-0">
+                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-white relative">
                   {previewUrl ? (
                     <Image
                       src={previewUrl}
-                      alt="Profile"
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
+                      alt="Profile Avatar"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[var(--color-primary)]/10">
-                      <FiUser size={36} className="text-[var(--color-primary)]" />
+                    <div 
+                      className="w-full h-full flex items-center justify-center"
+                      style={{
+                        backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                        color: 'var(--color-primary, #619d23)'
+                      }}
+                    >
+                      <FiUser size={44} />
                     </div>
                   )}
                 </div>
-                <label className="absolute -bottom-1 -right-1 bg-white w-8 h-8 rounded-xl shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 border border-gray-200 transition-colors">
-                  <FiCamera size={16} className="text-[var(--color-text-secondary)]" />
-                  <input type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
+                
+                <label 
+                  htmlFor="avatar-upload"
+                  className="absolute bottom-1 right-1 w-9 h-9 rounded-xl bg-white border border-gray-200 shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 text-gray-700 hover:scale-105 active:scale-95 transition-all"
+                  style={{ color: 'var(--color-primary, #619d23)' }}
+                  title="Change Avatar"
+                >
+                  <FiCamera size={16} />
+                  <input
+                    id="avatar-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                  />
                 </label>
               </div>
 
-              <div className="text-center sm:text-left">
-                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
-                  {user?.firstName || 'User'} {user?.lastName || ''}
-                </h2>
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-sm text-[var(--color-text-muted)]">
-                  <span className="flex items-center gap-1">
-                    <FiMail size={14} />
-                    {user?.email || 'N/A'}
+              {/* User Name & Badges */}
+              <div className="flex-1 text-center sm:text-left space-y-1">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center justify-center sm:justify-start gap-1.5">
+                    <span>{user?.firstName || 'User'} {user?.lastName || ''}</span>
+                    <FiCheckCircle size={18} style={{ color: 'var(--color-primary, #619d23)' }} className="shrink-0" title="Verified Account" />
+                  </h2>
+
+                  {/* Role Badge */}
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider self-center sm:self-auto ${
+                    isAdmin 
+                      ? 'bg-purple-100 text-purple-800 border border-purple-200' 
+                      : isRider 
+                      ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                      : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                  }`}>
+                    {isRider ? <FiTruck size={12} /> : isAdmin ? <FiShield size={12} /> : <FiUser size={12} />}
+                    {role}
                   </span>
-                  <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                  <span className="flex items-center gap-1">
-                    <FiUser size={14} />
-                    {user?.role || 'User'}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-xs text-gray-500 pt-0.5">
+                  <span className="flex items-center gap-1.5 font-medium text-gray-600">
+                    <FiMail size={13} className="text-gray-400" />
+                    {user?.email || 'No email provided'}
                   </span>
+                  
+                  {user?.phoneNumber && (
+                    <>
+                      <span className="w-1 h-1 bg-gray-300 rounded-full hidden sm:inline-block" />
+                      <span className="flex items-center gap-1.5 text-gray-600">
+                        <FiPhone size={13} className="text-gray-400" />
+                        {user.phoneNumber}
+                      </span>
+                    </>
+                  )}
+
+                  {user?.createdAt && (
+                    <>
+                      <span className="w-1 h-1 bg-gray-300 rounded-full hidden sm:inline-block" />
+                      <span className="flex items-center gap-1.5 text-gray-400">
+                        <FiCalendar size={13} />
+                        Joined {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Form */}
-          <div className="px-6 pb-8 pt-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Form Content */}
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
+            
+            {/* Section 1: Personal Details */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                <div 
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{
+                    backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                    color: 'var(--color-primary, #619d23)'
+                  }}
+                >
+                  <FiUser size={15} />
+                </div>
+                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">
+                  Personal Information
+                </h3>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-text-secondary)] block mb-1.5">
-                    First Name
-                  </label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">First Name *</label>
                   <div className="relative">
-                    <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" size={18} />
+                    <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
                       type="text"
                       name="firstName"
+                      required
                       value={formData.firstName}
                       onChange={handleChange}
-                      className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all"
+                      placeholder="e.g. Saiful"
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-text-secondary)] block mb-1.5">
-                    Last Name
-                  </label>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Last Name</label>
                   <input
                     type="text"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl py-2.5 px-4 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all"
+                    placeholder="e.g. Islam"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-[var(--color-text-secondary)] block mb-1.5">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" size={18} />
-                  <input
-                    type="tel"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all"
-                  />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Phone Number *</label>
+                  <div className="relative">
+                    <FiPhone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input
+                      type="tel"
+                      name="phoneNumber"
+                      required
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
+                      placeholder="e.g. 01711223344"
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Email Address (Registered)</label>
+                  <div className="relative">
+                    <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input
+                      type="email"
+                      readOnly
+                      disabled
+                      value={user?.email || ''}
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-100/80 border border-gray-200 rounded-xl text-sm text-gray-500 cursor-not-allowed outline-none select-none"
+                    />
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <label className="text-sm font-medium text-[var(--color-text-secondary)] block mb-1.5">
-                  Address
-                </label>
+            {/* Section 2: Shipping & Delivery Address */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                <div 
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{
+                    backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                    color: 'var(--color-primary, #619d23)'
+                  }}
+                >
+                  <FiMapPin size={15} />
+                </div>
+                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">
+                  Default Delivery Address
+                </h3>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700">Street / House & Road Address</label>
                 <div className="relative">
-                  <FiMapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" size={18} />
+                  <FiMapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                   <input
                     type="text"
                     name="addressLine"
                     value={formData.addressLine}
                     onChange={handleChange}
-                    placeholder="House No, Road, Block"
-                    className="w-full border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all"
+                    placeholder="e.g. House #12, Road #4, Bangla Bazar"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-text-secondary)] block mb-1.5">
-                    City
-                  </label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">City</label>
                   <input
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl py-2.5 px-4 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all"
+                    placeholder="e.g. Barisal"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-text-secondary)] block mb-1.5">
-                    State
-                  </label>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">State / Division</label>
                   <input
                     type="text"
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl py-2.5 px-4 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all"
+                    placeholder="e.g. Barisal"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-text-secondary)] block mb-1.5">
-                    Postal Code
-                  </label>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Postal Code</label>
                   <input
                     type="text"
                     name="postalCode"
                     value={formData.postalCode}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl py-2.5 px-4 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all"
+                    placeholder="e.g. 8200"
+                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-xs text-gray-400 text-center sm:text-left">
+                Keep your profile updated for hassle-free vegetable deliveries.
+              </p>
 
               <button
                 type="submit"
                 disabled={isUpdating}
-                className="w-full mt-4 bg-[var(--color-primary)] hover:bg-[#4A9A7D] text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-70 shadow-md shadow-[var(--color-primary)]/20"
+                className="w-full sm:w-auto px-8 py-3 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 active:scale-98 transition-all disabled:opacity-60 cursor-pointer hover:opacity-90"
+                style={{
+                  backgroundColor: 'var(--color-primary, #619d23)',
+                  boxShadow: '0 10px 25px -5px color-mix(in srgb, var(--color-primary, #619d23) 35%, transparent)'
+                }}
               >
                 {isUpdating ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Saving...
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Saving Changes...</span>
                   </>
                 ) : (
                   <>
-                    <FiSave size={18} />
-                    Save Changes
+                    <FiSave size={16} />
+                    <span>Save Changes</span>
                   </>
                 )}
               </button>
-            </form>
-          </div>
+            </div>
+          </form>
+
         </div>
       </div>
     </div>

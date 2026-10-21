@@ -115,24 +115,24 @@ const SidebarCategories = () => {
 
   if (error) {
     return (
-      <div className="p-4 text-sm text-gray-400 text-center">
-        ক্যাটাগরি লোড করা যায়নি।
+      <div className="p-4 text-xs text-gray-400 text-center">
+        Failed to load categories.
       </div>
     );
   }
 
   if (categories.length === 0) {
     return (
-      <div className="p-4 text-sm text-gray-400 text-center">
-        কোনো ক্যাটাগরি নেই।
+      <div className="p-4 text-xs text-gray-400 text-center">
+        No categories available.
       </div>
     );
   }
 
   return (
     <div className="py-3">
-      <h2 className="py-2 text-sm font-bold text-gray-500 uppercase tracking-wide px-4">
-        ক্যাটাগরি
+      <h2 className="py-2 text-xs font-bold text-gray-500 uppercase tracking-wider px-4">
+        Categories
       </h2>
       <nav className="flex flex-col">
         {categories.map((cat: any) => {

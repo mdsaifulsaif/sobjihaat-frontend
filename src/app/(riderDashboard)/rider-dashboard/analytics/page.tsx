@@ -37,7 +37,7 @@ export default function AnalyticsPage() {
             {/* Main Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { title: 'Total Revenue', value: '৳12,54,300', change: '+12.5%', trend: 'up', icon: FiDollarSign, color: '#5CAF90' },
+                    { title: 'Total Revenue', value: '৳12,54,300', change: '+12.5%', trend: 'up', icon: FiDollarSign, color: 'var(--color-primary, #619d23)' },
                     { title: 'Total Orders', value: '3,245', change: '+8.2%', trend: 'up', icon: FiShoppingCart, color: '#3B82F6' },
                     { title: 'Unique Visitors', value: '45,678', change: '+15.3%', trend: 'up', icon: FiEye, color: '#8B5CF6' },
                     { title: 'Conversion Rate', value: '3.24%', change: '-0.8%', trend: 'down', icon: FiUsers, color: '#F59E0B' },
@@ -71,8 +71,11 @@ export default function AnalyticsPage() {
                         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
                             <div key={day} className="flex-1 flex flex-col items-center gap-2">
                                 <div
-                                    className="w-full bg-[#5CAF90] rounded-t-lg hover:bg-[#4A9A7D] transition-colors cursor-pointer"
-                                    style={{ height: `${Math.random() * 180 + 40}px` }}
+                                    className="w-full rounded-t-lg transition-colors cursor-pointer hover:opacity-85"
+                                    style={{ 
+                                        height: `${((i + 1) * 35) % 180 + 40}px`,
+                                        backgroundColor: 'var(--color-primary, #619d23)' 
+                                    }}
                                 />
                                 <span className="text-xs text-gray-500">{day}</span>
                             </div>
@@ -88,7 +91,7 @@ export default function AnalyticsPage() {
                             <div key={day} className="flex-1 flex flex-col items-center gap-2">
                                 <div
                                     className="w-full bg-blue-500 rounded-t-lg hover:bg-blue-600 transition-colors cursor-pointer"
-                                    style={{ height: `${Math.random() * 180 + 40}px` }}
+                                    style={{ height: `${((i + 2) * 28) % 180 + 40}px` }}
                                 />
                                 <span className="text-xs text-gray-500">{day}</span>
                             </div>
@@ -104,7 +107,7 @@ export default function AnalyticsPage() {
                     <h3 className="text-lg font-semibold text-gray-800 mb-6">Traffic Sources</h3>
                     <div className="space-y-4">
                         {[
-                            { source: 'Direct', value: 45, color: '#5CAF90' },
+                            { source: 'Direct', value: 45, color: 'var(--color-primary, #619d23)' },
                             { source: 'Organic Search', value: 30, color: '#3B82F6' },
                             { source: 'Social Media', value: 15, color: '#EC4899' },
                             { source: 'Referral', value: 10, color: '#F59E0B' },

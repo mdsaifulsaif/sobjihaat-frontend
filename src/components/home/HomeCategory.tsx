@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Grid, Mousewheel } from "swiper/modules";
 import CategoryCard from "../shared/CategoryCard";
-import { Category } from "@/types/category"; 
+import { Category } from "@/types/category";
 
 // Import styles
 import "swiper/css";
@@ -56,16 +56,16 @@ const GridIcon = () => (
    Skeleton Loader
 --------------------------------------------------------------------------- */
 const SkeletonLoader = () => (
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
-    {Array.from({ length: 6 }).map((_, index) => (
+  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 sm:gap-3">
+    {Array.from({ length: 10 }).map((_, index) => (
       <div
         key={index}
-        className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+        className="bg-white rounded-xl sm:rounded-2xl p-1.5 sm:p-2 shadow-xs border border-gray-100 flex flex-col items-center"
       >
-        <div className="aspect-square w-full rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
-        <div className="mt-3 text-center space-y-2">
-          <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-3/4 mx-auto animate-pulse" />
-          <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-1/2 mx-auto animate-pulse" />
+        <div className="aspect-square w-full rounded-lg sm:rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
+        <div className="mt-2 text-center space-y-1.5 w-full">
+          <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-3/4 mx-auto animate-pulse" />
+          <div className="h-2 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-1/2 mx-auto animate-pulse" />
         </div>
       </div>
     ))}
@@ -95,12 +95,13 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
   }, [initialCategories]);
 
   const breakpoints = {
-    320: { slidesPerView: 3, spaceBetween: 12 },
-    480: { slidesPerView: 3, spaceBetween: 14 },
-    640: { slidesPerView: 3, spaceBetween: 16 },
-    768: { slidesPerView: 4, spaceBetween: 18 },
-    1024: { slidesPerView: 6, spaceBetween: 20 },
-    1280: { slidesPerView: 6, spaceBetween: 24 },
+    320: { slidesPerView: 4, spaceBetween: 8 },
+    480: { slidesPerView: 4, spaceBetween: 10 },
+    640: { slidesPerView: 6, spaceBetween: 12 },
+    768: { slidesPerView: 7, spaceBetween: 12 },
+    1024: { slidesPerView: 8, spaceBetween: 14 },
+    1280: { slidesPerView: 10, spaceBetween: 14 },
+    1536: { slidesPerView: 10, spaceBetween: 16 },
   };
 
   if (!categoriesData.length) {
@@ -108,33 +109,21 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#fbfcfa] px-1 py-8 sm:px-6 lg:py-10">
-      <div className="mx-auto container overflow-hidden">
-        {/* <div className="text-center">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#eef3e6] px-4 py-1.5 text-xs font-bold tracking-wide text-[var(--color-primary)]">
-            <StarBadgeIcon />
-            EXPLORE &amp; SHOP
-          </span>
+    <section className="py-6 sm:py-8 bg-[#fbfcfa] overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          title="Product Categories"
+          icon={<BiLeaf size={18} />}
+          actionLabel="See all"
+          onAction={() => {
+            router.push("/categories");
+            if (typeof window !== "undefined") {
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }
+          }}
+        />
 
-          <h2 className="text-3xl font-extrabold leading-tight text-[#173321] sm:text-4xl lg:text-[2.6rem]">
-            Shop by Category
-          </h2>
-
-          <p className="mx-auto mt-4 text-sm text-gray-500 sm:text-base">
-            Find everything you need,{" "}
-            <span className="relative inline-block">
-              fresh and fast
-              <span className="absolute -bottom-0.5 left-0 h-[2px] w-full bg-[var(--color-primary)]" />
-            </span>
-          </p>
-        </div> */}
-
-        
-
-      <SectionHeader title="Prodcut Categories" icon={<BiLeaf size={18} />} actionLabel="See all" onAction={() => router.push("/vegetables")} />
-
- 
-        <div className="relative py-10">
+        <div className="relative mt-2">
           {!isMounted ? (
             <SkeletonLoader />
           ) : (
@@ -148,7 +137,7 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
               mousewheel={{ sensitivity: 0.5, forceToAxis: true }}
               grabCursor={true}
               loop={false}
-              className="!overflow-visible"
+              className="py-1"
             >
               {categoriesData.map((cat: Category) => (
                 <SwiperSlide key={cat._id}>
@@ -162,10 +151,10 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
             <>
               <button
                 type="button"
-                className="swiper-button-prev-custom absolute -left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 lg:-left-5 cursor-pointer"
+                className="swiper-button-prev-custom absolute -left-2.5 sm:-left-3.5 top-1/2 z-10 flex h-8 w-8 sm:h-9 sm:w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 cursor-pointer"
                 aria-label="Previous"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M15 5l-7 7 7 7"
                     stroke="#1a3c1f"
@@ -178,10 +167,10 @@ const HomeCategory: React.FC<HomeCategoryProps> = ({ initialCategories = [] }) =
 
               <button
                 type="button"
-                className="swiper-button-next-custom absolute -right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 lg:-right-5 cursor-pointer"
+                className="swiper-button-next-custom absolute -right-2.5 sm:-right-3.5 top-1/2 z-10 flex h-8 w-8 sm:h-9 sm:w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white shadow-md transition hover:bg-gray-50 cursor-pointer"
                 aria-label="Next"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M9 5l7 7-7 7"
                     stroke="#1a3c1f"

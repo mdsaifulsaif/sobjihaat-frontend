@@ -141,19 +141,30 @@ export const useSocket = () => {
       return;
     }
 
+    // ✅ Vercel বা অন্য পরিবেশে socket disable করা থাকলে connect করবে না
+    if (process.env.NEXT_PUBLIC_USE_SOCKET === "false") {
+      console.log("ℹ️ Socket is disabled (NEXT_PUBLIC_USE_SOCKET === 'false')");
+      setIsLoading(false);
+      return;
+    }
+
     const userID = session.user.id; // ✅ backend এর User._id — এটাই room match করার key
     const role = (session.user as any)?.role;
 
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
+    const socketUrl =
+      process.env.NEXT_PUBLIC_SOCKET_URL ||
+      process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/, "") ||
+      "http://localhost:5001";
     console.log("🔌 Connecting to socket server:", socketUrl);
 
     const socket = io(socketUrl, {
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"],
       withCredentials: true,
       reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 2000,
+      reconnectionDelayMax: 10000,
+      timeout: 10000,
     });
 
     socketRef.current = socket;
@@ -174,13 +185,13 @@ export const useSocket = () => {
     socket.on("disconnect", (reason) => {
       console.log("❌ Socket disconnected. Reason:", reason);
       setIsConnected(false);
-      if (reason === "io server disconnect" || reason === "transport close") {
+      if (reason === "io server disconnect") {
         socket.connect();
       }
     });
 
     socket.on("connect_error", (error) => {
-      console.error("🔴 Socket connect_error:", error);
+      console.warn("⚠️ Socket connect notice (retrying):", error?.message || error);
     });
 
     // ✅ backend rider-join handler নিজেই DB থেকে area খুঁজে এখানে পাঠায়
@@ -240,6 +251,7 @@ export const useSocket = () => {
   };
 
   return {
+    socket: socketRef.current,
     isConnected,
     notifications,
     unreadCount,

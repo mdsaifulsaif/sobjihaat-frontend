@@ -67,14 +67,18 @@ const PayoutHistory = () => {
         <div className="flex gap-3">
           <button
             onClick={() => refetch()}
-            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center gap-2 transition-colors"
+            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center gap-2 transition-colors cursor-pointer"
           >
             <FiRefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
             Refresh
           </button>
           <Link
             href="/rider-dashboard/payout/request"
-            className="px-5 py-2.5 bg-[#5CAF90] text-white rounded-lg text-sm font-semibold hover:bg-[#4A9A7D] transition-colors flex items-center gap-2"
+            className="px-5 py-2.5 text-white rounded-lg text-sm font-semibold transition-all flex items-center gap-2 shadow-sm hover:opacity-90"
+            style={{
+              backgroundColor: 'var(--color-primary, #619d23)',
+              boxShadow: '0 4px 14px color-mix(in srgb, var(--color-primary, #619d23) 30%, transparent)'
+            }}
           >
             <FiPlus size={18} />
             Request Payout
@@ -121,9 +125,10 @@ const PayoutHistory = () => {
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() => setStatus("")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              !status ? "bg-[#5CAF90] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+              !status ? "text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
+            style={!status ? { backgroundColor: 'var(--color-primary, #619d23)' } : {}}
           >
             All
           </button>
@@ -131,9 +136,10 @@ const PayoutHistory = () => {
             <button
               key={s}
               onClick={() => setStatus(s)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
-                status === s ? "bg-[#5CAF90] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors cursor-pointer ${
+                status === s ? "text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
+              style={status === s ? { backgroundColor: 'var(--color-primary, #619d23)' } : {}}
             >
               {s}
             </button>
@@ -217,7 +223,8 @@ const PayoutHistory = () => {
             <p className="text-gray-400 mt-1">You haven't requested any payouts yet</p>
             <Link
               href="/rider-dashboard/payout/request"
-              className="mt-4 inline-block px-6 py-2 bg-[#5CAF90] text-white rounded-lg hover:bg-[#4A9A7D] transition-colors"
+              className="mt-4 inline-block px-6 py-2 text-white rounded-lg transition-colors hover:opacity-90"
+              style={{ backgroundColor: 'var(--color-primary, #619d23)' }}
             >
               Request Payout
             </Link>

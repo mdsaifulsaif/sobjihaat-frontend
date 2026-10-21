@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@theme {
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
+  --radius-2xl: 0.25rem;
+  --radius-3xl: 0.25rem;
+  --radius: 0.25rem;
+  --color-primary: var(--theme-primary, var(--color-primary, #619d23));
+  --color-secondary: var(--theme-secondary, var(--color-secondary, #4B5966));
+  --color-accent: var(--theme-accent, var(--color-accent, #FF6B6B));
+  --color-surface: var(--theme-surface, var(--color-surface, #F8FAFC));
+  --color-text-primary: var(--theme-text-primary, var(--color-text-primary, #1E293B));
+  --color-text-secondary: var(--theme-text-secondary, var(--color-text-secondary, #4B5966));
+  --color-text-muted: var(--theme-text-muted, var(--color-text-muted, #94A3B8));
+}
+
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */
@@ -16,22 +34,43 @@
   height: 100%;
 }
 
-/* ===== Google Fonts ===== */
-* {
-  font-family: "Poppins", sans-serif;
+/* ===== Typography ===== */
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-family, "Poppins", sans-serif);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading, var(--font-family, "Poppins", sans-serif));
 }
 
 /* ===== CSS Variables System for Theme Customization ===== */
 :root {
   /* Colors - Can be customized from admin */
+  --theme-primary: #619d23;
   --color-primary: #619d23;
+  --theme-secondary: #4B5966;
   --color-secondary: #4B5966;
+  --theme-accent: #FF6B6B;
   --color-accent: #FF6B6B;
-  --color-background: #FFFFFF;
+  --theme-surface: #F8FAFC;
   --color-surface: #F8FAFC;
+  --theme-text-primary: #1E293B;
   --color-text-primary: #1E293B;
+  --theme-text-secondary: #4B5966;
   --color-text-secondary: #4B5966;
+  --theme-text-muted: #94A3B8;
   --color-text-muted: #94A3B8;
+  --color-background: #FFFFFF;
   --color-success: #22C55E;
   --color-warning: #F59E0B;
   --color-error: #EF4444;
@@ -49,11 +88,11 @@
   --font-size-4xl: 2.25rem;
   --font-size-5xl: 3rem;
 
-  /* Border Radius */
+  /* Border Radius - Unified to sm */
   --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
   --radius-full: 9999px;
 
   /* Shadows */
@@ -108,7 +147,7 @@ h6 {
   padding: 0.75rem 1.5rem;
   font-weight: 500;
   font-size: 14px;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -157,13 +196,13 @@ h6 {
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border: 1px solid #E2E8F0;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   background-color: white;
 }
 
 .input:focus-within {
-  border-color: #5CAF90;
-  box-shadow: 0 0 0 2px rgba(92, 175, 144, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
 /* ===== Scrollbar ===== */
@@ -187,8 +226,69 @@ h6 {
 
 /* ===== Selection ===== */
 ::selection {
-  background-color: #5CAF90;
+  background-color: var(--color-primary);
   color: white;
+}
+
+/* ===== Dynamic Theme Helper Utilities ===== */
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+.border-primary {
+  border-color: var(--color-primary) !important;
+}
+
+.fill-primary {
+  fill: var(--color-primary) !important;
+}
+
+.stroke-primary {
+  stroke: var(--color-primary) !important;
+}
+
+.hover-bg-primary:hover {
+  background-color: var(--color-primary) !important;
+}
+
+.hover-text-primary:hover {
+  color: var(--color-primary) !important;
+}
+
+.hover-border-primary:hover {
+  border-color: var(--color-primary) !important;
+}
+
+.bg-primary-light {
+  background-color: color-mix(in srgb, var(--color-primary) 12%, white) !important;
+}
+
+.border-primary-light {
+  border-color: color-mix(in srgb, var(--color-primary) 25%, white) !important;
+}
+
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.92);
+}
+
+.btn-accent {
+  background-color: var(--color-accent) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-accent:hover {
+  filter: brightness(0.92);
 }
 
 /* ===== Animations ===== */

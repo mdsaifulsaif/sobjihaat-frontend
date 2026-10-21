@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useSubscribeNewsletterMutation } from '@/redux/api/subscriberApi';
+import toast from 'react-hot-toast';
 
 /* =========================================================================
    Brand color: --color-primary: #619d23
@@ -77,11 +79,13 @@ const StoreBadge: React.FC<{ store: 'google' | 'apple' }> = ({ store }) => (
 
 const AppDownloadPromo: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [subscribeNewsletter, { isLoading: isSubscribing }] = useSubscribeNewsletterMutation();
 
   return (
-    <section className="px-4 py-8 sm:px-6 bg-[#eef3e6]">
-      <div className="relative mx-auto container overflow-hidden rounded-3xl ">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
+    <section className="py-6 sm:py-8 bg-[#f5f8f1]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-2xl md:rounded-3xl">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
           {/* ==================== LEFT: copy ==================== */}
           <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-10 lg:py-12">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 px-3.5 py-1 text-xs font-bold tracking-wide text-[var(--color-primary)]">
@@ -115,7 +119,17 @@ const AppDownloadPromo: React.FC = () => {
               </div>
 
               <form
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!email.trim()) return;
+                  try {
+                    await subscribeNewsletter({ email: email.trim() }).unwrap();
+                    toast.success("Thank you! You'll be notified when our app launches.");
+                    setEmail("");
+                  } catch (err: any) {
+                    toast.error(err?.data?.message || "Failed to submit. Please try again.");
+                  }
+                }}
                 className="flex w-full flex-col gap-2 sm:flex-row"
               >
                 <input
@@ -128,9 +142,10 @@ const AppDownloadPromo: React.FC = () => {
                 />
                 <button
                   type="submit"
-                  className="whitespace-nowrap rounded-lg bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+                  disabled={isSubscribing}
+                  className="whitespace-nowrap rounded-lg bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50 cursor-pointer"
                 >
-                  Notify Me
+                  {isSubscribing ? "Submitting..." : "Notify Me"}
                 </button>
               </form>
             </div>
@@ -158,6 +173,7 @@ const AppDownloadPromo: React.FC = () => {
               className="h-auto max-h-[260px] w-full max-w-[320px] select-none object-contain drop-shadow-xl sm:max-h-[320px] sm:max-w-[380px] lg:absolute lg:bottom-0 lg:right-0 lg:h-full lg:max-h-none lg:w-auto lg:max-w-none lg:translate-x-2"
               priority
             />
+          </div>
           </div>
         </div>
       </div>

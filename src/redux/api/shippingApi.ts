@@ -38,6 +38,20 @@ export const shippingApi = baseApi.injectEndpoints({
       providesTags: ["Shipping"],
     }),
 
+    // ✅ Get Active Shipping Config by type (e.g. local or nationwide)
+    getShippingConfig: builder.query<{
+      success: boolean;
+      data: {
+        type: string;
+        tiers: Array<{ min: number; max: number; charge: number }>;
+        riderCommission: number;
+        isActive: boolean;
+      };
+    }, string | void>({
+      query: (type = "local") => `/shipping/${type}`,
+      providesTags: ["Shipping"],
+    }),
+
     // ✅ Shipping Charge Preview
     getShippingPreview: builder.query<
       ShippingPreviewResponse,
@@ -50,4 +64,4 @@ export const shippingApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetZonesQuery, useGetShippingPreviewQuery } = shippingApi;
+export const { useGetZonesQuery, useGetShippingConfigQuery, useGetShippingPreviewQuery } = shippingApi;

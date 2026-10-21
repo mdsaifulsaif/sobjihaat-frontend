@@ -1036,6 +1036,7 @@ const CheckoutContent = () => {
     discountType?: string;
   } | null>(null);
   const [isCouponDrawerOpen, setIsCouponDrawerOpen] = useState(false);
+  const [showMobileItems, setShowMobileItems] = useState(false);
 
   const handleApplyCoupon = async (codeToApply?: string) => {
     const code = (codeToApply || couponCode).trim().toUpperCase();
@@ -1334,9 +1335,22 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] tracking-tight mb-6">
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] tracking-tight mb-4 sm:mb-6">
           Checkout
         </h1>
+
+        {/* ✅ Mobile Compact Smart Upsell Nudge (কত কিনলে কত ছাড় / ফ্রি ডেলিভারি লক্ষ্য) */}
+        <div className="block lg:hidden mb-4">
+          <SmartUpsellNudge
+            currentSubtotal={totalPrice}
+            onApplyCoupon={(code: string) => handleApplyCoupon(code)}
+            onOpenCouponDrawer={() => setIsCouponDrawerOpen(true)}
+            appliedCouponCode={appliedCoupon?.code}
+            appliedDiscountAmount={appliedCoupon?.discountAmount || 0}
+            isFreeShipping={estimatedShipping === 0}
+            compact={true}
+          />
+        </div>
 
         {/* ✅ ফর্মে id দেওয়া হলো — এই id দিয়েই FloatingCartButton থেকে ফর্ম submit করা হবে */}
         <form id="checkout-form" onSubmit={handleSubmit} className="space-y-4">
@@ -1380,7 +1394,8 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                   </div>
                 </div>
 
-                {/* Delivery Type */}
+                {/* Delivery Type (Temporarily hidden from initial UI as requested - defaults to local) */}
+                {/* 
                 <div>
                   <SubLabel>Delivery Type</SubLabel>
                   <div className="grid grid-cols-2 gap-3">
@@ -1436,6 +1451,7 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                     ))}
                   </div>
                 </div>
+                */}
 
                 {/* Delivery Address */}
                 <div>
@@ -1565,8 +1581,8 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
               </div>
             </div>
 
-            {/* ── Order Summary ── */}
-            <div className="lg:col-span-5">
+            {/* ── Order Summary (Desktop only: hidden on mobile to avoid long scroll) ── */}
+            <div className="hidden lg:block lg:col-span-5">
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:sticky lg:top-6">
                 <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
                   <h2 className="text-[15px] font-bold text-[var(--color-text-primary)] tracking-tight">
@@ -1602,36 +1618,30 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                   ))}
                 </div>
 
-                {/* Smart Upsell Nudge Bar */}
+                {/* Smart Upsell Nudge Bar (Compact & Clean like mobile to prevent squishing) */}
                 <div className="mb-4">
                   <SmartUpsellNudge
+                    compact={true}
                     currentSubtotal={totalPrice}
                     onApplyCoupon={(code: string) => handleApplyCoupon(code)}
+                    onOpenCouponDrawer={() => setIsCouponDrawerOpen(true)}
                     appliedCouponCode={appliedCoupon?.code}
                     appliedDiscountAmount={appliedCoupon?.discountAmount || 0}
                     isFreeShipping={estimatedShipping === 0}
                   />
                 </div>
 
-                {/* Coupon */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setShowCoupon(!showCoupon)}
-                      className="flex items-center gap-2 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors"
-                    >
-                      <FiTag size={13} />
-                      {appliedCoupon ? "Coupon applied" : showCoupon ? "Hide coupon" : "Have a coupon code?"}
-                      <FiChevronDown
-                        size={13}
-                        className={`transition-transform ${showCoupon ? "rotate-180" : ""}`}
-                      />
-                    </button>
+                {/* Coupon (Always Visible Input, Clean & Simple like mobile) */}
+                <div className="mb-4 pt-3 border-t border-gray-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-[var(--color-text-primary)] flex items-center gap-1.5">
+                      <FiTag size={13} className="text-[var(--color-primary)]" />
+                      Coupon Code
+                    </span>
                     <button
                       type="button"
                       onClick={() => setIsCouponDrawerOpen(true)}
-                      className="text-[11px] font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-full border border-amber-200/80 transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                      className="text-[11px] font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-full border border-amber-200/80 transition-all flex items-center gap-1 shadow-2xs active:scale-95 cursor-pointer"
                     >
                       <span>🎟️</span>
                       <span>Available Coupons</span>
@@ -1639,9 +1649,9 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                   </div>
 
                   {appliedCoupon ? (
-                    <div className="mt-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between shadow-sm animate-fadeIn">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between shadow-2xs animate-fadeIn">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
                           ✓
                         </div>
                         <div>
@@ -1657,20 +1667,20 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                       <button
                         type="button"
                         onClick={handleRemoveCoupon}
-                        className="px-2 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg flex items-center gap-1 transition"
+                        className="px-2 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg flex items-center gap-1 transition cursor-pointer"
                       >
-                        <FiX size={13} /> Remove
+                        <FiX size={12} /> Remove
                       </button>
                     </div>
-                  ) : showCoupon ? (
-                    <div className="mt-2.5 space-y-2">
+                  ) : (
+                    <div className="space-y-1.5">
                       <div className="flex gap-2">
                         <input
                           type="text"
                           value={couponCode}
                           onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                          placeholder="Enter coupon code (e.g. SOBJI50)"
-                          className={`${inputClass} flex-1 uppercase font-mono tracking-wider text-xs`}
+                          placeholder="Enter coupon code"
+                          className={`${inputClass} flex-1 uppercase font-mono tracking-wider text-xs py-2`}
                           disabled={isApplyingCoupon}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
@@ -1683,7 +1693,7 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                           type="button"
                           onClick={() => handleApplyCoupon()}
                           disabled={isApplyingCoupon || !couponCode.trim()}
-                          className="px-4 py-2.5 bg-[var(--color-primary)] text-white text-xs font-bold rounded-xl hover:opacity-90 transition-opacity flex-shrink-0 disabled:opacity-50 flex items-center gap-1.5"
+                          className="px-4 py-2 bg-[var(--color-primary)] text-white text-xs font-bold rounded-xl hover:opacity-90 transition-opacity flex-shrink-0 disabled:opacity-50 flex items-center gap-1.5 cursor-pointer shadow-2xs"
                         >
                           {isApplyingCoupon ? (
                             <>
@@ -1700,13 +1710,13 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                         <button
                           type="button"
                           onClick={() => setIsCouponDrawerOpen(true)}
-                          className="text-[var(--color-primary)] font-semibold hover:underline"
+                          className="text-[var(--color-primary)] font-semibold hover:underline cursor-pointer"
                         >
                           কুপন তালিকা দেখুন →
                         </button>
                       </p>
                     </div>
-                  ) : null}
+                  )}
                 </div>
 
                 {/* Selected delivery time summary */}
@@ -1943,71 +1953,62 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
               subtitle="How would you like to pay?"
             />
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                {
-                  value: "cod",
-                  label: "Cash on Delivery",
-                  sub: "Pay on receive",
-                  icon: "💵",
-                  available: true,
-                },
-                {
-                  value: "bkash",
-                  label: "bKash",
-                  sub: "Coming soon",
-                  icon: "📱",
-                  available: false,
-                },
-                {
-                  value: "nagad",
-                  label: "Nagad",
-                  sub: "Coming soon",
-                  icon: "💳",
-                  available: false,
-                },
-                {
-                  value: "card",
-                  label: "Card",
-                  sub: "Coming soon",
-                  icon: "💳",
-                  available: false,
-                },
-              ].map((method) => (
-                <label
-                  key={method.value}
-                  className={`relative flex flex-col items-center text-center gap-1 p-3.5 border rounded-xl transition-all ${
-                    !method.available
-                      ? "opacity-50 cursor-not-allowed border-gray-100 bg-gray-50"
-                      : formData.paymentMethod === method.value
-                        ? "border-[var(--color-primary)] bg-[var(--color-primary)]/5 ring-1 ring-[var(--color-primary)]/20 cursor-pointer"
-                        : "border-gray-200 hover:border-gray-300 cursor-pointer"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value={method.value}
-                    checked={formData.paymentMethod === method.value}
-                    onChange={handleChange}
-                    disabled={!method.available}
-                    className="sr-only"
-                  />
-                  <span className="text-xl leading-none">{method.icon}</span>
-                  <p className="text-xs font-bold text-[var(--color-text-primary)] leading-tight mt-1">
-                    {method.label}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Cash On Delivery (Active & Selected) */}
+              <label
+                className={`relative flex items-center gap-3.5 p-3.5 border rounded-xl cursor-pointer transition-all ${
+                  formData.paymentMethod === "cod"
+                    ? "border-[var(--color-primary)] bg-[var(--color-primary)]/5 ring-1 ring-[var(--color-primary)]/20 shadow-2xs"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cod"
+                  checked={formData.paymentMethod === "cod"}
+                  onChange={handleChange}
+                  className="sr-only"
+                />
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center text-xl shrink-0">
+                  💵
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-[var(--color-text-primary)]">
+                    Cash on Delivery
                   </p>
-                  <p className="text-[10px] text-[var(--color-text-muted)] leading-tight">
-                    {method.sub}
+                  <p className="text-xs text-[var(--color-text-muted)]">
+                    Pay when you receive order
                   </p>
-                  {formData.paymentMethod === method.value &&
-                    method.available && (
-                      <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center">
-                        <FiCheck size={10} />
-                      </div>
-                    )}
-                </label>
-              ))}
+                </div>
+                {formData.paymentMethod === "cod" && (
+                  <div className="w-5 h-5 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shrink-0">
+                    <FiCheck size={11} strokeWidth={3} />
+                  </div>
+                )}
+              </label>
+
+              {/* Online Payment (Disabled / Coming Soon) */}
+              <div
+                className="relative flex items-center gap-3.5 p-3.5 border border-dashed border-gray-200 rounded-xl bg-gray-50/70 opacity-65 cursor-not-allowed select-none"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gray-200/60 text-gray-500 flex items-center justify-center text-xl shrink-0">
+                  💳
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-bold text-gray-700">
+                      Online Payment
+                    </p>
+                    <span className="text-[10px] font-bold text-gray-500 bg-gray-200/80 px-2 py-0.5 rounded-full">
+                      Coming soon
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400">
+                    bKash, Nagad & Cards
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="mt-5">
@@ -2021,6 +2022,145 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                   placeholder="Any special requests for your order..."
                 />
               </InputField>
+            </div>
+          </div>
+
+          {/* ===== MOBILE ONLY: 1-Line Clean Coupon Bar & Compact Bill Summary ===== */}
+          <div className="block lg:hidden space-y-3">
+            {/* 1-Line Clean Coupon Bar */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-3.5 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-[var(--color-text-primary)] flex items-center gap-1.5">
+                  <FiTag size={13} className="text-[var(--color-primary)]" />
+                  Coupon Code
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsCouponDrawerOpen(true)}
+                  className="text-[10px] font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200/80 transition-all flex items-center gap-1"
+                >
+                  <span>🎟️</span>
+                  <span>Available Coupons</span>
+                </button>
+              </div>
+
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded font-mono">
+                      {appliedCoupon.code}
+                    </span>
+                    <span className="text-emerald-700 font-semibold truncate text-[11px]">
+                      -৳{appliedCoupon.discountAmount.toLocaleString()} saved
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="font-bold text-red-600 hover:text-red-700 text-xs px-1.5"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter coupon code"
+                    className="flex-1 px-3 py-2 text-xs uppercase font-mono tracking-wider bg-[var(--color-surface)] border border-gray-200 rounded-xl outline-none focus:border-[var(--color-primary)] text-[var(--color-text-primary)]"
+                    disabled={isApplyingCoupon}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleApplyCoupon();
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleApplyCoupon()}
+                    disabled={isApplyingCoupon || !couponCode.trim()}
+                    className="px-4 py-2 bg-[var(--color-primary)] text-white text-xs font-bold rounded-xl hover:opacity-90 transition disabled:opacity-50 shrink-0"
+                  >
+                    {isApplyingCoupon ? "..." : "Apply"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Compact Payment Details */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-3.5 shadow-sm space-y-2">
+              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                <span className="text-xs font-bold text-[var(--color-text-primary)]">
+                  Payment Summary
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowMobileItems(!showMobileItems)}
+                  className="text-[11px] font-semibold text-[var(--color-primary)] flex items-center gap-1 hover:underline cursor-pointer"
+                >
+                  <span>{items.length} item{items.length > 1 ? "s" : ""}</span>
+                  <FiChevronDown
+                    size={12}
+                    className={`transition-transform duration-200 ${showMobileItems ? "rotate-180" : ""}`}
+                  />
+                </button>
+              </div>
+
+              {/* Collapsible item preview */}
+              {showMobileItems && (
+                <div className="space-y-1.5 py-1.5 max-h-40 overflow-y-auto border-b border-gray-100 mb-1.5 text-xs">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between">
+                      <span className="text-[var(--color-text-muted)] truncate max-w-[210px]">
+                        {item.quantity}× {item.name}
+                      </span>
+                      <span className="font-semibold text-[var(--color-text-primary)] shrink-0">
+                        ৳{(item.price * item.quantity).toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pricing breakdown */}
+              <div className="space-y-1.5 text-xs">
+                <div className="flex justify-between text-[var(--color-text-muted)]">
+                  <span>Subtotal</span>
+                  <span className="font-semibold text-[var(--color-text-primary)]">
+                    ৳{totalPrice.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="flex justify-between text-[var(--color-text-muted)]">
+                  <span>Delivery Charge</span>
+                  <span className="font-semibold text-[var(--color-text-primary)]">
+                    {isShippingLoading ? (
+                      <span className="inline-block w-8 h-3 bg-gray-100 rounded animate-pulse" />
+                    ) : estimatedShipping === 0 ? (
+                      <span className="text-[var(--color-primary)] font-bold">FREE</span>
+                    ) : (
+                      `৳${estimatedShipping}`
+                    )}
+                  </span>
+                </div>
+
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between text-emerald-600 font-medium">
+                    <span>Coupon Discount</span>
+                    <span>-৳{couponDiscount.toLocaleString()}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center pt-2 border-t border-gray-100 font-bold text-xs text-[var(--color-text-primary)]">
+                  <span className="text-sm">Total Payable</span>
+                  <span className="text-base font-black text-[var(--color-text-primary)]">
+                    ৳{grandTotal.toLocaleString()}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </form>

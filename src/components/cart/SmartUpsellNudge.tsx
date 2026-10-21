@@ -18,19 +18,23 @@ import { useSession } from "next-auth/react";
 interface SmartUpsellNudgeProps {
   currentSubtotal: number;
   onApplyCoupon?: (code: string) => void;
+  onOpenCouponDrawer?: () => void;
   appliedCouponCode?: string;
   appliedDiscountAmount?: number;
   freeShippingThreshold?: number; // fallback if not configured
   isFreeShipping?: boolean;
+  compact?: boolean;
 }
 
 export default function SmartUpsellNudge({
   currentSubtotal,
   onApplyCoupon,
+  onOpenCouponDrawer,
   appliedCouponCode,
   appliedDiscountAmount = 0,
   freeShippingThreshold: fallbackThreshold = 1000,
   isFreeShipping,
+  compact = false,
 }: SmartUpsellNudgeProps) {
   const { data: session } = useSession();
   const currentUserId = (session?.user as any)?.id || (session?.user as any)?._id;
@@ -216,6 +220,97 @@ export default function SmartUpsellNudge({
 
   const IconComponent = milestoneState.icon;
 
+  if (compact) {
+    return (
+      <div className="w-full bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 border border-emerald-200/90 rounded-2xl p-3 sm:p-3.5 shadow-xs transition-all">
+        <div className="flex items-start gap-2.5">
+          {/* Icon */}
+          <div
+            className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-2xs mt-0.5 ${
+              milestoneState.stage === 3
+                ? "bg-amber-500 text-white"
+                : milestoneState.stage === 2
+                ? "bg-emerald-600 text-white"
+                : "bg-emerald-100 text-emerald-800"
+            }`}
+          >
+            <IconComponent size={16} />
+          </div>
+
+          {/* Text Content: Full headline and subline without truncation */}
+          <div className="min-w-0 flex-1">
+            <h4 className="text-xs sm:text-[13px] font-bold text-gray-900 leading-snug">
+              {milestoneState.headline}
+            </h4>
+            <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
+              {milestoneState.subline}
+            </p>
+
+            {/* Action Buttons: Wrap cleanly under the message */}
+            <div className="mt-2.5 flex items-center gap-2 flex-wrap">
+              {milestoneState.actionType === "apply_coupon" &&
+              milestoneState.couponCode &&
+              onApplyCoupon ? (
+                <button
+                  type="button"
+                  onClick={() => onApplyCoupon(milestoneState.couponCode!)}
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-[11px] font-bold rounded-lg shadow-2xs transition-all cursor-pointer inline-flex items-center gap-1"
+                >
+                  <FiTag size={12} />
+                  <span>অ্যাপ্লাই {milestoneState.couponCode}</span>
+                </button>
+              ) : milestoneState.actionType === "add_items" ? (
+                <Link
+                  href="/search"
+                  className="px-3 py-1 bg-white hover:bg-emerald-50 border border-emerald-300 text-emerald-800 text-[11px] font-bold rounded-lg shadow-2xs transition-all inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>+যোগ করুন</span>
+                  <FiArrowRight size={11} />
+                </Link>
+              ) : null}
+
+              {onOpenCouponDrawer && (
+                <button
+                  type="button"
+                  onClick={onOpenCouponDrawer}
+                  className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-800 text-[11px] font-bold rounded-lg shadow-2xs transition-all inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>🎟️</span>
+                  <span>Available Coupons</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mini progress bar with progress details */}
+        <div className="mt-2.5 pt-2 border-t border-emerald-200/50">
+          <div className="flex items-center justify-between text-[10px] font-bold text-gray-500 mb-1">
+            <span className="text-emerald-900 flex items-center gap-1">
+              <FiTruck size={11} className="text-emerald-600" />
+              কার্ট প্রগ্রেস
+            </span>
+            <span className="font-mono text-emerald-800">
+              ৳{currentSubtotal.toLocaleString()} / ৳
+              {(milestoneState.targetAmount || dynamicFreeDeliveryThreshold).toLocaleString()} (
+              {milestoneState.progressPercent}%)
+            </span>
+          </div>
+          <div className="relative h-1.5 w-full bg-emerald-100/90 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-700 ease-out ${
+                milestoneState.stage === 3
+                  ? "bg-gradient-to-r from-emerald-500 to-amber-500"
+                  : "bg-gradient-to-r from-emerald-500 to-teal-500"
+              }`}
+              style={{ width: `${milestoneState.progressPercent}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 border border-emerald-200/90 rounded-2xl p-4 sm:p-5 shadow-xs transition-all duration-300">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -279,16 +374,40 @@ export default function SmartUpsellNudge({
               অ্যাপ্লাই {milestoneState.couponCode}
             </button>
           ) : milestoneState.actionType === "add_items" ? (
-            <Link
-              href="/"
-              className="w-full sm:w-auto px-4 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 hover:border-emerald-400 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              আরো যোগ করুন <FiArrowRight size={13} />
-            </Link>
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <Link
+                href="/search"
+                className="w-full sm:w-auto px-4 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 hover:border-emerald-400 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                আরো যোগ করুন <FiArrowRight size={13} />
+              </Link>
+              {onOpenCouponDrawer && (
+                <button
+                  type="button"
+                  onClick={onOpenCouponDrawer}
+                  className="px-3 py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-800 text-xs font-bold rounded-xl shadow-2xs transition-all inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>🎟️</span>
+                  <span>Available Coupons</span>
+                </button>
+              )}
+            </div>
           ) : (
-            <span className="text-xs font-bold text-emerald-700 bg-white/80 border border-emerald-200 px-3 py-1.5 rounded-xl shadow-2xs inline-flex items-center gap-1">
-              <FiCheckCircle size={14} className="text-emerald-600" /> সেভিংস সক্রিয়
-            </span>
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <span className="text-xs font-bold text-emerald-700 bg-white/80 border border-emerald-200 px-3 py-1.5 rounded-xl shadow-2xs inline-flex items-center gap-1">
+                <FiCheckCircle size={14} className="text-emerald-600" /> সেভিংস সক্রিয়
+              </span>
+              {onOpenCouponDrawer && (
+                <button
+                  type="button"
+                  onClick={onOpenCouponDrawer}
+                  className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-800 text-xs font-bold rounded-xl shadow-2xs transition-all inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>🎟️</span>
+                  <span>Available Coupons</span>
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

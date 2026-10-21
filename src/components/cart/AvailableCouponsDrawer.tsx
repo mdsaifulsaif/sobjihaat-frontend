@@ -12,6 +12,7 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import { useGetAvailableCouponsQuery } from "@/redux/api/couponApi";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 
 interface AvailableCouponsDrawerProps {
@@ -29,12 +30,33 @@ export default function AvailableCouponsDrawer({
   currentSubtotal,
   appliedCouponCode,
 }: AvailableCouponsDrawerProps) {
-  const { data, isLoading } = useGetAvailableCouponsQuery(undefined, { skip: !isOpen });
+  const { data: session } = useSession();
+  const currentUserId = (session?.user as any)?.id || (session?.user as any)?._id;
+  const { data, isLoading } = useGetAvailableCouponsQuery(
+    currentUserId ? { userID: currentUserId } : undefined,
+    { skip: !isOpen }
+  );
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const coupons = data?.data || [];
+
+  // Filter out private coupons belonging to other users
+  const visibleCoupons = coupons.filter((coupon: any) => {
+    const isUserSpecific =
+      coupon.applicableTo === "specific_users" ||
+      (coupon.specificUsers && coupon.specificUsers.length > 0);
+
+    if (!isUserSpecific) return true;
+
+    return (
+      Boolean(currentUserId) &&
+      (coupon.specificUsers || []).some(
+        (u: any) => (u._id || u).toString() === currentUserId.toString()
+      )
+    );
+  });
 
   const handleCopy = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -69,7 +91,7 @@ export default function AvailableCouponsDrawer({
             <div>
               <h3 className="text-lg font-extrabold text-gray-900">Available Coupons</h3>
               <p className="text-xs text-gray-500">
-                {coupons.length} offer{coupons.length !== 1 ? "s" : ""} available for you
+                {visibleCoupons.length} offer{visibleCoupons.length !== 1 ? "s" : ""} available for you
               </p>
             </div>
           </div>
@@ -89,7 +111,7 @@ export default function AvailableCouponsDrawer({
               <div className="h-32 bg-gray-100 rounded-2xl"></div>
               <div className="h-32 bg-gray-100 rounded-2xl"></div>
             </div>
-          ) : coupons.length === 0 ? (
+          ) : visibleCoupons.length === 0 ? (
             <div className="py-16 text-center text-gray-400 space-y-3">
               <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto text-gray-400">
                 <FiTag size={28} />
@@ -100,12 +122,25 @@ export default function AvailableCouponsDrawer({
               </p>
             </div>
           ) : (
-            coupons.map((coupon: any) => {
+            visibleCoupons.map((coupon: any) => {
               const isApplied =
                 appliedCouponCode &&
                 appliedCouponCode.toUpperCase() === coupon.code.toUpperCase();
-              const isEligible = !coupon.minPurchase || currentSubtotal >= coupon.minPurchase;
-              const remaining = isEligible ? 0 : Math.round(coupon.minPurchase - currentSubtotal);
+              const isAmountEligible = !coupon.minPurchase || currentSubtotal >= coupon.minPurchase;
+              const remaining = isAmountEligible ? 0 : Math.round(coupon.minPurchase - currentSubtotal);
+
+              // Check if coupon is restricted to specific users
+              const isUserSpecific =
+                coupon.applicableTo === "specific_users" ||
+                (coupon.specificUsers && coupon.specificUsers.length > 0);
+              const isUserAllowed =
+                !isUserSpecific ||
+                (Boolean(currentUserId) &&
+                  (coupon.specificUsers || []).some(
+                    (u: any) => (u._id || u).toString() === currentUserId.toString()
+                  ));
+
+              const isEligible = isAmountEligible && isUserAllowed;
 
               const discountBadge =
                 coupon.discountType === "percentage"
@@ -135,7 +170,36 @@ export default function AvailableCouponsDrawer({
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 font-medium mt-0.5">
+
+                        {/* Applicability Scope Badge */}
+                        <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                          {(!coupon.applicableTo || coupon.applicableTo === "all") && (
+                            <span className="text-[10px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-md">
+                              সকল পণ্যের জন্য
+                            </span>
+                          )}
+                          {coupon.applicableTo === "specific_categories" && (
+                            <span className="text-[10px] font-bold text-purple-800 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-md">
+                              শুধুমাত্র: {coupon.specificCategories?.map((c: any) => c.name || c.title).filter(Boolean).join(", ") || "নির্দিষ্ট ক্যাটাগরি"}
+                            </span>
+                          )}
+                          {coupon.applicableTo === "specific_products" && (
+                            <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+                              নির্দিষ্ট পণ্য
+                            </span>
+                          )}
+                          {coupon.applicableTo === "specific_users" && (
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                              isUserAllowed
+                                ? "text-emerald-800 bg-emerald-50 border-emerald-200"
+                                : "text-blue-800 bg-blue-50 border-blue-200"
+                            }`}>
+                              {isUserAllowed ? "🌟 আপনার জন্য স্পেশাল অফার" : "নির্বাচিত গ্রাহক স্পেশাল"}
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-gray-500 font-medium mt-1">
                           {coupon.name || coupon.description || "Special offer on fresh produce"}
                         </p>
                       </div>
@@ -172,7 +236,21 @@ export default function AvailableCouponsDrawer({
 
                   {/* Apply action bar */}
                   <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-                    {!isEligible ? (
+                    {!isUserAllowed ? (
+                      <div className="flex items-center justify-between w-full">
+                        <p className="text-xs text-rose-600 font-semibold flex items-center gap-1">
+                          <FiAlertCircle size={13} />
+                          শুধুমাত্র নির্বাচিত অন্য গ্রাহকের জন্য
+                        </p>
+                        <button
+                          type="button"
+                          className="px-3 py-1.5 bg-gray-100 text-gray-400 text-xs font-bold rounded-xl cursor-not-allowed"
+                          disabled
+                        >
+                          অপ্রযোজ্য
+                        </button>
+                      </div>
+                    ) : !isAmountEligible ? (
                       <div className="flex items-center justify-between w-full">
                         <p className="text-xs text-amber-700 font-semibold flex items-center gap-1">
                           <FiAlertCircle size={13} />

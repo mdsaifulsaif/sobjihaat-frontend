@@ -1043,10 +1043,25 @@ const CheckoutContent = () => {
       toast.error("Please enter a coupon code");
       return;
     }
+    const currentUserId =
+      (session?.user as any)?.id ||
+      (session?.user as any)?._id ||
+      undefined;
+
     try {
       const res: any = await applyCouponMutation({
         code,
         subtotal: totalPrice,
+        userID: currentUserId,
+        items: items.map((it) => ({
+          productID: it.productID || it.id,
+          variantID: it.variantID || undefined,
+          quantity: it.quantity,
+          unitPrice: it.mrp || it.price,
+          salePrice: it.price,
+          totalPrice: it.price * it.quantity,
+          category: it.category,
+        })),
       }).unwrap();
 
       const discount = res?.data?.discountAmount || 0;
@@ -1593,6 +1608,8 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                     currentSubtotal={totalPrice}
                     onApplyCoupon={(code: string) => handleApplyCoupon(code)}
                     appliedCouponCode={appliedCoupon?.code}
+                    appliedDiscountAmount={appliedCoupon?.discountAmount || 0}
+                    isFreeShipping={estimatedShipping === 0}
                   />
                 </div>
 

@@ -43,10 +43,11 @@ export const couponApi = baseApi.injectEndpoints({
             success: boolean;
             message: string;
             data: any[];
-        }, void>({
-            query: () => ({
+        }, { userID?: string } | void>({
+            query: (params) => ({
                 url: '/coupons/available',
-                method: 'GET'
+                method: 'GET',
+                params: params || {},
             }),
             providesTags: ['Coupons']
         }),

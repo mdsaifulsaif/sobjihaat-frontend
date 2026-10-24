@@ -45,6 +45,7 @@ import Header from "@/components/layout/Header";
 import SidebarCategories from "@/components/shared/SidebarCategories";
 import MiniCart from '@/components/shared/MiniCart';
 import FloatingCartButton from '@/components/shared/FloatingCartButton';
+import WhatsAppLiveChat from '@/components/chat/WhatsAppLiveChat';
 
 export default function ShopLayout({
     children,
@@ -76,6 +77,7 @@ export default function ShopLayout({
 
             <MiniCart />
             <FloatingCartButton />
+            <WhatsAppLiveChat />
         </div>
     );
 }

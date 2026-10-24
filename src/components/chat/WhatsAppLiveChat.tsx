@@ -138,8 +138,8 @@ export default function WhatsAppLiveChat() {
 
   return (
     <>
-      {/* Floating Trigger Button: Positioned above mobile bottom bar (bottom-[78px]) and bottom-6 on desktop */}
-      <div className="fixed bottom-[78px] right-3.5 md:bottom-6 md:right-6 z-[990]">
+      {/* Floating Trigger Button: Positioned above mobile bottom bar (bottom-[78px]) and bottom-6 on desktop; z-30 to stay behind cart drawer (z-50) */}
+      <div className="fixed bottom-[78px] right-3.5 md:bottom-6 md:right-6 z-30">
         {!isOpen && (
           <button
             type="button"

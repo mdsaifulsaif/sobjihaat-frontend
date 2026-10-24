@@ -583,12 +583,21 @@ export default function SubscriptionPackages({ initialPackages = [] }: Props) {
     }
   }, [defaultCategory, availableCategories, activeTab]);
 
-  // 4. Filter packages based on active category tab
+  // 4. Filter packages based on active category tab (sorted left to right from lowest to highest price)
   const displayedPackages = useMemo(() => {
     const selected = activeTab || defaultCategory;
-    if (!selected) return normalizedPackages;
-    return normalizedPackages.filter((p) => p.category === selected);
+    const pkgs = selected
+      ? normalizedPackages.filter((p) => p.category === selected)
+      : normalizedPackages;
+
+    // Sort ascending by price (choto theke boro)
+    return [...pkgs].sort((a, b) => {
+      const priceA = Number(a.salePrice || a.subscriptionPrice || a.regularPrice) || 0;
+      const priceB = Number(b.salePrice || b.subscriptionPrice || b.regularPrice) || 0;
+      return priceA - priceB;
+    });
   }, [normalizedPackages, activeTab, defaultCategory]);
+
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -719,9 +728,16 @@ export default function SubscriptionPackages({ initialPackages = [] }: Props) {
         ) : (
           <div className="mx-auto grid max-w-6xl grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
             {displayedPackages.map((pkg, idx) => {
-              const isFeatured = pkg.isPinnedToHome || idx === 1;
+              // Only ONE card should ever have the "Most Popular" badge:
+              // 1. If admin pinned exactly 1 package, that specific package gets it.
+              // 2. Otherwise (if all or none are pinned), only the middle package (Smart Plan, idx 1) gets it.
+              const pinnedCount = displayedPackages.filter((p) => p.isPinnedToHome).length;
+              const isFeatured =
+                pinnedCount === 1
+                  ? Boolean(pkg.isPinnedToHome)
+                  : idx === 1 || (displayedPackages.length < 3 && idx === 0);
               const cycle = pkg.frequency === 'weekly' ? 'week' : 'month';
-              const hiddenCount = pkg.items.length - VISIBLE_ITEMS;
+
 
               return (
                 <article
@@ -750,7 +766,7 @@ export default function SubscriptionPackages({ initialPackages = [] }: Props) {
 
                     {/* Top chips */}
                     <div className="absolute left-3.5 right-3.5 top-3.5 flex items-start justify-between gap-2">
-                      <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-gray-900 shadow-sm">
+                      <span className="bg-[#EA4335] text-white text-[11px] sm:text-xs font-bold px-3 py-1 rounded-md shadow-sm tracking-wide">
                         {pkg.badge}
                       </span>
                       <span className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md">
@@ -808,13 +824,13 @@ export default function SubscriptionPackages({ initialPackages = [] }: Props) {
 
                     <div className="my-5 h-px bg-gray-100" />
 
-                    {/* Items */}
+                    {/* Items - Show ALL items without View More */}
                     <div className="flex-1">
                       <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">
                         What&apos;s inside
                       </p>
                       <ul className="space-y-2.5">
-                        {pkg.items.slice(0, VISIBLE_ITEMS).map((item: string, itemIdx: number) => (
+                        {pkg.items.map((item: string, itemIdx: number) => (
                           <li
                             key={itemIdx}
                             className="flex items-start gap-2.5 text-[13px] font-medium text-gray-700"
@@ -822,22 +838,12 @@ export default function SubscriptionPackages({ initialPackages = [] }: Props) {
                             <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)]">
                               <FiCheck size={10} strokeWidth={3.5} />
                             </span>
-                            <span className="line-clamp-1">{item}</span>
+                            <span>{item}</span>
                           </li>
                         ))}
                       </ul>
-
-                      {hiddenCount > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => handleOpenSubscribe(pkg)}
-                          className="mt-3 inline-flex cursor-pointer items-center gap-1 text-xs font-bold text-[var(--color-primary)] hover:underline"
-                        >
-                          View {hiddenCount} more item{hiddenCount > 1 ? 's' : ''}
-                          <FiArrowRight size={12} />
-                        </button>
-                      )}
                     </div>
+
 
                     {/* Delivery note */}
                     <div className="mt-5 flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2.5 text-xs text-gray-600">

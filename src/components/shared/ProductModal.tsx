@@ -718,24 +718,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                 )}
 
                 {/* Action Buttons */}
-                <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
-                  <div className="flex items-center border rounded-xl flex-shrink-0">
+                <div className="mt-5 sm:mt-6 flex items-center gap-2.5 sm:gap-4">
+                  <div className="flex items-center border border-gray-200 rounded-xl flex-shrink-0 bg-white">
                     <button
                       onClick={() => {
                         if (qtyInCart > 0) dispatch(decreaseQuantity(cartItemId));
                       }}
                       disabled={qtyInCart === 0 || !inStock}
-                      className={`w-12 h-12 flex items-center justify-center text-2xl rounded-l-xl ${
+                      className={`w-10 sm:w-12 h-11 sm:h-12 flex items-center justify-center text-xl sm:text-2xl rounded-l-xl transition-colors ${
                         qtyInCart > 0 && inStock ? 'hover:bg-gray-100' : 'opacity-40 cursor-not-allowed'
                       }`}
                     >
                       −
                     </button>
-                    <span className="w-12 text-center font-bold text-lg">{qtyInCart}</span>
+                    <span className="w-8 sm:w-12 text-center font-bold text-base sm:text-lg">{qtyInCart}</span>
                     <button
                       onClick={handleAddToCart}
                       disabled={!inStock}
-                      className={`w-12 h-12 flex items-center justify-center text-2xl rounded-r-xl ${
+                      className={`w-10 sm:w-12 h-11 sm:h-12 flex items-center justify-center text-xl sm:text-2xl rounded-r-xl transition-colors ${
                         inStock ? 'hover:bg-gray-100' : 'opacity-40 cursor-not-allowed'
                       }`}
                     >
@@ -748,7 +748,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                     variant="primary"
                     size="lg"
                     fullWidth
-                    className="flex-1"
+                    className="flex-1 !h-11 sm:!h-12 !py-0 rounded-xl text-sm sm:text-base font-semibold"
                     rightIcon={<FiZap size={18} />}
                     disabled={!inStock}
                   >
@@ -760,7 +760,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                 <button
                   type="button"
                   onClick={handleWhatsAppOrder}
-                  className="mt-3 w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-sm hover:shadow transition-all duration-200 cursor-pointer active:scale-[0.99]"
+                  className="mt-2.5 sm:mt-3 w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-sm hover:shadow transition-all duration-200 cursor-pointer active:scale-[0.99]"
                 >
                   <FaWhatsapp size={22} className="text-white flex-shrink-0" />
                   <span className="text-sm sm:text-base font-semibold">Order via WhatsApp (হোয়াটসঅ্যাপে অর্ডার)</span>

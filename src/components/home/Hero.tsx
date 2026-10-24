@@ -85,10 +85,10 @@ const Hero: React.FC<HeroProps> = ({ initialBanners }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6 sm:pb-8">
+    <div className="container mx-auto px-2.5 sm:px-6 lg:px-8 pt-1.5 pb-3 sm:pt-2 sm:pb-8">
       {/* ===== HERO BANNER WRAPPER ===== */}
       <div
-        className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-sm bg-gray-100 group select-none
+        className="relative w-full rounded-xl md:rounded-3xl overflow-hidden shadow-sm bg-gray-100 group select-none
                    aspect-[800/275] sm:aspect-[16/6] md:aspect-[21/8] lg:h-[380px] xl:h-[420px] max-h-[420px]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

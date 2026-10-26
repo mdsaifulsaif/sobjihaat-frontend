@@ -85,11 +85,11 @@ const Hero: React.FC<HeroProps> = ({ initialBanners }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6 sm:pb-8">
+    <div className="container mx-auto px-2.5 sm:px-6 lg:px-8 pt-1.5 pb-3 sm:pt-2 sm:pb-8">
       {/* ===== HERO BANNER WRAPPER ===== */}
       <div
-        className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-sm bg-gray-100 group select-none
-                   aspect-[16/7] sm:aspect-[16/6] md:aspect-[21/8] lg:h-[400px] xl:h-[440px] max-h-[440px]"
+        className="relative w-full rounded-xl md:rounded-3xl overflow-hidden shadow-sm bg-gray-100 group select-none
+                   aspect-[800/275] sm:aspect-[16/6] md:aspect-[21/8] lg:h-[380px] xl:h-[420px] max-h-[420px]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onTouchStart={handleTouchStart}
@@ -101,29 +101,50 @@ const Hero: React.FC<HeroProps> = ({ initialBanners }) => {
           const isActive = index === currentSlide;
           const content = (
             <div className="relative w-full h-full">
-              <picture>
-                {banner.mobileImage && (
-                  <source
-                    media="(max-width: 640px)"
-                    srcSet={banner.mobileImage}
-                  />
-                )}
-                <img
+              {banner.mobileImage ? (
+                <>
+                  <div className="block sm:hidden relative w-full h-full">
+                    <Image
+                      src={banner.mobileImage}
+                      alt={banner.title || `Hero banner ${index + 1}`}
+                      fill
+                      priority={index === 0}
+                      quality={95}
+                      sizes="100vw"
+                      className="w-full h-full object-cover object-center transition-transform duration-700 ease-out"
+                    />
+                  </div>
+                  <div className="hidden sm:block relative w-full h-full">
+                    <Image
+                      src={banner.image}
+                      alt={banner.title || `Hero banner ${index + 1}`}
+                      fill
+                      priority={index === 0}
+                      quality={95}
+                      sizes="(max-width: 1024px) 100vw, 1400px"
+                      className="w-full h-full object-cover object-center transition-transform duration-700 ease-out"
+                    />
+                  </div>
+                </>
+              ) : (
+                <Image
                   src={banner.image}
                   alt={banner.title || `Hero banner ${index + 1}`}
+                  fill
+                  priority={index === 0}
+                  quality={95}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1400px"
                   className="w-full h-full object-cover object-center transition-transform duration-700 ease-out"
-                  loading={index === 0 ? "eager" : "lazy"}
                 />
-              </picture>
+              )}
             </div>
           );
 
           return (
             <div
               key={banner._id || index}
-              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                isActive ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
-              }`}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isActive ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
+                }`}
             >
               {banner.link ? (
                 <Link
@@ -168,27 +189,11 @@ const Hero: React.FC<HeroProps> = ({ initialBanners }) => {
           </>
         )}
 
-        {/* Navigation Indicator Dots (Only shown when > 1 banner) */}
-        {isSliderEnabled && (
-          <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-sm">
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setCurrentSlide(index)}
-                aria-label={`Go to slide ${index + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 outline-none ${
-                  index === currentSlide
-                    ? "w-6 sm:w-8 bg-white shadow-sm"
-                    : "w-1.5 sm:w-2 bg-white/50 hover:bg-white/80"
-                }`}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
 };
 
 export default Hero;
+
+

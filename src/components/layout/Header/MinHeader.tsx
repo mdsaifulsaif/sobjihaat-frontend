@@ -264,21 +264,21 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
   };
 
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-3 md:py-4">
+    <header className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm max-h-[115px] md:max-h-none">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between py-1.5 sm:py-2 md:py-4">
           {/* Left: Menu + Logo */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
             <button
               onClick={onToggleMobile}
-              className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-xl transition-all md:hidden"
+              className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-gray-100 rounded-xl transition-all md:hidden"
               aria-label="Toggle Mobile Menu"
             >
-              <FiMenu size={26} />
+              <FiMenu size={24} />
             </button>
 
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-11 h-11 bg-[var(--color-primary)] rounded-2xl flex items-center justify-center text-white font-black text-3xl">
+            <Link href="/" className="flex items-center gap-2.5 sm:gap-3">
+              <div className="w-9 h-9 md:w-11 md:h-11 bg-[var(--color-primary)] rounded-xl md:rounded-2xl flex items-center justify-center text-white font-black text-2xl md:text-3xl">
                 S
               </div>
               <div className="hidden sm:block">
@@ -451,7 +451,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
         </div>
 
         {/* Mobile Search */}
-        <div className="md:hidden pb-4 relative" ref={searchMobileRef}>
+        <div className="md:hidden pb-2 relative" ref={searchMobileRef}>
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
               type="text"
@@ -459,24 +459,24 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
               value={searchQuery}
               onFocus={() => setIsSearchOpen(true)}
               onChange={handleSearchChange}
-              className="w-full py-3 pl-5 pr-12 border border-gray-200 rounded-3xl focus:border-[var(--color-primary)] outline-none text-sm bg-gray-50 transition-all"
+              className="w-full py-1.5 pl-4 pr-11 border border-gray-200 rounded-2xl focus:border-[var(--color-primary)] outline-none text-xs sm:text-sm bg-gray-50 transition-all h-[36px]"
             />
             {searchQuery ? (
               <button
                 type="button"
                 onClick={clearSearch}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-200 text-gray-600 p-2 rounded-3xl"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-gray-200 text-gray-600 p-1.5 rounded-xl"
                 aria-label="Clear search"
               >
-                <FiX size={18} />
+                <FiX size={15} />
               </button>
             ) : (
               <button
                 type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-white px-5 py-2 rounded-3xl"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-white px-3.5 py-1 rounded-xl h-[28px] flex items-center justify-center"
                 aria-label="Search"
               >
-                <FiSearch size={18} />
+                <FiSearch size={15} />
               </button>
             )}
           </form>

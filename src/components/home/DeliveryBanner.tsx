@@ -170,6 +170,28 @@ const CalendarIcon: React.FC<{ size?: number; className?: string }> = ({
   </svg>
 );
 
+const DownloadIcon: React.FC<{ size?: number; className?: string }> = ({
+  size = 18,
+  className = "",
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </svg>
+);
+
 const DeliveryBanner = () => {
   return (
     <section className="bg-[#eef0f2] py-6 sm:py-8">
@@ -188,7 +210,7 @@ const DeliveryBanner = () => {
               />
             </div>
 
-            {/* CENTER - Main Text */}
+            {/* CENTER - Main Text & Download Button */}
             <div className="flex-1 min-w-0 text-center md:text-left px-0 md:px-4 lg:px-6">
               <h2 className="text-[18px] sm:text-[20px] lg:text-[30px] leading-tight font-bold text-gray-900">
                 Groceries Delivered
@@ -199,6 +221,17 @@ const DeliveryBanner = () => {
               <p className="mt-1 text-gray-500 text-[12px] lg:text-[15px]">
                 Fresh and fast, right at your doorstep anytime.
               </p>
+              <div className="mt-3.5 flex items-center justify-center md:justify-start">
+                <a
+                  href="https://github.com/mdsaifulsaif/shodaikori-download/releases/latest/download/app-arm64-v8a-release.apk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:opacity-90 active:scale-95 text-white text-[12px] sm:text-[13px] lg:text-[14px] font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl shadow-md shadow-[var(--color-primary)]/20 transition-all duration-200 cursor-pointer"
+                >
+                  <DownloadIcon size={18} />
+                  <span>Download App</span>
+                </a>
+              </div>
             </div>
 
             {/* DIVIDER */}

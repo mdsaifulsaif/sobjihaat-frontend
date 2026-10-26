@@ -21,6 +21,8 @@ import {
   FiMapPin,
   FiPackage,
   FiPower,
+  FiGlobe,
+  FiExternalLink,
 } from "react-icons/fi";
 import { useSocket } from "@/lib/socket";
 import { useGetMyRiderProfileQuery, useUpdateRiderStatusMutation } from "@/redux/api/riderApi";
@@ -260,7 +262,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-10rem)] custom-scrollbar">
+        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-13rem)] custom-scrollbar">
           {sidebarOpen && (
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">Main Menu</p>
           )}
@@ -342,13 +344,21 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </nav>
 
         {/* Bottom Section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700/50 bg-[#1E293B]">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700/50 bg-[#1E293B] space-y-1.5">
+          <Link
+            href="/"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white transition-all text-sm font-medium"
+            title="Go to Landing Page"
+          >
+            <FiGlobe size={20} className="text-emerald-400 shrink-0" />
+            {sidebarOpen && <span>Landing Page</span>}
+          </Link>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-red-500/20 hover:text-red-400 transition-all"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-md text-gray-300 hover:bg-red-500/20 hover:text-red-400 transition-all text-sm font-medium"
           >
-            <FiLogOut size={20} />
-            {sidebarOpen && <span className="font-medium">Logout</span>}
+            <FiLogOut size={20} className="shrink-0" />
+            {sidebarOpen && <span>Logout</span>}
           </button>
         </div>
       </aside>
@@ -358,7 +368,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {/* Top Header */}
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30 shadow-sm">
           {/* Left */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="lg:hidden p-2 hover:bg-gray-100 rounded-md"
@@ -373,6 +383,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 className="bg-transparent outline-none w-72 text-sm"
               />
             </div>
+            {/* Landing Page Button */}
+            <Link
+              href="/"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 border border-gray-200 transition-all shadow-xs group"
+              title="Go to Landing Page / Home"
+            >
+              <FiGlobe size={15} className="text-emerald-600 transition-transform group-hover:rotate-12 shrink-0" />
+              <span>Landing Page</span>
+              <FiExternalLink size={12} className="text-gray-400 group-hover:text-emerald-600 hidden sm:inline" />
+            </Link>
           </div>
 
           {/* Right */}

@@ -110,7 +110,7 @@ const DeliveryCharges: React.FC<DeliveryChargesProps> = ({
                   </span>
                 </div>
                 <p className="mt-0.5 text-xs text-gray-500">
-                  Enjoy zero delivery fee on your very first order at SobjiHaat!
+                  Enjoy zero delivery fee on your very first order at ShodaiBari!
                 </p>
               </div>
             </div>

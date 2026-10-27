@@ -4,9 +4,9 @@ import { Metadata } from "next";
 import { FiChevronRight, FiFileText, FiCheckCircle, FiAlertCircle, FiMail, FiPhone } from "react-icons/fi";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | SobjiHaat - Online Grocery Delivery",
+  title: "Terms & Conditions | ShodaiBari - Online Grocery Delivery",
   description:
-    "Read the terms, rules, and conditions for ordering fresh vegetables, fruits, fish, and groceries from SobjiHaat in Barisal, Bangladesh.",
+    "Read the terms, rules, and conditions for ordering fresh vegetables, fruits, fish, and groceries from ShodaiBari in Barisal, Bangladesh.",
 };
 
 export default function TermsPage() {
@@ -33,7 +33,7 @@ export default function TermsPage() {
             </h1>
           </div>
           <p className="text-gray-500 text-xs sm:text-sm mt-2">
-            Last Updated: {lastUpdated} • Please review carefully before placing orders with SobjiHaat
+            Last Updated: {lastUpdated} • Please review carefully before placing orders with ShodaiBari
           </p>
         </div>
       </div>
@@ -47,10 +47,10 @@ export default function TermsPage() {
               <span className="text-[var(--color-primary)] font-mono text-lg">01.</span> Agreement to Terms
             </h2>
             <p>
-              These Terms & Conditions constitute a legally binding agreement between you (&ldquo;Customer&rdquo;, &ldquo;User&rdquo;) and <strong>SobjiHaat</strong> (&ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;), governing your access to and use of our website, applications, and doorstep grocery delivery services in Barisal, Bangladesh.
+              These Terms & Conditions constitute a legally binding agreement between you (&ldquo;Customer&rdquo;, &ldquo;User&rdquo;) and <strong>ShodaiBari</strong> (&ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;), governing your access to and use of our website, applications, and doorstep grocery delivery services in Barisal, Bangladesh.
             </p>
             <p className="mt-3">
-              By placing an order or registering an account on SobjiHaat, you acknowledge that you have read, understood, and agreed to be bound by these Terms and our Privacy Policy.
+              By placing an order or registering an account on ShodaiBari, you acknowledge that you have read, understood, and agreed to be bound by these Terms and our Privacy Policy.
             </p>
           </section>
 
@@ -73,7 +73,7 @@ export default function TermsPage() {
               <span className="text-[var(--color-primary)] font-mono text-lg">03.</span> Product Quality, Weights & Daily Pricing
             </h2>
             <p>
-              SobjiHaat specializes in fresh agricultural produce, seafood, meat, and packaged consumer goods:
+              ShodaiBari specializes in fresh agricultural produce, seafood, meat, and packaged consumer goods:
             </p>
             <div className="space-y-3 mt-3">
               <div className="p-4 bg-white rounded-xl border border-gray-200">
@@ -142,7 +142,7 @@ export default function TermsPage() {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
               <span className="text-[var(--color-primary)] font-mono text-lg">07.</span> Prohibited Activities
             </h2>
-            <p>When using SobjiHaat, you agree not to:</p>
+            <p>When using ShodaiBari, you agree not to:</p>
             <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-gray-600 pl-2">
               <li>Place fictitious, abusive, or bulk speculative orders to disrupt operations.</li>
               <li>Harass, threaten, or mistreat our doorstep delivery riders or customer care personnel.</li>
@@ -169,8 +169,8 @@ export default function TermsPage() {
             <div className="flex flex-col sm:flex-row gap-4 text-sm text-gray-700">
               <div className="flex items-center gap-2">
                 <FiMail className="text-[var(--color-primary)]" />
-                <a href="mailto:support@sobjihaat.com" className="font-semibold hover:underline">
-                  support@sobjihaat.com
+                <a href="mailto:support@shodaibari.com" className="font-semibold hover:underline">
+                  support@shodaibari.com
                 </a>
               </div>
               <div className="flex items-center gap-2">

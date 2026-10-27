@@ -283,7 +283,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
               </div>
               <div className="hidden sm:block">
                 <h1 className="text-2xl font-bold tracking-tight notranslate">
-                  Sobji<span className="text-[var(--color-primary)]">Haat</span>
+                  Shodai<span className="text-[var(--color-primary)]">Bari</span>
                 </h1>
               </div>
             </Link>

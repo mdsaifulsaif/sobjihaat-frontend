@@ -6,13 +6,14 @@ import AuthSessionProvider from "@/components/providers/AuthSessionProvider";
 export const metadata: Metadata = {
   metadataBase: new URL("https://sobjihaat.com"),
 
-  title: "SobjiHaat | Barisal's Trusted Online Grocery & Fresh Food Delivery",
+  title: "ShodaiBari | Barisal's Trusted Online Grocery & Fresh Food Delivery",
 
   description:
-    "Shop fresh vegetables, fruits, fish, meat, groceries, daily essentials, and household products online from SobjiHaat. Fast and reliable home delivery across Barisal.",
+    "Shop fresh vegetables, fruits, fish, meat, groceries, daily essentials, and household products online from ShodaiBari. Fast and reliable home delivery across Barisal.",
 
   keywords: [
-    "SobjiHaat",
+    "ShodaiBari",
+    "সদাইবাড়ি",
     "Online Grocery",
     "Barisal",
     "Fresh Vegetables",
@@ -25,17 +26,17 @@ export const metadata: Metadata = {
   ],
 
   openGraph: {
-    title: "SobjiHaat | Fresh Grocery Delivered to Your Doorstep",
+    title: "ShodaiBari | Fresh Grocery Delivered to Your Doorstep",
     description:
       "Order fresh groceries, vegetables, fruits, fish, meat, and daily essentials online with fast delivery in Barisal.",
     type: "website",
     locale: "en_US",
-    siteName: "SobjiHaat",
+    siteName: "ShodaiBari",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "SobjiHaat | Online Grocery in Barisal",
+    title: "ShodaiBari | Online Grocery in Barisal",
     description:
       "Fresh groceries and daily essentials delivered to your doorstep.",
   },

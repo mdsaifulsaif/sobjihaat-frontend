@@ -31,7 +31,7 @@ const Footer: React.FC = () => {
 
         try {
             await subscribeNewsletter({ email: trimmed }).unwrap();
-            toast.success("Thank you! You have subscribed to SobjiHaat newsletter.");
+            toast.success("Thank you! You have subscribed to ShodaiBari newsletter.");
             setNewsletterEmail("");
         } catch (error: any) {
             toast.error(error?.data?.message || "Subscription failed. Please try again.");
@@ -57,7 +57,7 @@ const Footer: React.FC = () => {
                             Fresh Updates & Weekly Deals
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">
-                            Subscribe to SobjiHaat Newsletter
+                            Subscribe to ShodaiBari Newsletter
                         </h2>
                         <p className="text-gray-400 text-sm">
                             Get weekly market arrivals, fresh produce price drops, and exclusive subscriber deals delivered to your inbox.
@@ -93,7 +93,7 @@ const Footer: React.FC = () => {
                                 S
                             </div>
                             <span className="text-2xl font-bold tracking-tight text-white">
-                                Sobji<span className="text-[var(--color-primary)]">Haat</span>
+                                Shodai<span className="text-[var(--color-primary)]">Bari</span>
                             </span>
                         </Link>
                         <p className="text-sm text-gray-400 leading-relaxed mb-6">
@@ -186,8 +186,8 @@ const Footer: React.FC = () => {
                             </li>
                             <li className="flex items-center gap-3 text-sm text-gray-400">
                                 <AiOutlineMail className="text-[var(--color-primary)] shrink-0" size={18} />
-                                <a href="mailto:support@sobjihaat.com" className="hover:text-white transition-colors truncate">
-                                    support@sobjihaat.com
+                                <a href="mailto:support@shodaibari.com" className="hover:text-white transition-colors truncate">
+                                    support@shodaibari.com
                                 </a>
                             </li>
                         </ul>
@@ -211,7 +211,7 @@ const Footer: React.FC = () => {
             <div className="bg-[#0e0f0d] py-6 border-t border-gray-900">
                 <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
                     <p>
-                        Copyright © {new Date().getFullYear()} <span className="text-gray-300 font-semibold">SobjiHaat</span>. All Rights Reserved. Barisal, Bangladesh.
+                        Copyright © {new Date().getFullYear()} <span className="text-gray-300 font-semibold">ShodaiBari</span>. All Rights Reserved. Barisal, Bangladesh.
                     </p>
                     <div className="flex items-center gap-3 text-gray-500">
                         <span className="text-[11px]">100% Secure Payments</span>

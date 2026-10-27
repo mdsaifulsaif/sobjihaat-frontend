@@ -4,9 +4,9 @@ import { Metadata } from "next";
 import { FiChevronRight, FiShield, FiLock, FiMail, FiPhone } from "react-icons/fi";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | SobjiHaat - Protecting Your Data",
+  title: "Privacy Policy | ShodaiBari - Protecting Your Data",
   description:
-    "SobjiHaat's Privacy Policy outlines how we collect, protect, and handle your personal information when using our online grocery delivery service in Barisal, Bangladesh.",
+    "ShodaiBari's Privacy Policy outlines how we collect, protect, and handle your personal information when using our online grocery delivery service in Barisal, Bangladesh.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -33,7 +33,7 @@ export default function PrivacyPolicyPage() {
             </h1>
           </div>
           <p className="text-gray-500 text-xs sm:text-sm mt-2">
-            Last Updated: {lastUpdated} • Applies to all users and visitors of SobjiHaat
+            Last Updated: {lastUpdated} • Applies to all users and visitors of ShodaiBari
           </p>
         </div>
       </div>
@@ -47,10 +47,10 @@ export default function PrivacyPolicyPage() {
               <span className="text-[var(--color-primary)] font-mono text-lg">01.</span> Introduction
             </h2>
             <p>
-              Welcome to <strong>SobjiHaat</strong> (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website, mobile application, or use our grocery ordering and delivery services in Barisal, Bangladesh.
+              Welcome to <strong>ShodaiBari</strong> (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website, mobile application, or use our grocery ordering and delivery services in Barisal, Bangladesh.
             </p>
             <p className="mt-3">
-              By accessing or using SobjiHaat, you agree to the collection and use of information in accordance with this policy. If you do not agree with any part of this policy, please refrain from using our services.
+              By accessing or using ShodaiBari, you agree to the collection and use of information in accordance with this policy. If you do not agree with any part of this policy, please refrain from using our services.
             </p>
           </section>
 
@@ -122,7 +122,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-gray-600 pl-2">
               <li><strong>Assigned Delivery Riders:</strong> Provided only with your name, phone number, and delivery address to complete your doorstep delivery.</li>
               <li><strong>Payment Service Providers:</strong> Regulated payment gateways (such as bKash, Nagad, SSLCommerz) to process cashless transactions securely.</li>
-              <li><strong>Legal Authorities:</strong> When required by Bangladeshi law, judicial proceedings, or to protect the safety and property of SobjiHaat and our users.</li>
+              <li><strong>Legal Authorities:</strong> When required by Bangladeshi law, judicial proceedings, or to protect the safety and property of ShodaiBari and our users.</li>
             </ul>
           </section>
 
@@ -157,7 +157,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
               <span className="text-[var(--color-primary)] font-mono text-lg">07.</span> Your Rights & Control
             </h2>
-            <p>As a SobjiHaat customer, you have full control over your data:</p>
+            <p>As a ShodaiBari customer, you have full control over your data:</p>
             <ul className="list-disc list-inside space-y-1.5 text-sm sm:text-base text-gray-600 pl-2">
               <li><strong>Access & Update:</strong> You can review and update your name, address, and contact details from your Profile page at any time.</li>
               <li><strong>Opt-Out of Marketing:</strong> You may unsubscribe from promotional newsletters and SMS messages at any time.</li>
@@ -174,8 +174,8 @@ export default function PrivacyPolicyPage() {
             <div className="flex flex-col sm:flex-row gap-4 text-sm text-gray-700">
               <div className="flex items-center gap-2">
                 <FiMail className="text-[var(--color-primary)]" />
-                <a href="mailto:support@sobjihaat.com" className="font-semibold hover:underline">
-                  support@sobjihaat.com
+                <a href="mailto:support@shodaibari.com" className="font-semibold hover:underline">
+                  support@shodaibari.com
                 </a>
               </div>
               <div className="flex items-center gap-2">

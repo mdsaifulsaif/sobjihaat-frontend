@@ -763,7 +763,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                   className="mt-2.5 sm:mt-3 w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-sm hover:shadow transition-all duration-200 cursor-pointer active:scale-[0.99]"
                 >
                   <FaWhatsapp size={22} className="text-white flex-shrink-0" />
-                  <span className="text-sm sm:text-base font-semibold">Order via WhatsApp (হোয়াটসঅ্যাপে অর্ডার)</span>
+                  <span className="text-sm sm:text-base font-semibold whitespace-nowrap">Order via WhatsApp</span>
                 </button>
 
                 {/* End of purchase options */}

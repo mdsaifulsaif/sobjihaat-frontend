@@ -32,7 +32,7 @@
 //   isActive: boolean;
 // }
 
-// // ===== Section Header =====
+// ===== Section Header =====
 // const SectionHeader = ({
 //   icon,
 //   title,
@@ -944,6 +944,7 @@ import {
   FiHeart,
   FiMoreHorizontal,
   FiUser,
+  FiPhone,
   FiCheck,
   FiAlertTriangle,
   FiX,
@@ -956,6 +957,14 @@ interface Area {
   name: string;
   isActive: boolean;
 }
+
+// ===== Delivery Time Slots =====
+const DELIVERY_TIME_SLOTS = [
+  { label: "09:00 AM - 11:00 AM", startHour: 9, startMinute: 0 },
+  { label: "11:00 AM - 01:00 PM", startHour: 11, startMinute: 0 },
+  { label: "02:00 PM - 04:00 PM", startHour: 14, startMinute: 0 },
+  { label: "04:00 PM - 06:00 PM", startHour: 16, startMinute: 0 },
+];
 
 // ===== Section Header =====
 const SectionHeader = ({
@@ -1004,7 +1013,7 @@ const InputField = ({
   <div>
     <label className="block text-xs font-semibold text-[var(--color-text-primary)]/80 mb-1.5">
       {label}{" "}
-      {required && <span className="text-[var(--color-primary)]">*</span>}
+      {required && <span className="text-red-500">*</span>}
     </label>
     {children}
   </div>
@@ -1101,6 +1110,34 @@ const CheckoutContent = () => {
   const [orderMode, setOrderMode] = useState<"normal" | "preorder">("normal");
   const [wantsCustomTime, setWantsCustomTime] = useState(false);
   const [customTime, setCustomTime] = useState("");
+
+  // Delivery Time slot calculation
+  const isSlotDisabled = (slot: (typeof DELIVERY_TIME_SLOTS)[0]) => {
+    // Pre-order is for next day (tomorrow) -> always allowed
+    if (orderMode === "preorder") {
+      return false;
+    }
+
+    // Normal order is for today -> compare with current time
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const slotStartMinutes = slot.startHour * 60 + slot.startMinute;
+
+    return currentMinutes >= slotStartMinutes;
+  };
+
+  const allSlotsDisabled =
+    orderMode === "normal" &&
+    DELIVERY_TIME_SLOTS.every((slot) => isSlotDisabled(slot));
+
+  useEffect(() => {
+    if (wantsCustomTime && customTime) {
+      const selected = DELIVERY_TIME_SLOTS.find((s) => s.label === customTime);
+      if (selected && isSlotDisabled(selected)) {
+        setCustomTime("");
+      }
+    }
+  }, [orderMode, wantsCustomTime]);
 
   // ✅ Location Verification state (Check if customer orders from outside Barisal)
   const [deviceCoords, setDeviceCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -1366,32 +1403,41 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
 
               <div className="space-y-6">
                 {/* Contact Information */}
-                <div>
-                  <SubLabel>Contact Details</SubLabel>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <InputField label="Full Name" required>
+                <div className="grid grid-cols-2 gap-3">
+                  <InputField label="Full Name" required>
+                    <div className="relative">
+                      <FiUser
+                        size={16}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      />
                       <input
                         type="text"
                         name="fullName"
                         required
                         value={formData.fullName}
                         onChange={handleChange}
-                        className={inputClass}
+                        className={`${inputClass} pl-10`}
                         placeholder="Your full name"
                       />
-                    </InputField>
-                    <InputField label="Phone Number" required>
+                    </div>
+                  </InputField>
+                  <InputField label="Phone Number" required>
+                    <div className="relative">
+                      <FiPhone
+                        size={16}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      />
                       <input
                         type="tel"
                         name="phone"
                         required
                         value={formData.phone}
                         onChange={handleChange}
-                        className={inputClass}
+                        className={`${inputClass} pl-10`}
                         placeholder="01XXXXXXXXX"
                       />
-                    </InputField>
-                  </div>
+                    </div>
+                  </InputField>
                 </div>
 
                 {/* Delivery Type (Temporarily hidden from initial UI as requested - defaults to local) */}
@@ -1457,27 +1503,6 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <SubLabel>Delivery Address</SubLabel>
-                  </div>
-
-                  {/* Address label chips */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {labelOptions.map((opt) => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() =>
-                          setFormData({ ...formData, label: opt.value })
-                        }
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all ${
-                          formData.label === opt.value
-                            ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                            : "border-gray-200 text-[var(--color-text-muted)] hover:border-gray-300"
-                        }`}
-                      >
-                        {opt.icon}
-                        {opt.text}
-                      </button>
-                    ))}
                   </div>
 
                   <div className="space-y-3">
@@ -1899,130 +1924,97 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
               )}
 
               <div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-[var(--color-text-primary)]">
-                      নির্দিষ্ট সময়ে ডেলিভারি চান?
-                    </p>
-                    <p className="text-xs text-[var(--color-text-muted)]">
-                      {orderMode === "preorder"
-                        ? "না দিলে আগামীকাল সুবিধাজনক সময়ে ডেলিভারি হবে"
-                        : "না দিলে যত দ্রুত সম্ভব ডেলিভারি হবে"}
-                    </p>
+                <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl border border-green-200 bg-green-50/40">
+                  <div className="flex items-center gap-2.5">
+                    <FiClock
+                      className="text-green-600 shrink-0"
+                      size={20}
+                    />
+                    <div>
+                      <p className="text-sm font-bold text-green-700">
+                        নির্দিষ্ট সময়ে ডেলিভারি চান?
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        নিচের সুবিধাজনক সময় সিলেক্ট করুন
+                      </p>
+                    </div>
                   </div>
                   <button
                     type="button"
-                    onClick={() => setWantsCustomTime(!wantsCustomTime)}
-                    className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${wantsCustomTime ? "bg-[var(--color-primary)]" : "bg-gray-200"}`}
+                    onClick={() => {
+                      const next = !wantsCustomTime;
+                      setWantsCustomTime(next);
+                      if (!next) setCustomTime("");
+                    }}
+                    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 cursor-pointer ${
+                      wantsCustomTime ? "bg-green-600" : "bg-gray-200"
+                    }`}
+                    aria-label="Toggle custom delivery time"
                   >
                     <div
-                      className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${wantsCustomTime ? "left-5" : "left-0.5"}`}
+                      className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all ${
+                        wantsCustomTime ? "left-[calc(100%-1.375rem)]" : "left-0.5"
+                      }`}
                     />
                   </button>
                 </div>
 
                 {wantsCustomTime && (
-                  <div className="mt-4 max-w-xs">
-                    <InputField label="Delivery Time (9 AM - 5 PM)">
-                      <div className="relative">
-                        <FiClock
-                          size={14}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-primary)] pointer-events-none"
-                        />
-                        <input
-                          type="time"
-                          min="09:00"
-                          max="17:00"
-                          value={customTime}
-                          onChange={(e) => setCustomTime(e.target.value)}
-                          className={`${inputClass} pl-9`}
-                        />
-                      </div>
-                    </InputField>
+                  <div className="mt-3.5 space-y-2.5">
+                    <div className="flex flex-wrap gap-2.5 sm:gap-3">
+                      {DELIVERY_TIME_SLOTS.map((slot) => {
+                        const disabled = isSlotDisabled(slot);
+                        const isSelected = customTime === slot.label;
+
+                        return (
+                          <button
+                            key={slot.label}
+                            type="button"
+                            disabled={disabled}
+                            onClick={() => setCustomTime(slot.label)}
+                            className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border text-xs sm:text-sm font-semibold transition-all ${
+                              disabled
+                                ? "border-gray-200 bg-gray-100/70 text-gray-400 cursor-not-allowed opacity-50 select-none"
+                                : isSelected
+                                ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-sm ring-2 ring-[var(--color-primary)]/20"
+                                : "border-gray-200 bg-white text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] cursor-pointer"
+                            }`}
+                          >
+                            {slot.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {allSlotsDisabled && (
+                      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-2.5">
+                        ⚠️ আজকের জন্য নির্দিষ্ট সময়ের সব স্লট শেষ হয়ে গেছে। জরুরি প্রয়োজনে সাধারণ অর্ডার দিন (যত দ্রুত সম্ভব ডেলিভারি হবে) অথবা <strong>Pre-order (আগামীকাল)</strong> সিলেক্ট করে অগ্রিম সময় নির্বাচন করুন।
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* ===== ROW 3: Payment Method (full width) ===== */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-            <SectionHeader
-              icon={<FiCreditCard size={17} />}
-              title="Payment Method"
-              subtitle="How would you like to pay?"
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Cash On Delivery (Active & Selected) */}
-              <label
-                className={`relative flex items-center gap-3.5 p-3.5 border rounded-xl cursor-pointer transition-all ${
-                  formData.paymentMethod === "cod"
-                    ? "border-[var(--color-primary)] bg-[var(--color-primary)]/5 ring-1 ring-[var(--color-primary)]/20 shadow-2xs"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="cod"
-                  checked={formData.paymentMethod === "cod"}
-                  onChange={handleChange}
-                  className="sr-only"
-                />
-                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center text-xl shrink-0">
-                  💵
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-[var(--color-text-primary)]">
-                    Cash on Delivery
-                  </p>
-                  <p className="text-xs text-[var(--color-text-muted)]">
-                    Pay when you receive order
-                  </p>
-                </div>
-                {formData.paymentMethod === "cod" && (
-                  <div className="w-5 h-5 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shrink-0">
-                    <FiCheck size={11} strokeWidth={3} />
-                  </div>
-                )}
-              </label>
-
-              {/* Online Payment (Disabled / Coming Soon) */}
-              <div
-                className="relative flex items-center gap-3.5 p-3.5 border border-dashed border-gray-200 rounded-xl bg-gray-50/70 opacity-65 cursor-not-allowed select-none"
-              >
-                <div className="w-10 h-10 rounded-xl bg-gray-200/60 text-gray-500 flex items-center justify-center text-xl shrink-0">
-                  💳
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-bold text-gray-700">
-                      Online Payment
-                    </p>
-                    <span className="text-[10px] font-bold text-gray-500 bg-gray-200/80 px-2 py-0.5 rounded-full">
-                      Coming soon
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    bKash, Nagad & Cards
-                  </p>
-                </div>
+          {/* ===== ROW 3: Payment Method (full width, 1 row) ===== */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-sm flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
+                <FiCreditCard size={18} />
               </div>
+              <h2 className="text-[15px] sm:text-base font-bold text-[var(--color-text-primary)] tracking-tight">
+                Payment Method
+              </h2>
             </div>
 
-            <div className="mt-5">
-              <InputField label="Special Instructions (Optional)">
-                <textarea
-                  name="specialInstructions"
-                  value={formData.specialInstructions}
-                  onChange={handleChange}
-                  rows={2}
-                  className={`${inputClass} resize-none`}
-                  placeholder="Any special requests for your order..."
-                />
-              </InputField>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs sm:text-sm font-semibold shrink-0">
+              <div className="w-4 h-4 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shrink-0">
+                <FiCheck size={10} strokeWidth={3} />
+              </div>
+              <span>Cash on Delivery</span>
             </div>
+            <input type="hidden" name="paymentMethod" value="cod" />
           </div>
 
           {/* ===== MOBILE ONLY: 1-Line Clean Coupon Bar & Compact Bill Summary ===== */}

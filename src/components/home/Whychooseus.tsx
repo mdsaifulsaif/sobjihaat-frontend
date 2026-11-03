@@ -257,7 +257,7 @@ const WhyChooseUs: React.FC = () => {
           </div>
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl lg:text-5xl">
             Why Choose{' '}
-            <span style={{ color: 'var(--color-primary)' }}>SobjiHaat?</span>
+            <span style={{ color: 'var(--color-primary)' }}>ShodaiBari?</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500 sm:text-base">
             We are committed to providing the best grocery shopping experience

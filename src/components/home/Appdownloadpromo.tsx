@@ -95,7 +95,7 @@ const AppDownloadPromo: React.FC = () => {
 
             <h2 className="text-2xl font-extrabold leading-tight text-[#1c2b22] sm:text-3xl lg:text-[2.1rem]">
               Download the{' '}
-              <span className="text-[var(--color-primary)]">SobjiHaat</span> App
+              <span className="text-[var(--color-primary)]">ShodaiBari</span> App
             </h2>
 
             <p className="mt-2 text-sm text-gray-600 sm:text-base">
@@ -167,7 +167,7 @@ const AppDownloadPromo: React.FC = () => {
             */}
             <Image
               src="/shapp.png"
-              alt="SobjiHaat app preview on a smartphone"
+              alt="ShodaiBari app preview on a smartphone"
               width={640}
               height={520}
               className="h-auto max-h-[260px] w-full max-w-[320px] select-none object-contain drop-shadow-xl sm:max-h-[320px] sm:max-w-[380px] lg:absolute lg:bottom-0 lg:right-0 lg:h-full lg:max-h-none lg:w-auto lg:max-w-none lg:translate-x-2"

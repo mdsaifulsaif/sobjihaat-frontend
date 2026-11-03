@@ -15,9 +15,9 @@ import { BiLeaf } from "react-icons/bi";
 import { RiEBike2Line } from "react-icons/ri";
 
 export const metadata: Metadata = {
-  title: "About Us | SobjiHaat - Fresh Grocery Delivery in Barisal",
+  title: "About Us | ShodaiBari - Fresh Grocery Delivery in Barisal",
   description:
-    "Learn about SobjiHaat, Barisal's trusted online grocery platform delivering 100% farm-fresh vegetables, fruits, fish, meat, and ready-to-cook essentials directly to your doorstep.",
+    "Learn about ShodaiBari, Barisal's trusted online grocery platform delivering 100% farm-fresh vegetables, fruits, fish, meat, and ready-to-cook essentials directly to your doorstep.",
 };
 
 export default function AboutPage() {
@@ -87,7 +87,7 @@ export default function AboutPage() {
             <span className="text-gray-900">About Us</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
-            About <span className="text-[var(--color-primary)]">SobjiHaat</span>
+            About <span className="text-[var(--color-primary)]">ShodaiBari</span>
           </h1>
           <p className="mt-3 text-gray-600 max-w-2xl text-sm sm:text-base leading-relaxed">
             Barisal&apos;s homegrown online grocery destination committed to making fresh, safe, and nutritious produce easily accessible to every family.
@@ -108,7 +108,7 @@ export default function AboutPage() {
                 Bridging the Gap Between Local Farmers and City Kitchens
               </h2>
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                Navigating crowded morning wet markets in Barisal is often exhausting, time-consuming, and uncertain in terms of hygiene and pricing. <strong>SobjiHaat</strong> was born out of a simple conviction: families deserve pure, nutritious groceries without the friction.
+                Navigating crowded morning wet markets in Barisal is often exhausting, time-consuming, and uncertain in terms of hygiene and pricing. <strong>ShodaiBari</strong> was born out of a simple conviction: families deserve pure, nutritious groceries without the friction.
               </p>
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
                 By partnering directly with farmers and trusted regional suppliers in Barisal, we cut out unnecessary middlemen. This guarantees fairer wages for local growers and ensures our customers receive vegetables, fruits, fish, and meat that are remarkably fresher and competitively priced.
@@ -164,7 +164,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
             <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-3.5 py-1.5 rounded-full inline-block mb-3">
-              Why SobjiHaat
+              Why ShodaiBari
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
               The Standards We Live By
@@ -203,7 +203,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-              What You&apos;ll Find on SobjiHaat
+              What You&apos;ll Find on ShodaiBari
             </h2>
             <p className="mt-2 text-sm text-gray-500">
               Your one-stop daily bazaar for everything fresh and wholesome.

@@ -53,7 +53,7 @@ export default function ContactPage() {
         {
             icon: <FiMail size={22} />,
             title: "Support Email",
-            details: "support@sobjihaat.com",
+            details: "support@shodaibari.com",
             color: "text-rose-600 bg-rose-50"
         },
         {

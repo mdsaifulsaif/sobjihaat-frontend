@@ -266,9 +266,9 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
   return (
     <header className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm max-h-[115px] md:max-h-none">
       <div className="container mx-auto px-3 sm:px-4">
-        <div className="flex items-center justify-between py-1.5 sm:py-2 md:py-4">
+        <div className="flex items-center justify-between py-1.5 md:py-2">
           {/* Left: Menu + Logo */}
-          <div className="flex items-center gap-3 md:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-3 md:gap-4 shrink-0">
             <button
               onClick={onToggleMobile}
               className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-gray-100 rounded-xl transition-all md:hidden"
@@ -277,20 +277,28 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
               <FiMenu size={24} />
             </button>
 
-            <Link href="/" className="flex items-center gap-2.5 sm:gap-3">
-              <div className="w-9 h-9 md:w-11 md:h-11 bg-[var(--color-primary)] rounded-xl md:rounded-2xl flex items-center justify-center text-white font-black text-2xl md:text-3xl">
-                S
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold tracking-tight notranslate">
-                  Shodai<span className="text-[var(--color-primary)]">Bari</span>
-                </h1>
-              </div>
+            <Link href="/" className="flex items-center shrink-0">
+              {/* 
+                === LOGO SCREEN HEIGHT BREAKPOINTS ===
+                1. Mobile (< 640px)          -> h-10    (40px height)
+                2. Tablet (sm: >= 640px)       -> sm:h-12 (48px height)
+                3. Laptop/Desktop (md: >= 768px) -> md:h-14 (56px height)
+                4. Large Desktop (lg: >= 1024px)-> lg:h-[58px] (58px height)
+                (আপনি চাইলে এখান থেকে যেকোনো ডিভাইসের হাইট খুব সহজে পরিবর্তন করতে পারবেন)
+              */}
+              <Image
+                src="/images/logo.png"
+                alt="ShodaiBari"
+                width={260}
+                height={48}
+                priority
+                className="h-6 sm:h-8 md:h-10 w-auto object-contain"
+              />
             </Link>
           </div>
 
           {/* Desktop Search */}
-          <div className="hidden md:flex flex-1 max-w-xl mx-8 relative" ref={searchDesktopRef}>
+          <div className="hidden md:flex flex-1 max-w-xl mx-4 lg:mx-8 relative" ref={searchDesktopRef}>
             <form onSubmit={handleSearchSubmit} className="relative w-full">
               <input
                 type="text"
@@ -325,7 +333,7 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
           </div>
 
           {/* Right Side */}
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-3 shrink-0">
             {/* Wishlist */}
             <Link
               href="/wishlist"
@@ -360,9 +368,8 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
                       : "Login"}
                     <FiChevronDown
                       size={14}
-                      className={`transition-transform ${
-                        isUserMenuOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${isUserMenuOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </p>
                 </div>
@@ -370,11 +377,10 @@ const MinHeader = ({ onToggleMobile }: MinHeaderProps) => {
 
               {/* User Dropdown */}
               <div
-                className={`absolute right-0 top-[110%] w-64 bg-white rounded-2xl shadow-xl border border-gray-100 transition-all z-50 ${
-                  isUserMenuOpen
-                    ? "opacity-100 visible translate-y-0"
-                    : "opacity-0 invisible translate-y-2 pointer-events-none"
-                }`}
+                className={`absolute right-0 top-[110%] w-64 bg-white rounded-2xl shadow-xl border border-gray-100 transition-all z-50 ${isUserMenuOpen
+                  ? "opacity-100 visible translate-y-0"
+                  : "opacity-0 invisible translate-y-2 pointer-events-none"
+                  }`}
               >
                 {!isAuthenticated ? (
                   <div className="p-6">

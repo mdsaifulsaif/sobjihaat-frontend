@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
     FaFacebookF,
     FaTwitter,
@@ -88,18 +89,20 @@ const Footer: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 py-14">
                     {/* Column 1: Brand & About (4 cols) */}
                     <div className="lg:col-span-4">
-                        <Link href="/" className="inline-flex items-center gap-3 mb-5">
-                            <div className="w-11 h-11 bg-[var(--color-primary)] rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-sm">
-                                S
-                            </div>
-                            <span className="text-2xl font-bold tracking-tight text-white">
-                                Shodai<span className="text-[var(--color-primary)]">Bari</span>
-                            </span>
+                        {/* Footer Logo */}
+                        <Link href="/" className="inline-flex items-center mb-5 px-3.5 py-2 rounded-xl shadow-sm hover:opacity-95 transition-opacity">
+                            <Image
+                                src="/images/logo.png"
+                                alt="ShodaiBari"
+                                width={220}
+                                height={50}
+                                className="h-9 md:h-11 w-auto object-contain"
+                            />
                         </Link>
                         <p className="text-sm text-gray-400 leading-relaxed mb-6">
                             Barisal&apos;s trusted online grocery and fresh produce doorstep delivery platform. Delivering 100% farm-fresh vegetables, organic fruits, fish, meat, and daily kitchen essentials directly to your home.
                         </p>
-                        
+
                         <div className="flex items-center gap-2.5">
                             <Link href="#" aria-label="Facebook" className="w-9 h-9 rounded-xl bg-[#20241f] border border-gray-800 flex items-center justify-center text-gray-400 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)] transition-all duration-300">
                                 <FaFacebookF size={14} />
@@ -125,8 +128,8 @@ const Footer: React.FC = () => {
                         <ul className="space-y-3">
                             {quickLinks.map((item, i) => (
                                 <li key={i}>
-                                    <Link 
-                                        href={item.href} 
+                                    <Link
+                                        href={item.href}
                                         className="text-sm text-gray-400 hover:text-[var(--color-primary)] hover:translate-x-1 inline-flex items-center gap-1.5 transition-all duration-200"
                                     >
                                         <span className="text-xs opacity-50 font-mono">›</span>
@@ -155,7 +158,7 @@ const Footer: React.FC = () => {
                             Deliver fresh groceries in Barisal on your own flexible schedule. Enjoy competitive payouts, guaranteed weekly settlements, and rider incentives.
                         </p>
 
-                        <Link 
+                        <Link
                             href="/rider-apply"
                             className="inline-flex items-center justify-center gap-2 bg-[var(--color-primary)] hover:bg-[#52861c] text-white font-semibold py-2.5 px-5 rounded-xl text-xs sm:text-sm transition-all shadow-md group"
                         >

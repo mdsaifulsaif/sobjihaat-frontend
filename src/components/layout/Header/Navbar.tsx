@@ -26,13 +26,13 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4 md:gap-8">
         {/* Brand Logo Section */}
         {/* মোবাইলেও যেন লোগোটা তার রেশিও ঠিক রাখে এবং কুঁচকে না যায় */}
-        <div className="flex items-center flex-shrink-0 cursor-pointer select-none max-w-[130px] sm:max-w-[180px]">
+        <div className="flex items-center flex-shrink-0 cursor-pointer select-none max-w-[200px] sm:max-w-[280px]">
           <Image
-            src="/img/shared/logo.png"
-            alt="Khati Bazar"
-            className="object-contain w-full h-auto"
-            width={180} 
-            height={50}
+            src="/images/logo.png"
+            alt="ShodaiBari"
+            className="object-contain w-auto h-10 sm:h-12 md:h-14 lg:h-[58px]"
+            width={260} 
+            height={58}
             priority
           />
         </div>

@@ -147,13 +147,25 @@ const Hero: React.FC<HeroProps> = ({ initialBanners }) => {
                 }`}
             >
               {banner.link ? (
-                <Link
-                  href={banner.link === "/shop" || banner.link === "/offers" ? "/" : banner.link}
-                  className="block w-full h-full cursor-pointer"
-                  tabIndex={isActive ? 0 : -1}
-                >
-                  {content}
-                </Link>
+                banner.link.startsWith("http://") || banner.link.startsWith("https://") ? (
+                  <a
+                    href={banner.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full h-full cursor-pointer"
+                    tabIndex={isActive ? 0 : -1}
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <Link
+                    href={banner.link === "/shop" ? "/" : banner.link}
+                    className="block w-full h-full cursor-pointer"
+                    tabIndex={isActive ? 0 : -1}
+                  >
+                    {content}
+                  </Link>
+                )
               ) : (
                 content
               )}

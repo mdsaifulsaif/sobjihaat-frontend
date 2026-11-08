@@ -4,6 +4,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import {
@@ -561,13 +562,15 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
             {/* Left: Image Gallery */}
             <div className="md:w-[45%] bg-gray-50 p-4 md:p-6 flex-shrink-0 md:sticky md:top-0 md:self-start">
               <div className="relative w-full h-[300px] md:h-[380px] bg-white rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden">
-                <img
+                <Image
                   src={galleryImages[activeImage] || product.thumbnail || '/placeholder.png'}
-                  alt={product.name}
+                  alt={product.name || 'Product'}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 45vw"
                   className="w-full h-full object-contain p-4"
                 />
                 {!inStock && (
-                  <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+                  <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-xs font-semibold px-2.5 py-1 rounded-full z-10">
                     Out of Stock
                   </span>
                 )}
@@ -579,13 +582,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                     <button
                       key={idx}
                       onClick={() => setActiveImage(idx)}
-                      className={`w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 bg-white p-1 overflow-hidden flex-shrink-0 transition-all ${
+                      className={`relative w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 bg-white p-1 overflow-hidden flex-shrink-0 transition-all ${
                         activeImage === idx
                           ? 'border-[var(--color-primary)] shadow-sm'
                           : 'border-gray-200 hover:border-gray-400'
                       }`}
                     >
-                      <img src={img} alt="" className="w-full h-full object-contain" />
+                      <Image src={img} alt="" fill sizes="64px" className="w-full h-full object-contain" />
                     </button>
                   ))}
                 </div>
@@ -697,11 +700,15 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
                           >
                             <div className="col-span-2 flex items-center gap-2 min-w-0">
                               {item.productThumbnail && (
-                                <img
-                                  src={item.productThumbnail}
-                                  alt={item.productName || ''}
-                                  className="w-8 h-8 rounded-lg object-cover border flex-shrink-0"
-                                />
+                                <div className="relative w-8 h-8 rounded-lg overflow-hidden border flex-shrink-0">
+                                  <Image
+                                    src={item.productThumbnail}
+                                    alt={item.productName || ''}
+                                    fill
+                                    sizes="32px"
+                                    className="object-cover"
+                                  />
+                                </div>
                               )}
                               <span className="text-xs font-medium text-gray-700 truncate">
                                 {itemName}

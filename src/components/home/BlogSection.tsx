@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const blogPosts = [
     {
@@ -62,9 +63,11 @@ const BlogSection: React.FC = () => {
                         {/* Image */}
                         <Link href={post.href}>
                             <div className='relative aspect-[16/10] overflow-hidden rounded-xl mb-5 shadow-sm'>
-                                <img
+                                <Image
                                     src={post.image}
                                     alt={post.title}
+                                    fill
+                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                                     className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-700'
                                 />
                                 <div className='absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500'></div>

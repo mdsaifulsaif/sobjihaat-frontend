@@ -919,6 +919,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/redux";
 import { clearCart, setPlacingOrder } from "@/redux/slices/cartSlice";
@@ -1621,11 +1622,13 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                 <div className="space-y-3 max-h-[240px] overflow-y-auto pr-1 mb-5">
                   {items.map((item) => (
                     <div key={item.id} className="flex gap-3 items-start">
-                      <div className="w-14 h-14 bg-[var(--color-surface)] rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
-                        <img
+                      <div className="relative w-14 h-14 bg-[var(--color-surface)] rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
+                        <Image
                           src={item.image}
-                          alt={item.name}
-                          className="w-full h-full object-contain p-1"
+                          alt={item.name || "Product"}
+                          fill
+                          sizes="56px"
+                          className="object-contain p-1"
                         />
                       </div>
                       <div className="flex-1 min-w-0">

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FiSearch, FiChevronRight, FiCalendar, FiUser, FiMessageSquare } from 'react-icons/fi';
 
 const blogPosts = [
@@ -109,12 +110,14 @@ export default function BlogPage() {
                                 <article key={post.id} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group">
                                     {/* Image Container */}
                                     <Link href={post.href} className="block relative aspect-[16/10] overflow-hidden">
-                                        <img
+                                        <Image
                                             src={post.image}
                                             alt={post.title}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw, 50vw"
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                         />
-                                        <div className="absolute top-4 left-4">
+                                        <div className="absolute top-4 left-4 z-10">
                                             <span className="bg-[var(--color-primary)] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
                                                 {post.category}
                                             </span>
@@ -207,8 +210,8 @@ export default function BlogPage() {
                             <div className="space-y-6">
                                 {recentPosts.map((post) => (
                                     <Link key={post.id} href={post.href} className="flex gap-4 group">
-                                        <div className="w-20 h-16 rounded-lg overflow-hidden shrink-0">
-                                            <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <div className="relative w-20 h-16 rounded-lg overflow-hidden shrink-0">
+                                            <Image src={post.image} alt={post.title} fill sizes="80px" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                                         </div>
                                         <div className="flex flex-col justify-center">
                                             <h4 className="text-sm font-bold text-gray-900 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2 leading-tight mb-1">

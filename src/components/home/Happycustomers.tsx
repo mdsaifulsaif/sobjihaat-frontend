@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-
+import Image from 'next/image';
 import { useRouter } from "next/navigation";
 import SectionHeader from '../shared/SectionHeader';
 import { BiLeaf } from 'react-icons/bi';
@@ -165,12 +165,15 @@ const Avatar: React.FC<{ initials: string; color: string; imageUrl?: string }> =
 }) => {
   if (imageUrl) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={imageUrl}
-        alt={initials}
-        className="h-12 w-12 shrink-0 rounded-full object-cover"
-      />
+      <div className="relative h-12 w-12 shrink-0 rounded-full overflow-hidden">
+        <Image
+          src={imageUrl}
+          alt={initials || "User avatar"}
+          fill
+          sizes="48px"
+          className="object-cover"
+        />
+      </div>
     );
   }
 

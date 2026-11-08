@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     FiMail,
     FiPhone,
@@ -195,10 +196,12 @@ export default function ContactPage() {
             {/* Stylized Map View */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pb-8 sm:pb-12">
                 <div className="w-full h-[360px] sm:h-[400px] bg-gray-100 rounded-md relative overflow-hidden group shadow-sm">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2000"
                         className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000"
                         alt="Location"
+                        fill
+                        sizes="100vw"
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="bg-white p-8 rounded-md shadow-2xl text-center max-w-xs border border-gray-50 transform hover:-translate-y-2 transition-all duration-300">

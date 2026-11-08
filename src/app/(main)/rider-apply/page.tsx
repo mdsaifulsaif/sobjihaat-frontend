@@ -964,7 +964,9 @@ const RiderApplyForm = () => {
                   <label htmlFor="nidImage" className="cursor-pointer flex flex-col items-center">
                     {preview ? (
                       <div className="relative w-full max-w-xs mx-auto">
-                        <img src={preview} alt="NID Preview" className="w-full h-36 object-cover rounded-xl" />
+                        <div className="relative w-full h-36 rounded-xl overflow-hidden">
+                          <Image src={preview} alt="NID Preview" fill sizes="320px" className="object-cover" unoptimized />
+                        </div>
                         <div className="mt-2 text-xs text-gray-600 font-medium">Click to change image</div>
                       </div>
                     ) : (

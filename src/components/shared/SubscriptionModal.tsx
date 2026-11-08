@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
@@ -287,11 +288,15 @@ export default function SubscriptionModal({
 
               {/* Compact Plan Preview */}
               <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-200 max-w-sm mx-auto text-left">
-                <img
-                  src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
-                  alt={product.name}
-                  className="w-12 h-12 object-cover rounded-xl border border-gray-200"
-                />
+                <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-gray-200 shrink-0">
+                  <Image
+                    src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
+                    alt={product.name || 'Plan'}
+                    fill
+                    sizes="48px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="font-bold text-gray-900 text-xs truncate">{product.name}</h4>
                   <p className="text-xs font-black text-[var(--color-primary)]">
@@ -323,11 +328,15 @@ export default function SubscriptionModal({
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Product preview strip */}
               <div className="flex items-center gap-3.5 bg-gray-50 p-3.5 rounded-2xl border border-gray-200">
-                <img
-                  src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
-                  alt={product.name}
-                  className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-xl border border-gray-200 shrink-0"
-                />
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-gray-200 shrink-0">
+                  <Image
+                    src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
+                    alt={product.name || 'Plan'}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)]">
                     {frequency === 'weekly' ? 'Weekly Delivery' : 'Monthly Delivery'} • Free Doorstep Delivery

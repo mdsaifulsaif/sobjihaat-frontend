@@ -640,10 +640,12 @@ function TrackOrderContent() {
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-12 h-12 rounded-sm border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0 relative">
                         {item.thumbnail ? (
-                          <img
+                          <Image
                             src={item.thumbnail}
-                            alt={item.productName}
-                            className="w-full h-full object-cover"
+                            alt={item.productName || "Product"}
+                            fill
+                            sizes="48px"
+                            className="object-cover"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-400">

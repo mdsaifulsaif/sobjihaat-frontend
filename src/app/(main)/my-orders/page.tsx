@@ -296,10 +296,12 @@ const MyOrdersPage = () => {
                         title={item.productName}
                       >
                         {item.thumbnail ? (
-                          <img
+                          <Image
                             src={item.thumbnail}
-                            alt={item.productName}
-                            className="w-full h-full object-cover"
+                            alt={item.productName || "Product"}
+                            fill
+                            sizes="56px"
+                            className="object-cover"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-300">

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useCreateComplaintMutation } from "@/redux/api/complainApi";
@@ -310,16 +311,21 @@ export default function ComplainModal() {
               </div>
             ) : (
               <div className="relative inline-block">
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="h-24 w-24 object-cover rounded-lg border"
-                />
+                <div className="relative h-24 w-24 rounded-lg overflow-hidden border">
+                  <Image
+                    src={preview}
+                    alt="Preview"
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
 
                 <button
                   type="button"
                   onClick={removeImage}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow z-10 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>

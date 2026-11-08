@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FiHeart, FiTrash2, FiShoppingBag, FiChevronRight, FiCheck } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "@/redux";
 import { removeFromWishlist, clearWishlist } from "@/redux/slices/wishlistSlice";
@@ -136,10 +137,12 @@ export default function WishlistPage() {
 
                   {/* Product Image */}
                   <div className="relative aspect-square bg-gray-50 overflow-hidden flex items-center justify-center p-3">
-                    <img
+                    <Image
                       src={item.image || item.thumbnail || "/placeholder.png"}
-                      alt={item.name}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      alt={item.name || "Product"}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                      className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
 

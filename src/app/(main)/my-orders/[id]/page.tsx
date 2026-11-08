@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useGetMyOrderByIdQuery, useCancelOrderMutation } from "@/redux/api/orderApi";
 import { format } from "date-fns";
 import {
@@ -425,12 +426,14 @@ const OrderDetailsPage = () => {
             {order.items.map((item: any, i: number) => (
               <div key={i} className="grid grid-cols-12 gap-2 px-5 py-3 items-center">
                 <div className="col-span-6 sm:col-span-5 flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-sm border border-gray-200 overflow-hidden bg-[var(--color-surface)] flex-shrink-0">
+                  <div className="w-12 h-12 rounded-sm border border-gray-200 overflow-hidden bg-[var(--color-surface)] flex-shrink-0 relative">
                     {item.thumbnail ? (
-                      <img
+                      <Image
                         src={item.thumbnail}
-                        alt={item.productName}
-                        className="w-full h-full object-cover"
+                        alt={item.productName || "Product"}
+                        fill
+                        sizes="48px"
+                        className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-300">

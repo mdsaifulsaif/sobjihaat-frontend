@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useGetMeQuery, useUpdateProfileMutation } from '@/redux/api/authApi';
+import { useGetAllAreasQuery } from '@/redux/api/areaApi';
 import { 
   FiUser, 
   FiPhone, 
@@ -14,7 +15,9 @@ import {
   FiShield, 
   FiCalendar, 
   FiTruck,
-  FiActivity
+  FiActivity,
+  FiShoppingBag,
+  FiChevronDown
 } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -23,18 +26,22 @@ import { toast } from 'react-hot-toast';
 const ProfilePage = () => {
   const router = useRouter();
   const { data, isLoading, refetch } = useGetMeQuery({});
+  const { data: areasResponse, isLoading: isLoadingAreas } = useGetAllAreasQuery({});
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
 
   const user = data?.data;
+  const areas = (areasResponse?.data || []).filter((a: any) => a.isActive !== false);
 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     phoneNumber: '',
     addressLine: '',
-    city: '',
-    state: '',
-    postalCode: '',
+    area: '',
+    areaId: '',
+    city: 'Barisal',
+    state: 'Barisal',
+    postalCode: '8200',
   });
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -47,9 +54,11 @@ const ProfilePage = () => {
         lastName: user.lastName || '',
         phoneNumber: user.phoneNumber || '',
         addressLine: user.shippingAddress?.addressLine || '',
-        city: user.shippingAddress?.city || '',
-        state: user.shippingAddress?.state || '',
-        postalCode: user.shippingAddress?.postalCode || '',
+        area: user.shippingAddress?.area || '',
+        areaId: user.shippingAddress?.areaId || '',
+        city: 'Barisal',
+        state: 'Barisal',
+        postalCode: user.shippingAddress?.postalCode || '8200',
       });
       setPreviewUrl(user.avatar?.url || '');
     }
@@ -57,6 +66,16 @@ const ProfilePage = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    const selectedObj = areas.find((a: any) => a._id === selectedId);
+    setFormData((prev) => ({
+      ...prev,
+      areaId: selectedId,
+      area: selectedObj?.name || '',
+    }));
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,111 +183,123 @@ const ProfilePage = () => {
         {/* Profile Container Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
           
-          {/* Top Banner with Brand Gradient & Organic Patterns */}
-          <div 
-            className="relative h-36 sm:h-44 overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, var(--color-primary, #619d23), color-mix(in srgb, var(--color-primary, #619d23) 70%, black))'
-            }}
-          >
-            {/* Soft decorative background circles */}
-            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none" />
-            <div className="absolute -bottom-10 left-10 w-40 h-40 rounded-full bg-white/10 blur-lg pointer-events-none" />
-            <div className="absolute inset-0 bg-radial from-transparent via-black/5 to-black/20 pointer-events-none" />
-          </div>
-
           {/* Profile Identity Bar */}
-          <div className="relative px-6 sm:px-8 pb-6 border-b border-gray-100">
-            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 -mt-16 sm:-mt-20">
+          <div className="p-6 sm:p-8 border-b border-gray-100 bg-gradient-to-br from-gray-50/70 via-white to-emerald-50/20">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               
-              {/* Avatar with Camera upload trigger */}
-              <div className="relative group shrink-0">
-                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-white relative">
-                  {previewUrl ? (
-                    <Image
-                      src={previewUrl}
-                      alt="Profile Avatar"
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div 
-                      className="w-full h-full flex items-center justify-center"
-                      style={{
-                        backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
-                        color: 'var(--color-primary, #619d23)'
-                      }}
-                    >
-                      <FiUser size={44} />
-                    </div>
-                  )}
-                </div>
-                
-                <label 
-                  htmlFor="avatar-upload"
-                  className="absolute bottom-1 right-1 w-9 h-9 rounded-xl bg-white border border-gray-200 shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 text-gray-700 hover:scale-105 active:scale-95 transition-all"
-                  style={{ color: 'var(--color-primary, #619d23)' }}
-                  title="Change Avatar"
-                >
-                  <FiCamera size={16} />
-                  <input
-                    id="avatar-upload"
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                  />
-                </label>
-              </div>
-
-              {/* User Name & Badges */}
-              <div className="flex-1 text-center sm:text-left space-y-1">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center justify-center sm:justify-start gap-1.5">
-                    <span>{user?.firstName || 'User'} {user?.lastName || ''}</span>
-                    <FiCheckCircle size={18} style={{ color: 'var(--color-primary, #619d23)' }} className="shrink-0" title="Verified Account" />
-                  </h2>
-
-                  {/* Role Badge */}
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider self-center sm:self-auto ${
-                    isAdmin 
-                      ? 'bg-purple-100 text-purple-800 border border-purple-200' 
-                      : isRider 
-                      ? 'bg-blue-100 text-blue-800 border border-blue-200' 
-                      : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                  }`}>
-                    {isRider ? <FiTruck size={12} /> : isAdmin ? <FiShield size={12} /> : <FiUser size={12} />}
-                    {role}
-                  </span>
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-xs text-gray-500 pt-0.5">
-                  <span className="flex items-center gap-1.5 font-medium text-gray-600">
-                    <FiMail size={13} className="text-gray-400" />
-                    {user?.email || 'No email provided'}
-                  </span>
+              {/* Left: Avatar + User Info */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-center gap-5 text-center sm:text-left">
+                {/* Circular Avatar with Camera upload trigger */}
+                <div className="relative group shrink-0">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full ring-4 ring-white shadow-md overflow-hidden bg-white border border-gray-200/70 relative">
+                    {previewUrl ? (
+                      <Image
+                        src={previewUrl}
+                        alt="Profile Avatar"
+                        fill
+                        className="object-cover rounded-full"
+                      />
+                    ) : (
+                      <div 
+                        className="w-full h-full rounded-full flex items-center justify-center font-bold text-3xl"
+                        style={{
+                          backgroundColor: 'color-mix(in srgb, var(--color-primary, #619d23) 12%, transparent)',
+                          color: 'var(--color-primary, #619d23)'
+                        }}
+                      >
+                        {user?.firstName ? user.firstName.charAt(0).toUpperCase() : <FiUser size={36} />}
+                      </div>
+                    )}
+                  </div>
                   
-                  {user?.phoneNumber && (
-                    <>
-                      <span className="w-1 h-1 bg-gray-300 rounded-full hidden sm:inline-block" />
-                      <span className="flex items-center gap-1.5 text-gray-600">
-                        <FiPhone size={13} className="text-gray-400" />
-                        {user.phoneNumber}
-                      </span>
-                    </>
-                  )}
+                  <label 
+                    htmlFor="avatar-upload"
+                    className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all"
+                    style={{ color: 'var(--color-primary, #619d23)' }}
+                    title="Change Avatar"
+                  >
+                    <FiCamera size={14} />
+                    <input
+                      id="avatar-upload"
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                    />
+                  </label>
+                </div>
 
-                  {user?.createdAt && (
-                    <>
-                      <span className="w-1 h-1 bg-gray-300 rounded-full hidden sm:inline-block" />
-                      <span className="flex items-center gap-1.5 text-gray-400">
-                        <FiCalendar size={13} />
-                        Joined {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                      </span>
-                    </>
-                  )}
+                {/* User Name & Badges */}
+                <div className="space-y-1.5">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-1.5">
+                      <span>{user?.firstName || 'User'} {user?.lastName || ''}</span>
+                      <FiCheckCircle size={18} style={{ color: 'var(--color-primary, #619d23)' }} className="shrink-0" title="Verified Account" />
+                    </h2>
+
+                    {/* Role Badge */}
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
+                      isAdmin 
+                        ? 'bg-purple-100 text-purple-800 border border-purple-200' 
+                        : isRider 
+                        ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                        : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                    }`}>
+                      {isRider ? <FiTruck size={12} /> : isAdmin ? <FiShield size={12} /> : <FiUser size={12} />}
+                      {role}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-xs text-gray-500 pt-0.5">
+                    <span className="flex items-center gap-1.5 font-medium text-gray-600">
+                      <FiMail size={13} className="text-gray-400" />
+                      {user?.email || 'No email provided'}
+                    </span>
+                    
+                    {user?.phoneNumber && (
+                      <>
+                        <span className="w-1 h-1 bg-gray-300 rounded-full hidden sm:inline-block" />
+                        <span className="flex items-center gap-1.5 text-gray-600">
+                          <FiPhone size={13} className="text-gray-400" />
+                          {user.phoneNumber}
+                        </span>
+                      </>
+                    )}
+
+                    {user?.createdAt && (
+                      <>
+                        <span className="w-1 h-1 bg-gray-300 rounded-full hidden sm:inline-block" />
+                        <span className="flex items-center gap-1.5 text-gray-400">
+                          <FiCalendar size={13} />
+                          Joined {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
+
+              {/* Right: Quick Action Buttons (Order History & Track Order) */}
+              <div className="flex flex-wrap items-center justify-center sm:justify-start md:justify-end gap-2.5 shrink-0 pt-2 md:pt-0">
+                <button
+                  type="button"
+                  onClick={() => router.push('/my-orders')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--color-primary)] text-white hover:opacity-95 text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer"
+                >
+                  <FiShoppingBag size={16} />
+                  <span>Order History</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => router.push('/track-order')}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-gray-50 text-gray-700 text-xs sm:text-sm font-semibold border border-gray-200 shadow-2xs transition-all cursor-pointer"
+                >
+                  <FiTruck size={15} className="text-gray-500" />
+                  <span>Track Order</span>
+                </button>
+              </div>
+
             </div>
           </div>
 
@@ -367,13 +398,68 @@ const ProfilePage = () => {
                 >
                   <FiMapPin size={15} />
                 </div>
-                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">
-                  Default Delivery Address
-                </h3>
+                <div className="flex-1 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">
+                    Default Delivery Address
+                  </h3>
+                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    📍 Barisal City Delivery
+                  </span>
+                </div>
               </div>
 
+              {/* Delivery Area Dropdown & City */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* 1. Delivery Area Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">
+                    Delivery Area (Barisal City) *
+                  </label>
+                  <div className="relative">
+                    <FiMapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                    <select
+                      name="areaId"
+                      value={formData.areaId || areas.find((a: any) => a.name === formData.area)?._id || ""}
+                      onChange={handleAreaChange}
+                      disabled={isLoadingAreas}
+                      className="w-full pl-10 pr-10 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 transition-all appearance-none cursor-pointer disabled:opacity-60"
+                    >
+                      <option value="">
+                        {isLoadingAreas ? "Loading areas..." : "-- Select Your Delivery Area --"}
+                      </option>
+                      {areas.map((area: any) => (
+                        <option key={area._id} value={area._id}>
+                          {area.name}
+                        </option>
+                      ))}
+                    </select>
+                    <FiChevronDown
+                      size={16}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    />
+                  </div>
+                </div>
+
+                {/* 2. City (Fixed / Default to Barisal) */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">City / Coverage</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      readOnly
+                      disabled
+                      value="Barisal City (Default)"
+                      className="w-full px-4 py-2.5 bg-gray-100/80 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 outline-none cursor-not-allowed select-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Street / House & Road Address */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700">Street / House & Road Address</label>
+                <label className="text-xs font-semibold text-gray-700">
+                  Street / House & Road Address
+                </label>
                 <div className="relative">
                   <FiMapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                   <input
@@ -381,46 +467,8 @@ const ProfilePage = () => {
                     name="addressLine"
                     value={formData.addressLine}
                     onChange={handleChange}
-                    placeholder="e.g. House #12, Road #4, Bangla Bazar"
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700">City</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="e.g. Barisal"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700">State / Division</label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    placeholder="e.g. Barisal"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700">Postal Code</label>
-                  <input
-                    type="text"
-                    name="postalCode"
-                    value={formData.postalCode}
-                    onChange={handleChange}
-                    placeholder="e.g. 8200"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                    placeholder="e.g. House #12, Road #4, Holding or Landmark"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm text-gray-800 outline-none focus:bg-white focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 transition-all"
                   />
                 </div>
               </div>

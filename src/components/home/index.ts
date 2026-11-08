@@ -6,3 +6,4 @@ export { default as NewProducts } from './NewProducts';
 export { default as Support } from './Support';
 export { default as BlogSection } from './BlogSection';
 export { default as ReadyToCookProducts } from './ReadyToCookProducts';
+export { default as PromotionalBanners } from './PromotionalBanners';

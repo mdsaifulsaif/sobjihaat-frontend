@@ -1,6 +1,6 @@
 
 
-import { Hero, HomeCategory } from '@/components/home';
+import { Hero, HomeCategory, PromotionalBanners } from '@/components/home';
 import AppDownloadPromo from '@/components/home/Appdownloadpromo';
 import ComboProducts from '@/components/home/ComboProducts';
 import SubscriptionPackages from '@/components/home/SubscriptionPackages';
@@ -17,8 +17,9 @@ import { serverFetch } from '@/services/api';
 
 export default async function Home() {
 
-  const [bannersData, categoriesData, brandsData, featuredData, readyToCookData, comboData, subscriptionPackagesData, shippingData, reviewsData, areasData] = await Promise.all([
+  const [bannersData, promotionalBannersData, categoriesData, brandsData, featuredData, readyToCookData, comboData, subscriptionPackagesData, shippingData, reviewsData, areasData] = await Promise.all([
     serverFetch<any>('/banners', { tags: ['banners'] }),
+    serverFetch<any>('/promotional-banners', { tags: ['promotional-banners'] }),
     serverFetch<any>('/categories?status=active&isDeleted=false&limit=20', { tags: ['categories'] }),
     serverFetch<any>('/brands?status=active&isDeleted=false&limit=30', { tags: ['brands'] }),
     serverFetch<any>('/products/featured?limit=10', { tags: ['products'] }),
@@ -46,6 +47,7 @@ export default async function Home() {
         initialProducts={readyToCookData?.data}
         categorySlug={readyCategorySlug}
       />
+      <PromotionalBanners initialBanners={promotionalBannersData?.data || []} />
       <ComboProducts initialProducts={comboData?.data} />
       <TrustedBrands initialBrands={brandsData?.data} />
       <SubscriptionPackages initialPackages={subscriptionPackagesData?.data || []} />

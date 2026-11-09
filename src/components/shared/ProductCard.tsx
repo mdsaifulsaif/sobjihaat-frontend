@@ -138,6 +138,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
         price: price,
         mrp: regularPrice || price,
         image: productImage,
+        thumbnail: productImage,
         category:
           product.categoryDetails?.name || product.categoryName || "General",
       }),

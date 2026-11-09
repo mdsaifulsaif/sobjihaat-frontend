@@ -52,13 +52,13 @@ export default async function Home() {
       <TrustedBrands initialBrands={brandsData?.data} />
       <SubscriptionPackages initialPackages={subscriptionPackagesData?.data || []} />
 
-      <DeliveryBanner />
+      {/* <DeliveryBanner /> */}
       <DeliveryCharges initialData={shippingData?.data} />
       {/* <OurCommitment /> */}
       <HappyCustomers initialReviews={reviewsData?.data} />
-      <AppDownloadPromo />
+      {/* <AppDownloadPromo /> */}
       <DeliveryCoverage areas={areasData?.data || []} />
-      <Faq />
+      {/* <Faq /> */}
     </>
   );
 }

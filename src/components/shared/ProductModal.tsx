@@ -392,7 +392,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
           : product.name,
         price,
         mrp,
-        image: product.thumbnail,
+        image: product.thumbnail || product.images?.[0] || '/placeholder.png',
+        thumbnail: product.thumbnail || product.images?.[0] || '/placeholder.png',
         category: product.categoryID?.name || product.categoryDetails?.name || '',
         quantity: 1,
       })
@@ -415,7 +416,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product: initialProduct, on
           : product.name,
         price,
         mrp,
-        image: product.thumbnail,
+        image: product.thumbnail || product.images?.[0] || '/placeholder.png',
+        thumbnail: product.thumbnail || product.images?.[0] || '/placeholder.png',
         category: product.categoryID?.name || product.categoryDetails?.name || '',
         quantity: 1,
       })

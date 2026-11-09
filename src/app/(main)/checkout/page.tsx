@@ -1238,7 +1238,10 @@ const CheckoutContent = () => {
       },
     );
 
-  const estimatedShipping = shippingPreview?.data?.shippingCharge ?? 0;
+  const estimatedShipping =
+    shippingPreview?.data?.shippingCharge !== undefined
+      ? shippingPreview.data.shippingCharge
+      : 30;
   const couponDiscount = appliedCoupon?.discountAmount ?? 0;
   const grandTotal = Math.max(0, totalPrice + estimatedShipping - couponDiscount);
 
@@ -1385,7 +1388,7 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
             onOpenCouponDrawer={() => setIsCouponDrawerOpen(true)}
             appliedCouponCode={appliedCoupon?.code}
             appliedDiscountAmount={appliedCoupon?.discountAmount || 0}
-            isFreeShipping={estimatedShipping === 0}
+            isFreeShipping={Boolean((appliedCoupon as any)?.freeShipping || shippingPreview?.data?.isFirstOrder)}
             compact={true}
           />
         </div>
@@ -1655,7 +1658,7 @@ console.log("shippingPreview:", shippingPreview, "error:", shippingError);
                     onOpenCouponDrawer={() => setIsCouponDrawerOpen(true)}
                     appliedCouponCode={appliedCoupon?.code}
                     appliedDiscountAmount={appliedCoupon?.discountAmount || 0}
-                    isFreeShipping={estimatedShipping === 0}
+                    isFreeShipping={Boolean((appliedCoupon as any)?.freeShipping || shippingPreview?.data?.isFirstOrder)}
                   />
                 </div>
 

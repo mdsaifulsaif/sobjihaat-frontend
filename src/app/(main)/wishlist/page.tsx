@@ -23,6 +23,7 @@ export default function WishlistPage() {
         price: item.price,
         mrp: item.mrp || item.regularPrice || item.price,
         image: item.image || item.thumbnail || "/placeholder.png",
+        thumbnail: item.thumbnail || item.image || "/placeholder.png",
         category: item.category || "",
         quantity: 1,
       })

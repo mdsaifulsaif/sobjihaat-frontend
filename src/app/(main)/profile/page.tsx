@@ -387,6 +387,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Section 2: Shipping & Delivery Address */}
+            {/* Section 2: Shipping & Delivery Address */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                 <div 

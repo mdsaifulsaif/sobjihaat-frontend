@@ -21,12 +21,12 @@ const menuItems = [
   },
   {
     title: "Fresh Vegetables",
-    href: "/cat/fresh-vegetables",
+    href: "/category/fresh-vegetables",
     icon: FiShoppingBag,
   },
   {
     title: "Fresh Fruits",
-    href: "/cat/fruits",
+    href: "/category/fruits",
     icon: FiShoppingBag,
   },
   {

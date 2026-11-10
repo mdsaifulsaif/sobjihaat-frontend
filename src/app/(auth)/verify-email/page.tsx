@@ -194,7 +194,7 @@ function VerifyEmailContent() {
       </p>
 
       {/* Email Display & Edit */}
-      <div className="mb-6 p-3 bg-gray-50 rounded-lg border border-gray-150 flex items-center justify-between gap-2">
+      <div className="mb-6 p-3 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-between gap-2">
         {isEditingEmail ? (
           <input
             type="email"

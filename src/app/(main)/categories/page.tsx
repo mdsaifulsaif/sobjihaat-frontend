@@ -56,7 +56,7 @@ export default async function CategoriesPage() {
               </p>
             </div>
 
-            <div className="text-xs font-semibold text-gray-500 bg-gray-50 px-4 py-2 rounded-xl border border-gray-150 self-start sm:self-auto">
+            <div className="text-xs font-semibold text-gray-500 bg-gray-50 px-4 py-2 rounded-xl border border-gray-200 self-start sm:self-auto">
               Total {categories.length} Categories Available
             </div>
           </div>
@@ -80,7 +80,7 @@ export default async function CategoriesPage() {
             {categories.map((category) => (
               <Link
                 key={category._id}
-                href={`/cat/${category.slug}`}
+                href={`/category/${category.slug}`}
                 className="group block bg-white border border-gray-100/90 rounded-2xl p-4 sm:p-5 hover:shadow-md hover:border-gray-200 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center text-center"
               >
                 {/* Image Container */}

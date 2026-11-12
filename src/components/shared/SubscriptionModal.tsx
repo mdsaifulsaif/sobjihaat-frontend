@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
@@ -176,7 +177,7 @@ export default function SubscriptionModal({
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
       <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden my-6 border border-gray-200">
         {/* Clean Header Without Heavy Background */}
-        <div className="px-6 py-5 border-b border-gray-150 flex items-center justify-between bg-white relative">
+        <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between bg-white relative">
           <div className="flex items-center gap-3">
             <span className="p-2.5 rounded-2xl bg-gray-100 text-gray-800">
               <FiRepeat className="text-lg text-[var(--color-primary)]" />
@@ -287,11 +288,15 @@ export default function SubscriptionModal({
 
               {/* Compact Plan Preview */}
               <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-200 max-w-sm mx-auto text-left">
-                <img
-                  src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
-                  alt={product.name}
-                  className="w-12 h-12 object-cover rounded-xl border border-gray-200"
-                />
+                <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-gray-200 shrink-0">
+                  <Image
+                    src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
+                    alt={product.name || 'Plan'}
+                    fill
+                    sizes="48px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="font-bold text-gray-900 text-xs truncate">{product.name}</h4>
                   <p className="text-xs font-black text-[var(--color-primary)]">
@@ -323,11 +328,15 @@ export default function SubscriptionModal({
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Product preview strip */}
               <div className="flex items-center gap-3.5 bg-gray-50 p-3.5 rounded-2xl border border-gray-200">
-                <img
-                  src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
-                  alt={product.name}
-                  className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-xl border border-gray-200 shrink-0"
-                />
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-gray-200 shrink-0">
+                  <Image
+                    src={product.thumbnail || '/images/monthly_cleaning_box.jpg'}
+                    alt={product.name || 'Plan'}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)]">
                     {frequency === 'weekly' ? 'Weekly Delivery' : 'Monthly Delivery'} • Free Doorstep Delivery
@@ -383,7 +392,7 @@ export default function SubscriptionModal({
               </div>
 
               {/* Customer Information (Pre-filled from logged in user) */}
-              <div className="space-y-3 pt-1 border-t border-gray-150">
+              <div className="space-y-3 pt-1 border-t border-gray-200">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-bold text-gray-700 block mb-1 flex items-center gap-1">
@@ -440,7 +449,7 @@ export default function SubscriptionModal({
               </div>
 
               {/* Payment Method - Simple Cash on Delivery */}
-              <div className="pt-2 border-t border-gray-150">
+              <div className="pt-2 border-t border-gray-200">
                 <label className="text-xs font-bold text-gray-700 block mb-1.5">
                   Payment Method (মূল্য পরিশোধ পদ্ধতি)
                 </label>

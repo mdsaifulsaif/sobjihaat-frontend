@@ -199,10 +199,10 @@ const Footer: React.FC = () => {
                             <h4 className="text-white font-bold mb-3 uppercase text-[11px] tracking-wider text-gray-400">Download Mobile App</h4>
                             <div className="flex gap-2">
                                 <div className="bg-[#1e221d] p-1.5 rounded-lg border border-gray-800 cursor-pointer hover:border-[var(--color-primary)] transition-all">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play Store" className="h-7" />
+                                    <Image src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play Store" width={96} height={28} className="h-7 w-auto" />
                                 </div>
                                 <div className="bg-[#1e221d] p-1.5 rounded-lg border border-gray-800 cursor-pointer hover:border-[var(--color-primary)] transition-all">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Apple App Store" className="h-7" />
+                                    <Image src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Apple App Store" width={96} height={28} className="h-7 w-auto" />
                                 </div>
                             </div>
                         </div>

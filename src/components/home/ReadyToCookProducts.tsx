@@ -55,7 +55,7 @@ const ReadyToCookProducts: React.FC<ReadyToCookProductsProps> = ({
   };
 
   const handleSeeAll = () => {
-    router.push(`/cat/${categorySlug}`);
+    router.push(`/category/${categorySlug}`);
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "instant" });
     }

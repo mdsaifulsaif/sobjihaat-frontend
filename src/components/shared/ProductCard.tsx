@@ -1,6 +1,7 @@
 
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { FiHeart } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "@/redux";
 import {
@@ -137,6 +138,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
         price: price,
         mrp: regularPrice || price,
         image: productImage,
+        thumbnail: productImage,
         category:
           product.categoryDetails?.name || product.categoryName || "General",
       }),
@@ -208,9 +210,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
     >
       {/* Image */}
       <div className="relative aspect-square md:aspect-[4/3] bg-gray-50 overflow-hidden">
-        <img
+        <Image
           src={productImage}
-          alt={productName}
+          alt={productName || "Product image"}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
             !isInStock ? "opacity-50 grayscale-[30%]" : ""
           }`}

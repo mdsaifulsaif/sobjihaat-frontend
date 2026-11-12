@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux';
 import {
@@ -99,8 +100,8 @@ const CartPage = () => {
                                     <div key={item.id} className="p-6 grid grid-cols-1 md:grid-cols-6 items-center gap-6 group">
                                         {/* Product Info */}
                                         <div className="col-span-1 md:col-span-3 flex items-center gap-4">
-                                            <div className="w-20 h-24 bg-gray-50 rounded-md overflow-hidden flex-shrink-0 border border-gray-100 p-2">
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                                            <div className="relative w-20 h-24 bg-gray-50 rounded-md overflow-hidden flex-shrink-0 border border-gray-100">
+                                                <Image src={item.image} alt={item.name || "Product"} fill sizes="80px" className="object-contain p-2 group-hover:scale-110 transition-transform duration-500" />
                                             </div>
                                             <div>
                                                 <span className="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-widest">{item.category}</span>

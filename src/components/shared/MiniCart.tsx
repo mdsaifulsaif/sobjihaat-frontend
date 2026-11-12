@@ -1,8 +1,9 @@
 "use client";
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FiTrash2, FiShoppingBag, FiInfo, FiChevronsRight } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '@/redux';
+import { useGetShippingConfigQuery } from '@/redux/api/shippingApi';
 import {
     decreaseQuantity,
     increaseQuantity,
@@ -15,6 +16,20 @@ import Image from 'next/image';
 const MiniCart = () => {
     const dispatch = useAppDispatch();
     const { items, totalPrice, isMiniCartOpen } = useAppSelector(state => state.cart);
+    const { data: shippingConfigData } = useGetShippingConfigQuery("local");
+
+    const freeDeliveryThreshold = useMemo(() => {
+        const tiers = shippingConfigData?.data?.tiers;
+        if (tiers && Array.isArray(tiers) && tiers.length > 0) {
+            const freeTier = tiers.find((t) => Number(t.charge) === 0);
+            if (freeTier && freeTier.min !== undefined && Number(freeTier.min) > 0) {
+                return Number(freeTier.min);
+            }
+        }
+        return 5000;
+    }, [shippingConfigData]);
+
+    const isFreeShippingUnlocked = totalPrice >= freeDeliveryThreshold;
 
     if (!isMiniCartOpen) return null;
 
@@ -49,9 +64,18 @@ const MiniCart = () => {
                             <p className="font-bold text-sm text-gray-800">
                                 {items.length} Items
                             </p>
-                            <p className="text-xs flex items-center gap-1 text-[var(--color-primary)]">
-                                Shipping Fee: ৳0
-                                <FiInfo size={12} />
+                            <p className="text-xs flex items-center gap-1 font-medium text-[var(--color-primary)]">
+                                {isFreeShippingUnlocked ? (
+                                    <>
+                                        <span>Shipping: FREE</span>
+                                        <FiInfo size={12} />
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Free shipping at ৳{freeDeliveryThreshold.toLocaleString()}</span>
+                                        <FiInfo size={12} />
+                                    </>
+                                )}
                             </p>
                         </div>
                     </div>
@@ -72,65 +96,77 @@ const MiniCart = () => {
                             <p className="text-sm">Your cart is empty</p>
                         </div>
                     ) : (
-                        items.map((item) => (
-                            <div key={item.id} className="flex items-start gap-3 px-4 py-3 border-b border-gray-50">
+                        items.map((item) => {
+                            const itemImage = item.thumbnail || item.image;
+                            return (
+                                <div key={item.id} className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
 
-                                {/* Image */}
-                                <div className="w-14 h-14 flex-shrink-0 rounded-md overflow-hidden border border-gray-100 bg-gray-50">
-                                    {item.thumbnail ? (
-                                        <Image
-                                            src={item.thumbnail}
-                                            alt={item.name}
-                                            width={56}
-                                            height={56}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center">
-                                            <FiShoppingBag size={20} className="text-gray-300" />
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm leading-snug line-clamp-2 text-gray-700 mb-2">
-                                        {item.name}
-                                    </p>
-                                    <div className="flex items-center gap-1.5 mb-2">
-                                        <span className="text-sm font-bold text-[var(--color-primary)]">
-                                            ৳{item.price}
-                                        </span>
-                                        {item.mrp > item.price && (
-                                            <span className="text-xs line-through text-gray-400">
-                                                ৳{item.mrp}
-                                            </span>
+                                    {/* Image */}
+                                    <div className="relative w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
+                                        {itemImage ? (
+                                            <Image
+                                                src={itemImage}
+                                                alt={item.name || 'Product'}
+                                                fill
+                                                sizes="56px"
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center">
+                                                <FiShoppingBag size={20} className="text-gray-300" />
+                                            </div>
                                         )}
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center border border-gray-200 rounded-full text-xs">
-                                            <button
-                                                onClick={() => dispatch(decreaseQuantity(item.id))}
-                                                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors text-gray-600"
-                                            >−</button>
-                                            <span className="px-2 font-semibold text-gray-800 min-w-[20px] text-center">
-                                                {item.quantity}
-                                            </span>
-                                            <button
-                                                onClick={() => dispatch(increaseQuantity(item.id))}
-                                                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors text-gray-600"
-                                            >+</button>
+
+                                    {/* Info */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-semibold leading-snug line-clamp-1 text-gray-800" title={item.name}>
+                                            {item.name}
+                                        </p>
+
+                                        {/* Price & Quantity in one row */}
+                                        <div className="flex items-center justify-between gap-2 mt-2">
+                                            <div className="flex items-baseline gap-1.5 min-w-0">
+                                                <span className="text-sm font-bold text-[var(--color-primary)]">
+                                                    ৳{item.price}
+                                                </span>
+                                                {item.mrp > item.price && (
+                                                    <span className="text-xs line-through text-gray-400">
+                                                        ৳{item.mrp}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <div className="flex items-center gap-2 flex-shrink-0">
+                                                <div className="flex items-center border border-gray-200 rounded-full text-xs bg-white shadow-2xs">
+                                                    <button
+                                                        onClick={() => dispatch(decreaseQuantity(item.id))}
+                                                        className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors text-gray-600 font-bold cursor-pointer"
+                                                        aria-label="Decrease quantity"
+                                                    >−</button>
+                                                    <span className="px-1.5 font-semibold text-gray-800 min-w-[20px] text-center">
+                                                        {item.quantity}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => dispatch(increaseQuantity(item.id))}
+                                                        className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors text-gray-600 font-bold cursor-pointer"
+                                                        aria-label="Increase quantity"
+                                                    >+</button>
+                                                </div>
+                                                <button
+                                                    onClick={() => dispatch(removeFromCart(item.id))}
+                                                    className="p-1 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                                                    aria-label="Remove item"
+                                                    title="Remove item"
+                                                >
+                                                    <FiTrash2 size={15} />
+                                                </button>
+                                            </div>
                                         </div>
-                                        <button
-                                            onClick={() => dispatch(removeFromCart(item.id))}
-                                            className="text-red-400 hover:text-red-600 transition-colors"
-                                        >
-                                            <FiTrash2 size={14} />
-                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
 

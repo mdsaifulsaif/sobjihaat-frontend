@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import {
     FiCalendar,
@@ -143,12 +144,14 @@ export default function BlogPostPage() {
                         <article className="bg-white rounded-[40px] overflow-hidden shadow-sm border border-gray-100 mb-12 animate-fadeIn">
                             {/* Featured Image */}
                             <div className="aspect-[21/10] relative overflow-hidden group">
-                                <img
+                                <Image
                                     src={post.image}
                                     alt={post.title}
+                                    fill
+                                    sizes="(max-width: 1024px) 100vw, 800px"
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                                 />
-                                <div className="absolute top-8 left-8">
+                                <div className="absolute top-8 left-8 z-10">
                                     <span className="bg-[var(--color-primary)] text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-2xl shadow-xl flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                                         {post.category}
@@ -177,8 +180,8 @@ export default function BlogPostPage() {
 
                                 {/* Author Card */}
                                 <div className="mt-16 bg-gray-900 rounded-[32px] p-8 md:p-10 flex flex-col md:flex-row items-center gap-10 text-white group">
-                                    <div className="w-32 h-32 rounded-3xl overflow-hidden shrink-0 border-4 border-gray-800 shadow-2xl group-hover:border-[var(--color-primary)] transition-colors duration-500">
-                                        <img src="https://i.pravatar.cc/150?u=john" alt="Author" className="w-full h-full object-cover" />
+                                    <div className="relative w-32 h-32 rounded-3xl overflow-hidden shrink-0 border-4 border-gray-800 shadow-2xl group-hover:border-[var(--color-primary)] transition-colors duration-500">
+                                        <Image src="https://i.pravatar.cc/150?u=john" alt="Author" fill sizes="128px" className="object-cover" />
                                     </div>
                                     <div className="text-center md:text-left">
                                         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
@@ -230,8 +233,8 @@ export default function BlogPostPage() {
                             <div className="space-y-12 mb-16">
                                 {comments.map((comment) => (
                                     <div key={comment.id} className="flex gap-6 group">
-                                        <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 ring-4 ring-gray-50">
-                                            <img src={comment.avatar} alt={comment.author} className="w-full h-full object-cover" />
+                                        <div className="relative w-16 h-16 rounded-2xl overflow-hidden shrink-0 ring-4 ring-gray-50">
+                                            <Image src={comment.avatar} alt={comment.author} fill sizes="64px" className="object-cover" />
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between mb-2">
@@ -292,8 +295,8 @@ export default function BlogPostPage() {
                             <div className="space-y-8">
                                 {recentPosts.map((rPost) => (
                                     <Link key={rPost.id} href={`/blog/${rPost.id}`} className="flex gap-5 group">
-                                        <div className="w-24 h-20 rounded-2xl overflow-hidden shrink-0 bg-gray-100">
-                                            <img src={rPost.image} alt={rPost.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <div className="relative w-24 h-20 rounded-2xl overflow-hidden shrink-0 bg-gray-100">
+                                            <Image src={rPost.image} alt={rPost.title} fill sizes="96px" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                                         </div>
                                         <div className="flex flex-col justify-center">
                                             <h5 className="text-[13px] font-bold text-gray-900 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2 leading-snug mb-2">

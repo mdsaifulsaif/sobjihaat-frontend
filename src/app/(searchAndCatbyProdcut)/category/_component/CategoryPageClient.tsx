@@ -69,12 +69,22 @@ const CategoryPageClient: React.FC<CategoryPageClientProps> = ({ slug }) => {
     <>
       <div className="mt-4">
         {isLoading && page === 1 && (
-          <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-            {[...Array(10)].map((_, i) => (
+          <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-4">
+            {[...Array(24)].map((_, i) => (
               <div
                 key={i}
-                className="h-72 bg-gray-100 rounded-2xl animate-pulse"
-              />
+                className="bg-white rounded-xl md:rounded-2xl border border-gray-100 p-2 sm:p-3 shadow-2xs animate-pulse flex flex-col justify-between"
+              >
+                <div className="w-full aspect-square bg-gray-100 rounded-lg sm:rounded-xl mb-2 sm:mb-3" />
+                <div className="space-y-1.5 sm:space-y-2 flex-1">
+                  <div className="w-3/4 h-3.5 bg-gray-150 rounded" />
+                  <div className="w-1/2 h-3 bg-gray-100 rounded" />
+                </div>
+                <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-50">
+                  <div className="w-1/3 h-4 bg-gray-100 rounded" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-100 rounded-lg sm:rounded-xl" />
+                </div>
+              </div>
             ))}
           </div>
         )}

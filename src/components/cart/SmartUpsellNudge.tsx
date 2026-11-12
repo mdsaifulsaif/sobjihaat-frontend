@@ -32,7 +32,7 @@ export default function SmartUpsellNudge({
   onOpenCouponDrawer,
   appliedCouponCode,
   appliedDiscountAmount = 0,
-  freeShippingThreshold: fallbackThreshold = 1000,
+  freeShippingThreshold: fallbackThreshold = 5000,
   isFreeShipping,
   compact = false,
 }: SmartUpsellNudgeProps) {
@@ -53,7 +53,7 @@ export default function SmartUpsellNudge({
     if (tiers && Array.isArray(tiers) && tiers.length > 0) {
       // Find tier with charge === 0
       const freeTier = tiers.find((t) => Number(t.charge) === 0);
-      if (freeTier && freeTier.min !== undefined) {
+      if (freeTier && freeTier.min !== undefined && Number(freeTier.min) > 0) {
         return Number(freeTier.min);
       }
     }
@@ -90,8 +90,10 @@ export default function SmartUpsellNudge({
       highestCoupon ? Number(highestCoupon.minPurchase) : freeShippingTarget
     );
 
+    // ✅ Free shipping is unlocked only if subtotal reached target, or explicit coupon/offer is applied
     const isFreeShippingUnlocked =
-      isFreeShipping === true || currentSubtotal >= freeShippingTarget;
+      currentSubtotal >= freeShippingTarget ||
+      Boolean(isFreeShipping && (appliedCouponCode || appliedDiscountAmount > 0));
 
     // Find the next upcoming coupon (subtotal < minPurchase)
     const upcomingCoupon = validCoupons.find(
@@ -111,10 +113,10 @@ export default function SmartUpsellNudge({
     // STAGE 1: Free Delivery NOT yet unlocked
     // ==========================================
     if (!isFreeShippingUnlocked) {
-      const remaining = Math.round(freeShippingTarget - currentSubtotal);
+      const remaining = Math.max(0, Math.round(freeShippingTarget - currentSubtotal));
       const progressPercent = Math.min(
         100,
-        Math.max(6, Math.round((currentSubtotal / freeShippingTarget) * 100))
+        Math.max(4, Math.round((currentSubtotal / freeShippingTarget) * 100))
       );
 
       return {
